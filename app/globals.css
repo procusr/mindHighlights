@@ -1,61 +1,63 @@
 @tailwind base;
+
 @tailwind components;
+
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --background: #f8efe5; /* Light background */
+    --foreground: #3b3b3b; /* Dark text color */
+    --card: #f1e5ce; /* Card background */
+    --card-foreground: #3b3b3b; /* Card text color */
+    --popover: #eae2c2; /* Popover background */
+    --popover-foreground: #3b3b3b; /* Popover text color */
+    --primary: #e1e0bb; /* Primary background */
+    --primary-foreground: #3b3b3b; /* Primary text color */
+    --secondary: #d0d9ad; /* Secondary background */
+    --secondary-foreground: #3b3b3b; /* Secondary text color */
+    --muted: #619685; /* Muted background */
+    --muted-foreground: #3b3b3b; /* Muted text color */
+    --accent: #85af85; /* Accent color */
+    --accent-foreground: #3b3b3b; /* Accent text color */
+    --destructive: #b2c998; /* Destructive action color */
+    --destructive-foreground: #3b3b3b; /* Destructive text color */
+    --border: #d0d9ad; /* Border color */
+    --input: #e1e0bb; /* Input background */
+    --ring: #f1e5ce; /* Ring color */
+    --radius: 0.5rem; /* Radius for borders */
+    --chart-1: #619685; /* Chart color 1 */
+    --chart-2: #85af85; /* Chart color 2 */
+    --chart-3: #b2c998; /* Chart color 3 */
+    --chart-4: #d0d9ad; /* Chart color 4 */
+    --chart-5: #e1e0bb; /* Chart color 5 */
   }
 
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --background: #3b3b3b; /* Dark background */
+    --foreground: #f8efe5; /* Light text color */
+    --card: #3b3b3b; /* Dark card background */
+    --card-foreground: #f8efe5; /* Light card text color */
+    --popover: #3b3b3b; /* Dark popover background */
+    --popover-foreground: #f8efe5; /* Light popover text color */
+    --primary: #f8efe5; /* Light primary color */
+    --primary-foreground: #3b3b3b; /* Dark primary text color */
+    --secondary: #4c4c4c; /* Darker secondary background */
+    --secondary-foreground: #f8efe5; /* Light secondary text color */
+    --muted: #4c4c4c; /* Dark muted color */
+    --muted-foreground: #f8efe5; /* Light muted text color */
+    --accent: #4c4c4c; /* Dark accent color */
+    --accent-foreground: #f8efe5; /* Light accent text */
+    --destructive: #4c4c4c; /* Dark destructive color */
+    --destructive-foreground: #f8efe5; /* Light for destructive text */
+    --border: #4c4c4c; /* Dark border color */
+    --input: #4c4c4c; /* Dark input background */
+    --ring: #d1d1d1; /* Dark ring color */
+    --chart-1: #62d68c; /* Darker chart color 1 */
+    --chart-2: #76c988; /* Darker chart color 2 */
+    --chart-3: #9fb69e; /* Darker chart color 3 */
+    --chart-4: #a1e3a4; /* Darker chart color 4 */
+    --chart-5: #d1d0bb; /* Darker chart color 5 */
   }
 }
 
@@ -63,6 +65,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
