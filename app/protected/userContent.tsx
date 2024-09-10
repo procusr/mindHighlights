@@ -158,8 +158,8 @@ export default function UserContent({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="flex h-screen min-w-[60rem] gap-1 p-20">
-      <div className="w-[250px] bg-gray-100 p-4 overflow-y-auto border-r border-gray-200">
+    <div className="flex flex-col md:flex-row min-h-screen w-full p-4 md:p-8 lg:p-20 gap-4">
+      <div className="w-full md:w-[250px] bg-gray-100 p-4 overflow-y-auto border-b md:border-r border-gray-200 mb-4 md:mb-0">
         <div className="bg-white p-4 rounded-lg shadow mb-4">
           {isCreatingFolder ? (
             <div>
@@ -236,7 +236,7 @@ export default function UserContent({ userId }: { userId: string }) {
           ))}
         </div>
       </div>
-      <div className="flex-grow p-6 overflow-y-auto border">
+      <div className="flex-grow p-4 md:p-6 overflow-y-auto border">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-semibold mb-4">Content</h2>
 
