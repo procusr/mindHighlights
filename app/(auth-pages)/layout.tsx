@@ -1,9 +1,11 @@
 export default async function Layout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <div className="max-w-7xl flex flex-col gap-12 items-start">{children}</div>
-  );
+    <div className="max-w-8xl flex flex-col gap-12 items-center mt-5">
+      {children}
+    </div>
+  )
 }

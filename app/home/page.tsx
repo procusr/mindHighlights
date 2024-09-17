@@ -16,7 +16,6 @@ export default async function LandingPage() {
   return (
     <div className="flex-1 w-full flex flex-col gap-12">
       <div>
-        {/* <FetchDataSteps /> */}
         <UserContent userId={user.id} />
       </div>
     </div>

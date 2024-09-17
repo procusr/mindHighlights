@@ -17,4 +17,18 @@ export async function fetchFolders({
   if (data) {
     fn()
   }
+  if (error) {
+    console.error(error)
+  }
+}
+
+export async function deleteFolder(folderId: string, fn: () => void) {
+  const { error } = await supabase
+    .from("user_folders")
+    .delete()
+    .eq("id", folderId)
+
+  if (!error) {
+    fn()
+  }
 }

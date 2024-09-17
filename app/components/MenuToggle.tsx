@@ -1,24 +1,17 @@
 "use client"
 
-import { useEffect } from "react"
+import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Menu } from "lucide-react"
+import { useSidebar } from "../contexts/SidebarContext"
 
 export default function MenuToggle() {
-  const toggleSidebar = () => {
-    const event = new CustomEvent("toggleSidebar")
-    window.dispatchEvent(event)
-  }
+  const { menuOpen, toggleMenu } = useSidebar()
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="md:hidden"
-      aria-label="Toggle menu"
-      onClick={toggleSidebar}
-    >
-      <Menu className="h-6 w-6" />
-    </Button>
+    <div className="md:hidden">
+      <Button variant="ghost" onClick={toggleMenu} aria-label="Toggle menu">
+        {menuOpen ? <X size={24} /> : <Menu size={24} />}
+      </Button>
+    </div>
   )
 }

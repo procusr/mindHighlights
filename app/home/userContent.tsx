@@ -1,13 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Card,
-} from "@/components/ui/card"
+import { CardContent, CardHeader, CardTitle, Card } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -18,11 +12,12 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@radix-ui/react-label"
-import { Edit, Menu, Plus, Star, StarOff, Trash, X } from "lucide-react"
+import { Edit, Plus, Star, StarOff, Trash, X } from "lucide-react"
 import React, { useEffect, useState } from "react"
 import { createClient } from "../../utils/supabase/client"
 import { Textarea } from "../../components/ui/textarea"
-import MenuToggle from "../components/MenuToggle"
+import { deleteFolder } from "./dataAccess"
+import { useSidebar } from "../contexts/SidebarContext"
 
 interface Folder {
   id: string
@@ -45,12 +40,12 @@ export default function UserContent({ userId }: { userId: string }) {
   const [activeFolder, setActiveFolder] = useState<string | null>(null)
   const [newFolderName, setNewFolderName] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [isCreatingFolder, setIsCreatingFolder] = useState(false)
   const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+  const { menuOpen, closeMenu } = useSidebar()
 
   const supabase = createClient()
 
@@ -94,21 +89,6 @@ export default function UserContent({ userId }: { userId: string }) {
 
     if (data) {
       setFolders(data)
-    }
-  }
-
-  async function deleteFolder(folderId: string) {
-    const { error } = await supabase
-      .from("user_folders")
-      .delete()
-      .eq("id", folderId)
-
-    if (!error) {
-      setFolders(folders.filter((f) => f.id !== folderId))
-      if (activeFolder === folderId) {
-        setActiveFolder(null)
-        setContentList([])
-      }
     }
   }
 
@@ -179,27 +159,19 @@ export default function UserContent({ userId }: { userId: string }) {
   }
 
   useEffect(() => {
-    const handleToggleSidebar = () => {
-      setIsSidebarOpen((prevState) => !prevState)
-    }
-
     const handleResize = () => {
       if (window.innerWidth >= 768) {
-        setIsSidebarOpen(true)
-      } else {
-        setIsSidebarOpen(false)
+        closeMenu()
       }
     }
 
-    window.addEventListener("toggleSidebar", handleToggleSidebar)
     window.addEventListener("resize", handleResize)
-    handleResize() // Call it initially
+    handleResize()
 
     return () => {
-      window.removeEventListener("toggleSidebar", handleToggleSidebar)
       window.removeEventListener("resize", handleResize)
     }
-  }, [])
+  }, [closeMenu])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -213,7 +185,7 @@ export default function UserContent({ userId }: { userId: string }) {
         menuButton !== event.target &&
         window.innerWidth < 768
       ) {
-        setIsSidebarOpen(false)
+        closeMenu()
       }
     }
 
@@ -221,17 +193,19 @@ export default function UserContent({ userId }: { userId: string }) {
     return () => {
       document.removeEventListener("click", handleClickOutside)
     }
-  }, [])
+  }, [closeMenu])
 
   return (
     <>
-      <div className="flex h-[calc(100vh-64px)] bg-gray-50">
+      <div className="flex h-[calc(100vh-64px)] bg-gray-50 relative">
         {/* Sidebar */}
         <aside
+          id="sidebar" // Added ID for targeting
           className={`
-            ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+            fixed top-0 left-0
+            ${menuOpen ? "translate-x-0" : "-translate-x-full"}
             md:translate-x-0 transition-transform duration-200 ease-in-out
-            fixed md:relative z-20 w-64 h-full
+            z-50 w-64 h-full
             border-r border-gray-200 bg-white
             md:bg-gray-50
           `}
@@ -283,7 +257,7 @@ export default function UserContent({ userId }: { userId: string }) {
               {folders.map((folder) => (
                 <li
                   key={folder.id}
-                  className="flex items-center justify-between bg-white rounded-md p-2 shadow-sm transition-all duration-200 hover:shadow-md hover:translate-y-[-2px]"
+                  className="flex items-center justify-between bg-white rounded-md p-2 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-1"
                 >
                   <Button
                     variant={
@@ -318,7 +292,15 @@ export default function UserContent({ userId }: { userId: string }) {
                             "Are you sure you want to delete this folder?"
                           )
                         )
-                          deleteFolder(folder.id)
+                          deleteFolder(folder.id, () => {
+                            setFolders(
+                              folders.filter((f) => f.id !== folder.id)
+                            )
+                            if (activeFolder === folder.id) {
+                              setActiveFolder(null)
+                              setContentList([])
+                            }
+                          })
                       }}
                       aria-label="Delete Folder"
                       className="text-destructive-foreground"
@@ -333,10 +315,15 @@ export default function UserContent({ userId }: { userId: string }) {
         </aside>
 
         {/* Overlay for mobile */}
-        {isSidebarOpen && (
+        {menuOpen && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"
-            onClick={() => setIsSidebarOpen(false)}
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+            onClick={closeMenu}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                closeMenu()
+              }
+            }}
           />
         )}
 
