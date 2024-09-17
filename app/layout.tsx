@@ -14,7 +14,7 @@ export default function RootLayout({
     <html lang="en" className={GeistSans.className}>
       <body>
         <SidebarProvider>
-          <main className="flex flex-col h-screen bg-background text-foreground">
+          <main className="sm:ml-64 ml-0 flex flex-col h-screen bg-background text-foreground">
             <header className="flex items-center justify-between px-4 py-3 border-b border-border">
               <div className="flex items-center">
                 <MenuToggle />

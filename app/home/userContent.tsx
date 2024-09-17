@@ -200,7 +200,7 @@ export default function UserContent({ userId }: { userId: string }) {
       <div className="flex h-[calc(100vh-64px)] bg-gray-50 relative">
         {/* Sidebar */}
         <aside
-          id="sidebar" // Added ID for targeting
+          id="sidebar"
           className={`
             fixed top-0 left-0
             ${menuOpen ? "translate-x-0" : "-translate-x-full"}
@@ -328,7 +328,7 @@ export default function UserContent({ userId }: { userId: string }) {
         )}
 
         {/* Content Area */}
-        <main className="flex-1 p-4 overflow-auto bg-gray-50 w-full">
+        <main className="flex-1 p-4 overflow-auto bg-gray-50 w-full bg-red-50">
           <Card className="h-full bg-white shadow-sm">
             <CardHeader className="border-b border-gray-200">
               <CardTitle className="text-xl font-bold text-gray-800">
