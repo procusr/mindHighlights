@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import UserContent from "./userContent"
 
-export default async function ProtectedPage() {
+export default async function LandingPage() {
   const supabase = createClient()
 
   const {

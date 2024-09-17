@@ -1,21 +1,8 @@
-
 import HeaderAuth from "@/components/headerAuth"
-
 import { GeistSans } from "geist/font/sans"
-
 import Link from "next/link"
 import "./globals.css"
-
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3001"
-
-export const metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "The missing apps for readers",
-  description:
-    "Easly remember the books you have read and take memorable notes",
-}
+import MenuToggle from "./components/MenuToggle"
 
 export default function RootLayout({
   children,
@@ -23,24 +10,20 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={GeistSans.className} suppressHydrationWarning>
-      <body className="bg-background text-foreground flex flex-col min-h-screen">
-        
-          <main className="flex-grow flex flex-col items-center">
-            <div className="w-full flex flex-col gap-20 items-center">
-              <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-                <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-                  <div className="flex gap-5 items-center font-semibold">
-                    <Link href={"/"}>Readers Heaven</Link>
-                  </div>
-                  <HeaderAuth />
-                </div>
-              </nav>
-              <div className="flex flex-col gap-20 max-w-5xl p-5">
-                {children}
-              </div>
+    <html lang="en" className={GeistSans.className}>
+      <body>
+        <main className="flex flex-col h-screen bg-background text-foreground">
+          <header className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <div className="flex items-center">
+              <MenuToggle />
+              <Link href="/" className="text-lg sm:text-xl ml-2">
+                ReView
+              </Link>
             </div>
-          </main>
+            <HeaderAuth />
+          </header>
+          {children}
+        </main>
       </body>
     </html>
   )

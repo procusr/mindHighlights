@@ -6,58 +6,58 @@
 
 @layer base {
   :root {
-    --background: #f8efe5; /* Light background */
-    --foreground: #3b3b3b; /* Dark text color */
-    --card: #f1e5ce; /* Card background */
-    --card-foreground: #3b3b3b; /* Card text color */
-    --popover: #eae2c2; /* Popover background */
-    --popover-foreground: #3b3b3b; /* Popover text color */
-    --primary: #e1e0bb; /* Primary background */
-    --primary-foreground: #3b3b3b; /* Primary text color */
-    --secondary: #d0d9ad; /* Secondary background */
-    --secondary-foreground: #3b3b3b; /* Secondary text color */
-    --muted: #619685; /* Muted background */
-    --muted-foreground: #3b3b3b; /* Muted text color */
-    --accent: #85af85; /* Accent color */
-    --accent-foreground: #3b3b3b; /* Accent text color */
-    --destructive: #b2c998; /* Destructive action color */
-    --destructive-foreground: #3b3b3b; /* Destructive text color */
-    --border: #d0d9ad; /* Border color */
-    --input: #e1e0bb; /* Input background */
-    --ring: #f1e5ce; /* Ring color */
-    --radius: 0.5rem; /* Radius for borders */
-    --chart-1: #619685; /* Chart color 1 */
-    --chart-2: #85af85; /* Chart color 2 */
-    --chart-3: #b2c998; /* Chart color 3 */
-    --chart-4: #d0d9ad; /* Chart color 4 */
-    --chart-5: #e1e0bb; /* Chart color 5 */
+    --background: #ffffff; /* Changed to white for higher contrast */
+    --foreground: #000000; /* Changed to black for text */
+    --card: #f9f9f9; /* Simplified card background */
+    --card-foreground: #000000;
+    --popover: #ffffff;
+    --popover-foreground: #000000;
+    --primary: #d1d5db; /* Tailwind gray-300 */
+    --primary-foreground: #000000;
+    --secondary: #9ca3af; /* Tailwind gray-400 */
+    --secondary-foreground: #000000;
+    --muted: #6b7280; /* Tailwind gray-500 */
+    --muted-foreground: #000000;
+    --accent: #3b82f6; /* Tailwind blue-500 */
+    --accent-foreground: #ffffff;
+    --destructive: #ef4444; /* Tailwind red-500 */
+    --destructive-foreground: #ffffff;
+    --border: #d1d5db;
+    --input: #ffffff;
+    --ring: #d1d5db;
+    --radius: 0.5rem;
+    --chart-1: #3b82f6;
+    --chart-2: #10b981;
+    --chart-3: #fbbf24;
+    --chart-4: #ef4444;
+    --chart-5: #8b5cf6;
   }
 
   .dark {
-    --background: #3b3b3b; /* Dark background */
-    --foreground: #f8efe5; /* Light text color */
-    --card: #3b3b3b; /* Dark card background */
-    --card-foreground: #f8efe5; /* Light card text color */
-    --popover: #3b3b3b; /* Dark popover background */
-    --popover-foreground: #f8efe5; /* Light popover text color */
-    --primary: #f8efe5; /* Light primary color */
-    --primary-foreground: #3b3b3b; /* Dark primary text color */
-    --secondary: #4c4c4c; /* Darker secondary background */
-    --secondary-foreground: #f8efe5; /* Light secondary text color */
-    --muted: #4c4c4c; /* Dark muted color */
-    --muted-foreground: #f8efe5; /* Light muted text color */
-    --accent: #4c4c4c; /* Dark accent color */
-    --accent-foreground: #f8efe5; /* Light accent text */
-    --destructive: #4c4c4c; /* Dark destructive color */
-    --destructive-foreground: #f8efe5; /* Light for destructive text */
-    --border: #4c4c4c; /* Dark border color */
-    --input: #4c4c4c; /* Dark input background */
-    --ring: #d1d1d1; /* Dark ring color */
-    --chart-1: #62d68c; /* Darker chart color 1 */
-    --chart-2: #76c988; /* Darker chart color 2 */
-    --chart-3: #9fb69e; /* Darker chart color 3 */
-    --chart-4: #a1e3a4; /* Darker chart color 4 */
-    --chart-5: #d1d0bb; /* Darker chart color 5 */
+    --background: #1f2937; /* Dark background */
+    --foreground: #f3f4f6; /* Light text */
+    --card: #374151;
+    --card-foreground: #f3f4f6;
+    --popover: #1f2937;
+    --popover-foreground: #f3f4f6;
+    --primary: #6b7280;
+    --primary-foreground: #f3f4f6;
+    --secondary: #4b5563;
+    --secondary-foreground: #f3f4f6;
+    --muted: #374151;
+    --muted-foreground: #f3f4f6;
+    --accent: #3b82f6;
+    --accent-foreground: #ffffff;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --border: #4b5563;
+    --input: #374151;
+    --ring: #4b5563;
+    --chart-1: #3b82f6;
+    --chart-2: #10b981;
+    --chart-3: #f59e0b;
+    --chart-4: #ef4444;
+    --chart-5: #8b5cf6;
   }
 }
 
