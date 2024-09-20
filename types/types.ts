@@ -5,6 +5,8 @@ export interface Folder {
 
 export interface Content {
   id: string
+  title: string
   content: string
   folder_id: string
+  user_id: string
 }

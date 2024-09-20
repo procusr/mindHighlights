@@ -7,6 +7,7 @@ import type { Content, Folder } from "../../types/types"
 import Sidebar from "./Sidebar"
 import ContentArea from "./ContentArea"
 import { fetchContentList } from "./dataAccess"
+import { useMediaQuery } from "react-responsive"
 
 export default function UserContent({ userId }: { userId: string }) {
   const [folders, setFolders] = useState<Folder[]>([])
@@ -14,16 +15,31 @@ export default function UserContent({ userId }: { userId: string }) {
   const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null)
   const { menuOpen, closeMenu } = useSidebar()
   const supabase = createClient()
+  const isMobile = useMediaQuery({ maxWidth: 767 })
 
   useEffect(() => {
     fetchFolders()
   }, [])
 
   useEffect(() => {
-    if (selectedFolder) {
-      fetchContentList(selectedFolder.id, userId, setContentList)
+    const fetchData = async () => {
+      if (selectedFolder) {
+        const { data, error } = await supabase
+          .from("user_content")
+          .select("*")
+          .eq("folder_id", selectedFolder.id)
+          .eq("user_id", userId)
+
+        if (data) {
+          setContentList(data)
+        }
+      } else {
+        setContentList([])
+      }
     }
-  }, [selectedFolder, userId])
+
+    fetchData()
+  }, [selectedFolder, userId, supabase])
 
   async function fetchFolders() {
     const { data, error } = await supabase
@@ -33,6 +49,8 @@ export default function UserContent({ userId }: { userId: string }) {
 
     if (data) {
       setFolders(data)
+    } else if (error) {
+      console.error("Error fetching folders:", error)
     }
   }
 
@@ -73,17 +91,24 @@ export default function UserContent({ userId }: { userId: string }) {
     }
   }, [closeMenu])
 
+  const handleFolderSelect = (folder: Folder) => {
+    setSelectedFolder(folder)
+    if (isMobile) {
+      closeMenu()
+    }
+  }
+
   return (
-    <div className="flex h-[calc(100vh-64px)] bg-gray-50 relative">
+    <div className="flex h-[calc(100vh-64px)] bg-gray-50 dark:bg-gray-900">
       <Sidebar
         folders={folders}
         setFolders={setFolders}
         selectedFolder={selectedFolder}
-        setSelectedFolder={setSelectedFolder}
+        setSelectedFolder={handleFolderSelect}
         userId={userId}
         menuOpen={menuOpen}
       />
-      <div className="flex-1 flex justify-center">
+      <div className="flex-1 overflow-y-auto">
         <ContentArea
           selectedFolder={selectedFolder}
           contentList={contentList}

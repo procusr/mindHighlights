@@ -1,121 +1,139 @@
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import type { Folder } from "../../types/types"
+import AddNewFolder from "./AddNewFolder"
+import FolderList from "../../components/FolderList"
+import { createClient } from "../../utils/supabase/client"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
+  DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog"
-import { Label } from "@radix-ui/react-label"
-import { Plus, Star, StarOff, Trash } from "lucide-react"
-import { deleteFolder } from "./dataAccess"
-import type { Folder } from "../../types/types"
-import { createClient } from "../../utils/supabase/client"
+
+interface SidebarProps {
+  folders: Folder[]
+  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>
+  selectedFolder: Folder | null
+  setSelectedFolder: (folder: Folder) => void
+  userId: string
+  menuOpen: boolean
+}
 
 export default function Sidebar({
   folders,
   setFolders,
   selectedFolder,
   setSelectedFolder,
-  menuOpen,
   userId,
-}: {
-  folders: Folder[]
-  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>
-  selectedFolder: Folder | null
-  setSelectedFolder: React.Dispatch<React.SetStateAction<Folder | null>>
-  menuOpen: boolean
-  userId: string
-}) {
-  const [newFolderName, setNewFolderName] = useState("")
-  const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false)
+  menuOpen,
+}: SidebarProps) {
   const [searchTerm, setSearchTerm] = useState("")
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [deletingFolderId, setDeletingFolderId] = useState<string | null>(null)
   const supabase = createClient()
 
-  async function createNewFolder() {
-    if (!newFolderName.trim()) return
-    const { data, error } = await supabase
-      .from("user_folders")
-      .insert({ user_id: userId, name: newFolderName })
-      .select()
+  const filteredFolders = folders.filter((folder) =>
+    folder.name.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
-    if (data) {
-      setFolders([...folders, { id: data[0].id, name: data[0].name }])
-      setNewFolderName("")
-      setIsFolderDialogOpen(false)
+  const handleEditFolder = async (folder: Folder) => {
+    const newName = prompt("Enter new folder name", folder.name)
+    if (newName && newName !== folder.name) {
+      const { data, error } = await supabase
+        .from("user_folders")
+        .update({ name: newName })
+        .eq("id", folder.id)
+        .select()
+
+      if (data) {
+        setFolders(
+          folders.map((f) => (f.id === folder.id ? { ...f, name: newName } : f))
+        )
+      }
+    }
+  }
+
+  const handleDeleteFolder = async () => {
+    if (deletingFolderId) {
+      const { error } = await supabase
+        .from("user_folders")
+        .delete()
+        .eq("id", deletingFolderId)
+
+      if (!error) {
+        setFolders(folders.filter((f) => f.id !== deletingFolderId))
+        if (selectedFolder?.id === deletingFolderId) {
+          setSelectedFolder(undefined as unknown as Folder)
+        }
+        setIsDeleteDialogOpen(false)
+        setDeletingFolderId(null)
+      }
     }
   }
 
   return (
     <aside
-      className={`fixed top-0 left-0 ${menuOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 transition-transform duration-200 ease-in-out z-50 w-64 h-full border-r border-gray-200 bg-white md:bg-gray-50`}
+      className={`${
+        menuOpen ? "translate-x-0" : "-translate-x-full"
+      } fixed left-0 top-16 bottom-0 z-40 w-64 bg-white dark:bg-gray-800 transition-transform duration-300 ease-in-out sm:static sm:translate-x-0 overflow-y-auto border-r border-gray-200 dark:border-gray-700`}
     >
-      <nav className="p-4 flex flex-col h-full">
+      <div className="p-4 h-full flex flex-col">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold text-gray-800">Folders</h2>
-          <Dialog
-            open={isFolderDialogOpen}
-            onOpenChange={setIsFolderDialogOpen}
-          >
-            <DialogTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Plus className="h-4 w-4" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogTitle>Create New Folder</DialogTitle>
-              <DialogDescription>
-                Enter the name of the new folder.
-              </DialogDescription>
-              <div className="mt-4">
-                <Label htmlFor="folder-name">Folder Name</Label>
-                <Input
-                  id="folder-name"
-                  value={newFolderName}
-                  onChange={(e) => setNewFolderName(e.target.value)}
-                  placeholder="e.g., Literature"
-                />
-              </div>
-              <DialogFooter>
-                <Button onClick={createNewFolder}>Create</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <h2 className="text-lg font-semibold">Folders</h2>
+          <AddNewFolder userId={userId} setFolders={setFolders}>
+            <Button variant="ghost" size="icon">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </AddNewFolder>
         </div>
         <Input
+          type="text"
+          placeholder="Search folders..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search folders..."
           className="mb-4"
         />
-        <ul className="space-y-2 overflow-auto flex-1">
-          {folders.map((folder) => (
-            <li key={folder.id} className="flex items-center justify-between">
-              <Button
-                variant={selectedFolder?.id === folder.id ? "default" : "ghost"}
-                className="flex-1 justify-start"
-                onClick={() => setSelectedFolder(folder)}
-              >
-                {folder.name}
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() =>
-                  deleteFolder(folder.id, () =>
-                    setFolders(folders.filter((f) => f.id !== folder.id))
-                  )
-                }
-              >
-                <Trash className="h-4 w-4" />
-              </Button>
-            </li>
-          ))}
-        </ul>
-      </nav>
+        <div className="flex-grow overflow-y-auto">
+          <FolderList
+            folders={filteredFolders}
+            selectedFolder={selectedFolder}
+            onFolderSelect={setSelectedFolder}
+            onEditFolder={handleEditFolder}
+            onDeleteFolder={(folderId) => {
+              setDeletingFolderId(folderId)
+              setIsDeleteDialogOpen(true)
+            }}
+          />
+        </div>
+      </div>
+
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Folder Deletion</DialogTitle>
+          </DialogHeader>
+          <DialogDescription>
+            Are you sure you want to delete this folder? This action cannot be
+            undone and will delete all content within the folder.
+          </DialogDescription>
+          <DialogFooter>
+            <Button
+              onClick={() => setIsDeleteDialogOpen(false)}
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleDeleteFolder} variant="destructive">
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </aside>
   )
 }

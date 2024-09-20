@@ -1,14 +1,17 @@
-import { signOutAction } from "@/app/actions";
-import { createClient } from "@/utils/supabase/server";
-import { ThemeProvider } from "next-themes";
-import Link from "next/link";
-import { Button } from "./ui/button";
-import { ThemeSwitcher } from "./theme-switcher";
+import { signOutAction } from "@/app/actions"
+import { createClient } from "@/utils/supabase/server"
+import { ThemeProvider } from "next-themes"
+import Link from "next/link"
+import { Button } from "./ui/button"
+import { ThemeSwitcher } from "./theme-switcher"
+import { Montserrat } from "next/font/google"
+
+const montserrat = Montserrat({ subsets: ["latin"] })
 
 export default async function HeaderAuth() {
   const {
     data: { user },
-  } = await createClient().auth.getUser();
+  } = await createClient().auth.getUser()
 
   return (
     <ThemeProvider
@@ -20,9 +23,9 @@ export default async function HeaderAuth() {
       <div className="flex items-center gap-4">
         {user ? (
           <div className="flex items-center gap-x-4">
-            Hey, {user.email}!
+            <span className="text-sm sm:block hidden">{user.email}!</span>
             <form action={signOutAction}>
-              <Button type="submit" variant="outline">
+              <Button type="submit" variant="outline" className="text-sm">
                 Sign out
               </Button>
             </form>
@@ -40,5 +43,5 @@ export default async function HeaderAuth() {
         <ThemeSwitcher />
       </div>
     </ThemeProvider>
-  );
+  )
 }

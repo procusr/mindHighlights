@@ -4,6 +4,9 @@ import Link from "next/link"
 import "./globals.css"
 import MenuToggle from "./components/MenuToggle"
 import { SidebarProvider } from "./contexts/SidebarContext"
+import { Montserrat } from "next/font/google"
+
+const montserrat = Montserrat({ subsets: ["latin"] })
 
 export default function RootLayout({
   children,
@@ -11,14 +14,20 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={GeistSans.className}>
-      <body>
+    <html
+      lang="en"
+      className={`${GeistSans.className} ${montserrat.className}`}
+    >
+      <body className="dark:bg-gray-900 dark:text-white">
         <SidebarProvider>
-          <main className="sm:ml-64 ml-0 flex flex-col h-screen bg-background text-foreground">
-            <header className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <main className="flex flex-col h-screen bg-background text-foreground">
+            <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-white dark:bg-gray-800 shadow-sm">
               <div className="flex items-center">
                 <MenuToggle />
-                <Link href="/" className="text-lg sm:text-xl ml-2">
+                <Link
+                  href="/"
+                  className={`text-2xl font-semibold ml-3 ${montserrat.className}`}
+                >
                   ReView
                 </Link>
               </div>

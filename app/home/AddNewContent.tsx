@@ -1,75 +1,92 @@
-import type React from "react"
-import { useState } from "react"
+import React, { useState, ReactNode } from "react"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "../../components/ui/textarea"
-import { Label } from "@radix-ui/react-label"
+import { Textarea } from "@/components/ui/textarea"
 import { createClient } from "../../utils/supabase/client"
 import type { Content } from "@/types/types"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
-export default function AddNewContent({
-  selectedFolder,
-  setContentList,
-  userId,
-  contentList,
-}: {
-  selectedFolder: { id: string; name: string } | null
-  setContentList: React.Dispatch<React.SetStateAction<Content[]>>
+interface AddNewContentProps {
+  selectedFolder: { id: string; name: string }
   userId: string
+  setContentList: React.Dispatch<React.SetStateAction<Content[]>>
   contentList: Content[]
-}) {
-  const [newContent, setNewContent] = useState("")
-  const [isSaving, setIsSaving] = useState(false)
+  children: ReactNode
+}
+
+const AddNewContent: React.FC<AddNewContentProps> = ({
+  selectedFolder,
+  userId,
+  setContentList,
+  contentList,
+  children,
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [content, setContent] = useState("")
   const supabase = createClient()
 
-  async function saveNewContent() {
-    if (!selectedFolder) return
-    setIsSaving(true)
-    try {
-      const { data, error } = await supabase
-        .from("user_content")
-        .insert({
-          user_id: userId,
-          content: newContent,
-          folder_id: selectedFolder.id,
-        })
-        .select()
+  async function handleSubmit() {
+    if (!content.trim()) return
 
-      if (error) throw error
+    // Generate title with a minimum length of 170 characters
+    let title = content.trim().replace(/\s+/g, " ") // Remove extra whitespace
+    if (title.length < 170) {
+      // If the content is shorter than 170 characters, repeat it
+      title = title.padEnd(170, " " + title)
+    }
+    title = title.slice(0, 170) // Ensure it's exactly 170 characters
 
-      if (data) {
-        setContentList([data[0], ...contentList])
-        setNewContent("")
-      }
-    } catch (error) {
-      console.error("Error saving new content:", error)
-    } finally {
-      setIsSaving(false)
+    const { data, error } = await supabase
+      .from("user_content")
+      .insert({
+        user_id: userId,
+        folder_id: selectedFolder.id,
+        title,
+        content,
+      })
+      .select()
+
+    if (data) {
+      setContentList([...contentList, data[0] as Content])
+      setContent("")
+      setIsOpen(false)
+    } else if (error) {
+      console.error("Error adding content:", error)
     }
   }
 
   return (
-    <div className="mb-8">
-      <Label
-        htmlFor="new-content"
-        className="block mb-2 text-lg font-semibold text-gray-700"
-      >
-        Add New Content
-      </Label>
-      <Textarea
-        id="new-content"
-        value={newContent}
-        onChange={(e) => setNewContent(e.target.value)}
-        rows={6}
-        className="w-full mb-3 break-words bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-        placeholder="Enter your new content here..."
-      />
-      <Button
-        onClick={saveNewContent}
-        disabled={isSaving || !newContent.trim()}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-      >
-        {isSaving ? "Saving..." : "Save"}
-      </Button>
-    </div>
+    <>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Content</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Enter your content here..."
+              className="min-h-[200px]"
+            />
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setIsOpen(false)} variant="outline">
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit}>Add Content</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
+
+export default AddNewContent
