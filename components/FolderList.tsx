@@ -1,4 +1,3 @@
-import React from "react"
 import type { Folder } from "../types/types"
 import { Button } from "@/components/ui/button"
 import { Pencil, Trash } from "lucide-react"
@@ -29,18 +28,20 @@ const FolderList: React.FC<FolderListProps> = ({
               : "hover:bg-gray-100 dark:hover:bg-gray-700"
           }`}
         >
-          <button
+          <Button
+            size="sm"
+            variant="ghost"
+            className="flex-grow justify-start text-left text-sm truncate bg-inherit w-full"
             onClick={() => onFolderSelect(folder)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 onFolderSelect(folder)
               }
             }}
-            className="flex-grow text-left text-sm truncate mr-1 bg-inherit"
             type="button"
           >
             {folder.name}
-          </button>
+          </Button>
           <div className="flex space-x-0.5 flex-shrink-0">
             <Button
               size="sm"
