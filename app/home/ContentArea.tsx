@@ -16,7 +16,9 @@ export default function ContentArea({
   userId: string
 }) {
   return (
-    <main className="flex-1 p-4 overflow-auto bg-gray-50 w-full">
+    <main className="flex-1 p-4 overflow-auto bg-gray-50 max-w-3xl w-full">
+      {" "}
+      {/* Adjusted classes */}
       <Card className="h-full bg-white shadow-sm">
         <CardHeader className="border-b border-gray-200">
           <CardTitle className="text-xl font-bold text-gray-800">

@@ -45,7 +45,7 @@ export default function Sidebar({
     if (data) {
       setFolders([...folders, { id: data[0].id, name: data[0].name }])
       setNewFolderName("")
-      setIsFolderDialogOpen(false) // Close the dialog automatically
+      setIsFolderDialogOpen(false)
     }
   }
 

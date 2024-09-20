@@ -83,12 +83,14 @@ export default function UserContent({ userId }: { userId: string }) {
         userId={userId}
         menuOpen={menuOpen}
       />
-      <ContentArea
-        selectedFolder={selectedFolder}
-        contentList={contentList}
-        setContentList={setContentList}
-        userId={userId}
-      />
+      <div className="flex-1 flex justify-center">
+        <ContentArea
+          selectedFolder={selectedFolder}
+          contentList={contentList}
+          setContentList={setContentList}
+          userId={userId}
+        />
+      </div>
     </div>
   )
 }
