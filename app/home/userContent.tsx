@@ -6,7 +6,6 @@ import { useSidebar } from "../contexts/SidebarContext"
 import type { Content, Folder } from "../../types/types"
 import Sidebar from "./Sidebar"
 import ContentArea from "./ContentArea"
-import { fetchContentList } from "./dataAccess"
 import { useMediaQuery } from "react-responsive"
 
 export default function UserContent({ userId }: { userId: string }) {
