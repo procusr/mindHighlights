@@ -16,19 +16,9 @@ import { Edit, Plus, Star, StarOff, Trash, X } from "lucide-react"
 import React, { useEffect, useState } from "react"
 import { createClient } from "../../utils/supabase/client"
 import { Textarea } from "../../components/ui/textarea"
-import { deleteFolder } from "./dataAccess"
+import { deleteFolder, fetchContentList } from "./dataAccess"
 import { useSidebar } from "../contexts/SidebarContext"
-
-interface Folder {
-  id: string
-  name: string
-}
-
-interface Content {
-  id: string
-  content: string
-  folder_id: string
-}
+import type { Content, Folder } from "../../types/types"
 
 export default function UserContent({ userId }: { userId: string }) {
   const [folders, setFolders] = useState<Folder[]>([])
@@ -57,29 +47,13 @@ export default function UserContent({ userId }: { userId: string }) {
 
   useEffect(() => {
     if (selectedFolder) {
-      fetchContentList(selectedFolder.id)
+      setIsLoading(true)
+      fetchContentList(selectedFolder.id, userId, setContentList).then(() =>
+        setIsLoading(false)
+      )
       setActiveFolder(selectedFolder.id)
     }
-  }, [selectedFolder])
-
-  async function fetchContentList(folderId: string) {
-    setIsLoading(true)
-    try {
-      const { data, error } = await supabase
-        .from("user_content")
-        .select("id, content, folder_id")
-        .eq("user_id", userId)
-        .eq("folder_id", folderId)
-        .order("created_at", { ascending: false })
-
-      if (error) throw error
-      setContentList(data || [])
-    } catch (error) {
-      console.error("Error fetching content:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  }, [selectedFolder, userId])
 
   async function fetchFolders() {
     const { data, error } = await supabase
@@ -328,7 +302,7 @@ export default function UserContent({ userId }: { userId: string }) {
         )}
 
         {/* Content Area */}
-        <main className="flex-1 p-4 overflow-auto bg-gray-50 w-full bg-red-50">
+        <main className="flex-1 p-4 overflow-auto bg-gray-50 w-full ">
           <Card className="h-full bg-white shadow-sm">
             <CardHeader className="border-b border-gray-200">
               <CardTitle className="text-xl font-bold text-gray-800">

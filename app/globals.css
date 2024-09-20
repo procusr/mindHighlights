@@ -6,9 +6,9 @@
 
 @layer base {
   :root {
-    --background: #ffffff; /* Changed to white for higher contrast */
-    --foreground: #000000; /* Changed to black for text */
-    --card: #f9f9f9; /* Simplified card background */
+    --background: #ffffff;
+    --foreground: #000000;
+    --card: #f9f9f9;
     --card-foreground: #000000;
     --popover: #ffffff;
     --popover-foreground: #000000;
