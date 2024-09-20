@@ -22,7 +22,7 @@ const FolderList: React.FC<FolderListProps> = ({
       {folders.map((folder) => (
         <li
           key={folder.id}
-          className={`flex items-center justify-between py-1 px-1 rounded ${
+          className={`flex items-center justify-between py-1 px-1 rounded group ${
             selectedFolder?.id === folder.id
               ? "bg-gray-200 dark:bg-gray-700"
               : "hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -42,7 +42,9 @@ const FolderList: React.FC<FolderListProps> = ({
           >
             {folder.name}
           </Button>
-          <div className="flex space-x-0.5 flex-shrink-0">
+          <div
+            className={`flex space-x-0.5 flex-shrink-0 ${selectedFolder?.id !== folder.id ? "opacity-0 group-hover:opacity-100 transition-opacity" : ""}`}
+          >
             <Button
               size="sm"
               variant="ghost"
