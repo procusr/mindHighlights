@@ -94,11 +94,11 @@ export default function Sidebar({
     <aside
       className={`${
         menuOpen ? "translate-x-0" : "-translate-x-full"
-      } p-2 fixed left-0 top-16 bottom-0 z-40 w-65 bg-white dark:bg-gray-800 transition-transform duration-300 ease-in-out sm:static sm:translate-x-0 overflow-y-auto border-r border-gray-200 dark:border-gray-700`}
+      } p-2 fixed left-0 top-16 bottom-0 z-40 w-64 bg-white dark:bg-gray-800 transition-transform duration-300 ease-in-out sm:static sm:translate-x-0 overflow-y-auto border-r border-gray-200 dark:border-gray-700`}
     >
-      <div className="p-2 h-full flex flex-col">
+      <div className="p-2 ml-5 h-full flex flex-col">
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-semibold">Folders</h2>
+          <h2 className="text-lg font-semibold mb-2">Folders</h2>
           <AddNewFolder userId={userId} setFolders={setFolders}>
             <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
               <Plus className="h-4 w-4" />
