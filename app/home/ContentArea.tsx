@@ -110,22 +110,22 @@ export default function ContentArea({
               contentList.map((content) => (
                 <Card key={content.id} className="overflow-hidden">
                   <CardHeader
-                    className="cursor-pointer p-4 flex flex-row items-center justify-between"
+                    className="cursor-pointer p-3 flex flex-row items-center justify-between"
                     onClick={() => handleToggleContent(content.id)}
                   >
-                    <CardTitle className="text-sm pr-8">
+                    <CardTitle className="text-sm pr-8 font-medium">
                       {content.title.length > 170
                         ? `${content.title.slice(0, 170)}...`
                         : content.title}
                     </CardTitle>
                     {expandedContentId === content.id ? (
-                      <ChevronUp className="h-6 w-6 flex-shrink-0" />
+                      <ChevronUp className="h-5 w-5 flex-shrink-0" />
                     ) : (
-                      <ChevronDown className="h-6 w-6 flex-shrink-0" />
+                      <ChevronDown className="h-5 w-5 flex-shrink-0" />
                     )}
                   </CardHeader>
                   {expandedContentId === content.id && (
-                    <CardContent className="p-4">
+                    <CardContent className="p-3">
                       {editingContent?.id === content.id ? (
                         <>
                           <Input
@@ -165,14 +165,17 @@ export default function ContentArea({
                         </>
                       ) : (
                         <>
-                          <p className="mb-4">{content.content}</p>
-                          <div className="flex justify-end space-x-2">
+                          <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                            {content.content}
+                          </p>
+                          <div className="flex justify-end space-x-2 mt-3">
                             <Button
                               onClick={() => handleEditContent(content)}
                               variant="outline"
                               size="sm"
                             >
-                              <Pencil className="h-4 w-4" />
+                              <Pencil className="h-3 w-3 mr-1" />
+                              Edit
                             </Button>
                             <Button
                               onClick={() => {
@@ -182,7 +185,8 @@ export default function ContentArea({
                               variant="destructive"
                               size="sm"
                             >
-                              <Trash className="h-4 w-4" />
+                              <Trash className="h-3 w-3 mr-1" />
+                              Delete
                             </Button>
                           </div>
                         </>

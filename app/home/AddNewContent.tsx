@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from "react"
+import { useState, type ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { createClient } from "../../utils/supabase/client"
@@ -34,13 +34,9 @@ const AddNewContent: React.FC<AddNewContentProps> = ({
   async function handleSubmit() {
     if (!content.trim()) return
 
-    // Generate title with a minimum length of 170 characters
+    // Generate title without repeating if it's shorter than 170 characters
     let title = content.trim().replace(/\s+/g, " ") // Remove extra whitespace
-    if (title.length < 170) {
-      // If the content is shorter than 170 characters, repeat it
-      title = title.padEnd(170, " " + title)
-    }
-    title = title.slice(0, 170) // Ensure it's exactly 170 characters
+    title = title.slice(0, 170) // Limit to 170 characters
 
     const { data, error } = await supabase
       .from("user_content")

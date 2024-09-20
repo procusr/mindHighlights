@@ -19,11 +19,11 @@ const FolderList: React.FC<FolderListProps> = ({
   onDeleteFolder,
 }) => {
   return (
-    <ul className="space-y-2">
+    <ul className="space-y-1">
       {folders.map((folder) => (
         <li
           key={folder.id}
-          className={`flex items-center justify-between p-2 rounded ${
+          className={`flex items-center justify-between py-1 px-1 rounded ${
             selectedFolder?.id === folder.id
               ? "bg-gray-200 dark:bg-gray-700"
               : "hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -36,26 +36,35 @@ const FolderList: React.FC<FolderListProps> = ({
                 onFolderSelect(folder)
               }
             }}
-            className="flex-grow text-left"
+            className="flex-grow text-left text-sm truncate mr-1 bg-inherit"
+            type="button"
           >
             {folder.name}
           </button>
-          <div className="flex space-x-1">
+          <div className="flex space-x-0.5 flex-shrink-0">
             <Button
-              size="icon"
+              size="sm"
               variant="ghost"
-              onClick={() => onEditFolder(folder)}
+              className="h-6 w-6 p-0"
+              onClick={(e) => {
+                e.stopPropagation()
+                onEditFolder(folder)
+              }}
               aria-label={`Edit ${folder.name}`}
             >
-              <Pencil className="h-4 w-4" />
+              <Pencil className="h-3 w-3" />
             </Button>
             <Button
-              size="icon"
+              size="sm"
               variant="ghost"
-              onClick={() => onDeleteFolder(folder.id)}
+              className="h-6 w-6 p-0"
+              onClick={(e) => {
+                e.stopPropagation()
+                onDeleteFolder(folder.id)
+              }}
               aria-label={`Delete ${folder.name}`}
             >
-              <Trash className="h-4 w-4" />
+              <Trash className="h-3 w-3" />
             </Button>
           </div>
         </li>

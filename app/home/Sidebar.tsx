@@ -34,7 +34,10 @@ export default function Sidebar({
 }: SidebarProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [deletingFolderId, setDeletingFolderId] = useState<string | null>(null)
+  const [editingFolder, setEditingFolder] = useState<Folder | null>(null)
+  const [newFolderName, setNewFolderName] = useState("")
   const supabase = createClient()
 
   const filteredFolders = folders.filter((folder) =>
@@ -42,18 +45,29 @@ export default function Sidebar({
   )
 
   const handleEditFolder = async (folder: Folder) => {
-    const newName = prompt("Enter new folder name", folder.name)
-    if (newName && newName !== folder.name) {
+    setEditingFolder(folder)
+    setNewFolderName(folder.name)
+    setIsEditDialogOpen(true)
+  }
+
+  const handleSaveEdit = async () => {
+    if (editingFolder && newFolderName.trim() !== "") {
       const { data, error } = await supabase
         .from("user_folders")
-        .update({ name: newName })
-        .eq("id", folder.id)
+        .update({ name: newFolderName })
+        .eq("id", editingFolder.id)
         .select()
 
       if (data) {
         setFolders(
-          folders.map((f) => (f.id === folder.id ? { ...f, name: newName } : f))
+          folders.map((f) =>
+            f.id === editingFolder.id ? { ...f, name: newFolderName } : f
+          )
         )
+        setIsEditDialogOpen(false)
+        setEditingFolder(null)
+      } else if (error) {
+        console.error("Error updating folder:", error)
       }
     }
   }
@@ -82,11 +96,11 @@ export default function Sidebar({
         menuOpen ? "translate-x-0" : "-translate-x-full"
       } fixed left-0 top-16 bottom-0 z-40 w-64 bg-white dark:bg-gray-800 transition-transform duration-300 ease-in-out sm:static sm:translate-x-0 overflow-y-auto border-r border-gray-200 dark:border-gray-700`}
     >
-      <div className="p-4 h-full flex flex-col">
-        <div className="flex justify-between items-center mb-4">
+      <div className="p-2 h-full flex flex-col">
+        <div className="flex justify-between items-center mb-2">
           <h2 className="text-lg font-semibold">Folders</h2>
           <AddNewFolder userId={userId} setFolders={setFolders}>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
               <Plus className="h-4 w-4" />
             </Button>
           </AddNewFolder>
@@ -96,7 +110,7 @@ export default function Sidebar({
           placeholder="Search folders..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="mb-4"
+          className="mb-2"
         />
         <div className="flex-grow overflow-y-auto">
           <FolderList
@@ -131,6 +145,28 @@ export default function Sidebar({
             <Button onClick={handleDeleteFolder} variant="destructive">
               Delete
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit Folder Name</DialogTitle>
+          </DialogHeader>
+          <Input
+            value={newFolderName}
+            onChange={(e) => setNewFolderName(e.target.value)}
+            placeholder="New folder name"
+          />
+          <DialogFooter>
+            <Button
+              onClick={() => setIsEditDialogOpen(false)}
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleSaveEdit}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
