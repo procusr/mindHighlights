@@ -12,14 +12,6 @@ import {
   MoreVertical,
 } from "lucide-react"
 import { createClient } from "../../utils/supabase/client"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -29,6 +21,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useMediaQuery } from "react-responsive"
+import ConfirmDialog from "../../components/ConfirmDialog"
+import EditFolderDialog from "../../components/EditFolderDialog"
 
 export default function ContentArea({
   selectedFolder,
@@ -156,11 +150,11 @@ export default function ContentArea({
   }
 
   return (
-    <div className="w-full max-w-3xl p-4 sm:p-6 ">
+    <div className="w-full max-w-2xl p-4 sm:p-6">
       {selectedFolder ? (
         <>
-          <div className="sticky top-0 bg-background z-10 flex justify-between items-center mb-4 p-2 shadow-sm rounded-b-sm ">
-            <h2 className="text-2xl font-semibold px-4 ">
+          <div className="sticky top-0 bg-background z-10 flex justify-between items-center mb-4 p-2 shadow-sm rounded-b-sm fixed-container">
+            <h2 className="text-2xl font-semibold px-4">
               {selectedFolder.name}
             </h2>
             <div className="flex items-center space-x-2">
@@ -201,8 +195,8 @@ export default function ContentArea({
                 setContentList={setContentList}
                 contentList={contentList}
               >
-                <Button variant="outline" size="icon">
-                  <Plus className="h-4 w-4" />
+                <Button variant="ghost" size="icon">
+                  <Plus className="h-6 w-6 text-accent" />
                 </Button>
               </AddNewContent>
             </div>
@@ -310,92 +304,28 @@ export default function ContentArea({
         </p>
       )}
 
-      <Dialog
+      <ConfirmDialog
         open={isDeleteContentDialogOpen}
         onOpenChange={setIsContentDeleteDialogOpen}
-      >
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
-          </DialogHeader>
-          <DialogDescription>
-            Are you sure you want to delete this content? This action cannot be
-            undone.
-          </DialogDescription>
-          <DialogFooter>
-            <Button
-              onClick={() => setIsContentDeleteDialogOpen(false)}
-              variant="outline"
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleDeleteContent} variant="destructive">
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <Dialog
+        title="Confirm Deletion"
+        description="Are you sure you want to delete this content? This action cannot be undone."
+        onConfirm={handleDeleteContent}
+      />
+      <ConfirmDialog
         open={isDeleteFolderDialogOpen}
         onOpenChange={setIsDeleteFolderDialogOpen}
-      >
-        <DialogContent
-          className={`sm:max-w-[425px] ${isMobile ? "p-4" : "p-6"}`}
-        >
-          <DialogHeader>
-            <DialogTitle className="text-xl mb-2">
-              Confirm Folder Deletion
-            </DialogTitle>
-          </DialogHeader>
-          <DialogDescription className="text-base mb-4">
-            Are you sure you want to delete this folder? This action cannot be
-            undone and will delete all content within the folder.
-          </DialogDescription>
-          <DialogFooter
-            className={`${isMobile ? "flex-col space-y-2" : "sm:justify-end sm:space-x-2"}`}
-          >
-            <Button
-              onClick={() => setIsDeleteFolderDialogOpen(false)}
-              variant="outline"
-              className="w-full sm:w-auto"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleDeleteFolder}
-              variant="destructive"
-              className="w-full sm:w-auto"
-            >
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog
+        title="Confirm Folder Deletion"
+        description="Are you sure you want to delete this folder? This action cannot be undone and will delete all content within the folder."
+        onConfirm={handleDeleteFolder}
+        isMobile={isMobile}
+      />
+      <EditFolderDialog
         open={isEditFolderDialogOpen}
         onOpenChange={setEditFolderDialogOpen}
-      >
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Folder Name</DialogTitle>
-          </DialogHeader>
-          <Input
-            value={newFolderName}
-            onChange={(e) => setNewFolderName(e.target.value)}
-            placeholder="New folder name"
-          />
-          <DialogFooter>
-            <Button
-              onClick={() => setEditFolderDialogOpen(false)}
-              variant="outline"
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleEditFolder}>Save</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        newFolderName={newFolderName}
+        setNewFolderName={setNewFolderName}
+        onSave={handleEditFolder}
+      />
     </div>
   )
 }

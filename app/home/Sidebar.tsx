@@ -45,12 +45,12 @@ export default function Sidebar({
         menuOpen ? "translate-x-0" : "-translate-x-full"
       } p-2 fixed left-0 top-16 bottom-0 z-40 w-64 bg-white  transition-transform duration-300 ease-in-out sm:static sm:translate-x-0 overflow-y-auto border-r border-gray-200 `}
     >
-      <div className="p-2 ml-5 h-full flex flex-col">
-        <div className="sticky top-0 bg-white border-none z-10 flex justify-between items-center mb-2 p-2 shadow-sm">
-          <h2 className="text-lg font-semibold mb-2">Folders</h2>
+      <div className="p-2 ml-5 h-full flex flex-col gap-2">
+        <div className="sticky top-0 bg-white border-none z-10 flex justify-between items-center  p-2 shadow-sm">
+          <h2 className="text-lg font-semibold ">Folders</h2>
           <AddNewFolder userId={userId} setFolders={setFolders}>
-            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-              <Plus className="h-4 w-4" />
+            <Button variant="ghost" size="lg" className="h-6 w-6 p-0">
+              <Plus className="h-6 w-6 text-accent" />
             </Button>
           </AddNewFolder>
         </div>
