@@ -14,7 +14,7 @@ const FolderList: React.FC<FolderListProps> = ({
   onFolderSelect,
 }) => {
   return (
-    <ul className="space-y-1">
+    <ul className="space-y-2">
       {folders.map((folder) => (
         <li
           key={folder.id}

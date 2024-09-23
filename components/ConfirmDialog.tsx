@@ -27,12 +27,16 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 }) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
     <DialogContent
-      className={isMobile ? "sm:max-w-[425px] p-4" : "sm:max-w-[425px] p-6"}
+      className={`sm:max-w-lg ${isMobile ? "p-4" : "p-6"} rounded-2xl bg-card`}
     >
       <DialogHeader>
-        <DialogTitle>{title}</DialogTitle>
+        <DialogTitle className="text-2xl font-bold text-primary">
+          {title}
+        </DialogTitle>
       </DialogHeader>
-      <DialogDescription>{description}</DialogDescription>
+      <DialogDescription className="text-gray-700">
+        {description}
+      </DialogDescription>
       <DialogFooter
         className={
           isMobile ? "flex-col space-y-2" : "sm:justify-end sm:space-x-2"
@@ -40,7 +44,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       >
         <Button
           onClick={() => onOpenChange(false)}
-          variant="outline"
+          variant="ghost"
           className="w-full sm:w-auto"
         >
           Cancel

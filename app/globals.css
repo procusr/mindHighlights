@@ -6,67 +6,55 @@
 
 @layer base {
   :root {
-    --background: #ffffff;
-    --foreground: #000000;
-    --card: #f9f9f9;
-    --card-foreground: #000000;
+    /* Vibrant Color Palette */
+    --background: #f0f4f8; /* Light Blue-50 */
+    --foreground: #1e293b; /* Cool Gray-900 */
+    --card: #ffffff;
+    --card-foreground: #1e293b;
     --popover: #ffffff;
-    --popover-foreground: #000000;
-    --primary: #d1d5db; /* Tailwind gray-300 */
-    --primary-foreground: #000000;
-    --secondary: #9ca3af; /* Tailwind gray-400 */
-    --secondary-foreground: #000000;
-    --muted: #6b7280; /* Tailwind gray-500 */
-    --muted-foreground: #000000;
-    --accent: #3b82f6; /* Tailwind blue-500 */
-    --accent-foreground: #ffffff;
-    --destructive: #ef4444; /* Tailwind red-500 */
-    --destructive-foreground: #ffffff;
-    --border: #d1d5db;
-    --input: #ffffff;
-    --ring: #d1d5db;
-    --radius: 0.5rem;
-    --chart-1: #3b82f6;
-    --chart-2: #10b981;
-    --chart-3: #fbbf24;
-    --chart-4: #ef4444;
-    --chart-5: #8b5cf6;
-  }
-
-  .dark {
-    --background: #1f2937; /* Dark background */
-    --foreground: #f3f4f6; /* Light text */
-    --card: #374151;
-    --card-foreground: #f3f4f6;
-    --popover: #1f2937;
-    --popover-foreground: #f3f4f6;
-    --primary: #6b7280;
-    --primary-foreground: #f3f4f6;
-    --secondary: #4b5563;
-    --secondary-foreground: #f3f4f6;
-    --muted: #374151;
-    --muted-foreground: #f3f4f6;
-    --accent: #3b82f6;
+    --popover-foreground: #1e293b;
+    --primary: #ec4899; /* Pink-500 */
+    --primary-foreground: #ffffff;
+    --secondary: #10b981; /* Emerald-500 */
+    --secondary-foreground: #ffffff;
+    --muted: #6b7280; /* Gray-500 */
+    --muted-foreground: #ffffff;
+    --accent: #6366f1;
     --accent-foreground: #ffffff;
     --destructive: #ef4444;
     --destructive-foreground: #ffffff;
-    --border: #4b5563;
-    --input: #374151;
-    --ring: #4b5563;
-    --chart-1: #3b82f6;
+    --border: #d1d5db;
+    --input: #ffffff;
+    --ring: #ec4899;
+    --radius: 0.75rem;
+    --chart-1: #ec4899;
     --chart-2: #10b981;
     --chart-3: #f59e0b;
     --chart-4: #ef4444;
-    --chart-5: #8b5cf6;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
+    --chart-5: #6366f1;
   }
 
-  body {
-    @apply bg-background text-foreground;
+  @layer base {
+    * {
+      @apply border-border;
+    }
+
+    body {
+      @apply bg-background text-foreground;
+    }
+
+    /* Enhanced Card Styling */
+    .card {
+      @apply bg-card  p-6 rounded-xl shadow-lg transition-shadow;
+    }
+
+    .card:hover {
+      @apply shadow-2xl;
+    }
+
+    /* Improved Button Focus States */
+    button:focus {
+      @apply ring-2 ring-primary ring-offset-2;
+    }
   }
 }

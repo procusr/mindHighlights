@@ -31,24 +31,10 @@ export default function ContentList({
         {contentList.map((item) => (
           <li
             key={item.id}
-            className="flex items-center justify-between p-4 border border-gray-200 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+            className="flex items-center justify-between p-4 border border-border rounded-md bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
           >
-            <div className="flex items-center space-x-2 flex-1 mr-2 min-w-0">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  /* Toggle favorite logic */
-                }}
-                aria-label="Toggle Favorite"
-                className="text-accent-foreground"
-              >
-                <StarOff className="h-4 w-4" />
-              </Button>
-              <span className="truncate break-words flex-1">
-                {item.content}
-              </span>
-            </div>
+            <span className="truncate break-words flex-1">{item.content}</span>
+
             <div className="flex space-x-1 flex-shrink-0">
               <Button
                 variant="outline"
@@ -58,7 +44,6 @@ export default function ContentList({
                   setIsEditDialogOpen(true)
                 }}
                 aria-label="Edit Content"
-                className="text-primary-foreground"
               >
                 <Edit className="h-4 w-4" />
               </Button>

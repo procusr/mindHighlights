@@ -1,4 +1,5 @@
-import React, { useState, ReactNode } from "react"
+import { useState } from "react"
+import type { ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -49,7 +50,7 @@ const AddNewFolder: React.FC<AddNewFolderProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-white">
         <DialogTitle>Create New Folder</DialogTitle>
         <DialogDescription>Enter a name for your new folder.</DialogDescription>
         <Input

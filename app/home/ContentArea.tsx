@@ -154,13 +154,14 @@ export default function ContentArea({
       {selectedFolder ? (
         <>
           <div className="sticky top-0 bg-background z-10 flex justify-between items-center mb-4 p-2 shadow-sm rounded-b-sm fixed-container">
-            <h2 className="text-2xl font-semibold px-4">
+            <h2 className="text-xl font-semibold px-4">
               {selectedFolder.name}
             </h2>
             <div className="flex items-center space-x-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
+                    className="text-primary"
                     variant="ghost"
                     size="sm"
                     onClick={() => {
@@ -195,8 +196,8 @@ export default function ContentArea({
                 setContentList={setContentList}
                 contentList={contentList}
               >
-                <Button variant="ghost" size="icon">
-                  <Plus className="h-6 w-6 text-accent" />
+                <Button variant="ghost" size="icon" className="text-primary">
+                  <Plus className="h-6 w-6" />
                 </Button>
               </AddNewContent>
             </div>
@@ -204,7 +205,10 @@ export default function ContentArea({
           <div className="space-y-2">
             {contentList.length > 0 ? (
               contentList.map((content) => (
-                <Card key={content.id} className="overflow-hidden pl-2 sm:pl-4">
+                <Card
+                  key={content.id}
+                  className="overflow-hidden pl-2 sm:pl-4 py-2 sm:py-3"
+                >
                   <CardHeader
                     className="cursor-pointer p-2 flex flex-row items-center justify-between"
                     onClick={() => handleToggleContent(content.id)}

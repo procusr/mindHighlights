@@ -28,7 +28,7 @@ export default function RootLayout({
                   href="/"
                   className={`text-2xl font-semibold ml-3 ${montserrat.className}`}
                 >
-                  Re<span className="text-bg text-accent">View</span>
+                  Re<span className="text-bg text-primary">View</span>
                 </Link>
               </div>
               <HeaderAuth />

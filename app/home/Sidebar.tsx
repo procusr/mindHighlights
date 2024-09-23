@@ -34,25 +34,34 @@ export default function Sidebar({
     <aside
       className={`${
         menuOpen ? "translate-x-0" : "-translate-x-full"
-      } p-2 fixed left-0 top-16 bottom-0 z-40 w-64 bg-white  transition-transform duration-300 ease-in-out sm:static sm:translate-x-0 overflow-y-auto border-r border-gray-200 `}
+      } p-6 fixed left-0 top-16 bottom-0 z-40 w-80 bg-background transition-transform duration-300 ease-in-out sm:static sm:translate-x-0 overflow-y-auto border-r border-border`}
+      aria-labelledby="sidebar-heading"
     >
-      <div className="p-2 ml-5 h-full flex flex-col gap-2">
-        <div className="sticky top-0 bg-white border-none z-10 flex justify-between items-center  p-2 shadow-sm">
-          <h2 className="text-lg font-semibold ">Folders</h2>
+      <div className="flex flex-col h-full gap-2">
+        <div className="sticky top-0 bg-background border-none z-10 flex justify-between items-center p-4 shadow-sm">
+          <h2 id="sidebar-heading" className="text-xl font-bold">
+            Folders
+          </h2>
           <AddNewFolder userId={userId} setFolders={setFolders}>
-            <Button variant="ghost" size="lg" className="h-6 w-6 p-0">
-              <Plus className="h-6 w-6 text-accent" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 p-0 text-primary hover:text-pink-600"
+              aria-label="Add new folder"
+            >
+              <Plus className="h-6 w-6" />
             </Button>
           </AddNewFolder>
         </div>
         <Input
+          id="folder-search-input"
           type="text"
           placeholder="Search folders..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="mb-2"
+          className="my-3 px-2 py-2 rounded-xl focus:ring-primary border-border bg-input "
         />
-        <div className="flex-grow overflow-y-auto">
+        <div className="flex-grow overflow-y-auto p-3 ">
           <FolderList
             folders={filteredFolders}
             selectedFolder={selectedFolder}

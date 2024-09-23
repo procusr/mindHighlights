@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import {
   Dialog,
   DialogContent,
@@ -68,7 +68,7 @@ export default function EditContentDialog({
             value={editingContent}
             onChange={(e) => setEditingContent(e.target.value)}
             className="w-full mb-4 break-words"
-            rows={6}
+            rows={7}
           />
         </div>
         <DialogFooter>

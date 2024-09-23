@@ -61,7 +61,7 @@ const AddNewContent: React.FC<AddNewContentProps> = ({
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] bg-card">
           <DialogHeader>
             <DialogTitle>Add New Content</DialogTitle>
           </DialogHeader>
