@@ -3,18 +3,9 @@ import { Input } from "@/components/ui/input"
 import type { Folder } from "../../types/types"
 import AddNewFolder from "./AddNewFolder"
 import FolderList from "../../components/FolderList"
-import { createClient } from "../../utils/supabase/client"
+
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from "@/components/ui/dialog"
-import { useMediaQuery } from "@/hooks/useMediaQuery"
 
 interface SidebarProps {
   folders: Folder[]
