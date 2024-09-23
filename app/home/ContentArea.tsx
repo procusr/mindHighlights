@@ -1,9 +1,16 @@
 import React, { useState } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import AddNewContent from "./AddNewContent"
-import type { Content } from "@/types/types"
+import type { Content, Folder } from "@/types/types"
 import { Button } from "@/components/ui/button"
-import { Plus, Trash, Pencil, ChevronDown, ChevronUp } from "lucide-react"
+import {
+  Plus,
+  Trash,
+  Pencil,
+  ChevronDown,
+  ChevronUp,
+  MoreVertical,
+} from "lucide-react"
 import { createClient } from "../../utils/supabase/client"
 import {
   Dialog,
@@ -15,17 +22,27 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function ContentArea({
   selectedFolder,
   contentList,
   setContentList,
   userId,
+  onEditFolder,
+  onDeleteFolder,
 }: {
-  selectedFolder: { id: string; name: string } | null
+  selectedFolder: Folder | null
   contentList: Content[]
   setContentList: React.Dispatch<React.SetStateAction<Content[]>>
   userId: string
+  onEditFolder: (folder: Folder) => void
+  onDeleteFolder: (folderId: string) => void
 }) {
   const supabase = createClient()
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
@@ -94,16 +111,39 @@ export default function ContentArea({
         <>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-semibold">{selectedFolder.name}</h2>
-            <AddNewContent
-              selectedFolder={selectedFolder}
-              userId={userId}
-              setContentList={setContentList}
-              contentList={contentList}
-            >
-              <Button variant="outline" size="icon">
-                <Plus className="h-4 w-4" />
-              </Button>
-            </AddNewContent>
+            <div className="flex items-center space-x-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={() => onEditFolder(selectedFolder)}
+                  >
+                    <Pencil className="mr-2 h-4 w-4" />
+                    Edit Folder
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => onDeleteFolder(selectedFolder.id)}
+                  >
+                    <Trash className="mr-2 h-4 w-4" />
+                    Delete Folder
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <AddNewContent
+                selectedFolder={selectedFolder}
+                userId={userId}
+                setContentList={setContentList}
+                contentList={contentList}
+              >
+                <Button variant="outline" size="icon">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </AddNewContent>
+            </div>
           </div>
           <div className="space-y-2">
             {contentList.length > 0 ? (
@@ -113,7 +153,7 @@ export default function ContentArea({
                     className="cursor-pointer p-3 flex flex-row items-center justify-between"
                     onClick={() => handleToggleContent(content.id)}
                   >
-                    <CardTitle className="text-sm pr-8 font-medium">
+                    <CardTitle className="text-sm pr-2 font-medium">
                       {content.title.length > 170
                         ? `${content.title.slice(0, 170)}...`
                         : content.title}

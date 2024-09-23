@@ -1,32 +1,29 @@
+import { cn } from "../lib/utils"
 import type { Folder } from "../types/types"
 import { Button } from "@/components/ui/button"
-import { Pencil, Trash } from "lucide-react"
 
 interface FolderListProps {
   folders: Folder[]
   selectedFolder: Folder | null
   onFolderSelect: (folder: Folder) => void
-  onEditFolder: (folder: Folder) => void
-  onDeleteFolder: (folderId: string) => void
 }
 
 const FolderList: React.FC<FolderListProps> = ({
   folders,
   selectedFolder,
   onFolderSelect,
-  onEditFolder,
-  onDeleteFolder,
 }) => {
   return (
     <ul className="space-y-1">
       {folders.map((folder) => (
         <li
           key={folder.id}
-          className={`flex items-center justify-between py-1 px-1 rounded group ${
+          className={cn(
+            "rounded-md",
             selectedFolder?.id === folder.id
               ? "bg-gray-200 dark:bg-gray-700"
               : "hover:bg-gray-100 dark:hover:bg-gray-700"
-          }`}
+          )}
         >
           <Button
             size="sm"
@@ -42,34 +39,6 @@ const FolderList: React.FC<FolderListProps> = ({
           >
             {folder.name}
           </Button>
-          <div
-            className={`flex space-x-0.5 flex-shrink-0 ${selectedFolder?.id !== folder.id ? "opacity-0 group-hover:opacity-100 transition-opacity" : ""}`}
-          >
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-6 w-6 p-0"
-              onClick={(e) => {
-                e.stopPropagation()
-                onEditFolder(folder)
-              }}
-              aria-label={`Edit ${folder.name}`}
-            >
-              <Pencil className="h-3 w-3" />
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-6 w-6 p-0"
-              onClick={(e) => {
-                e.stopPropagation()
-                onDeleteFolder(folder.id)
-              }}
-              aria-label={`Delete ${folder.name}`}
-            >
-              <Trash className="h-3 w-3" />
-            </Button>
-          </div>
         </li>
       ))}
     </ul>

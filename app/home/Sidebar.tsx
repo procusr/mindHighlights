@@ -14,6 +14,7 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/dialog"
+import { useMediaQuery } from "@/hooks/useMediaQuery"
 
 interface SidebarProps {
   folders: Folder[]
@@ -39,6 +40,7 @@ export default function Sidebar({
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null)
   const [newFolderName, setNewFolderName] = useState("")
   const supabase = createClient()
+  const isMobile = useMediaQuery("(max-width: 640px)")
 
   const filteredFolders = folders.filter((folder) =>
     folder.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -117,32 +119,38 @@ export default function Sidebar({
             folders={filteredFolders}
             selectedFolder={selectedFolder}
             onFolderSelect={setSelectedFolder}
-            onEditFolder={handleEditFolder}
-            onDeleteFolder={(folderId) => {
-              setDeletingFolderId(folderId)
-              setIsDeleteDialogOpen(true)
-            }}
           />
         </div>
       </div>
 
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent
+          className={`sm:max-w-[425px] ${isMobile ? "p-4" : "p-6"}`}
+        >
           <DialogHeader>
-            <DialogTitle>Confirm Folder Deletion</DialogTitle>
+            <DialogTitle className="text-xl mb-2">
+              Confirm Folder Deletion
+            </DialogTitle>
           </DialogHeader>
-          <DialogDescription>
+          <DialogDescription className="text-base mb-4">
             Are you sure you want to delete this folder? This action cannot be
             undone and will delete all content within the folder.
           </DialogDescription>
-          <DialogFooter>
+          <DialogFooter
+            className={`${isMobile ? "flex-col space-y-2" : "sm:justify-end sm:space-x-2"}`}
+          >
             <Button
               onClick={() => setIsDeleteDialogOpen(false)}
               variant="outline"
+              className="w-full sm:w-auto"
             >
               Cancel
             </Button>
-            <Button onClick={handleDeleteFolder} variant="destructive">
+            <Button
+              onClick={handleDeleteFolder}
+              variant="destructive"
+              className="w-full sm:w-auto"
+            >
               Delete
             </Button>
           </DialogFooter>
