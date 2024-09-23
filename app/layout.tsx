@@ -18,10 +18,10 @@ export default function RootLayout({
       lang="en"
       className={`${GeistSans.className} ${montserrat.className}`}
     >
-      <body className="dark:bg-gray-900 dark:text-white leading-normal">
+      <body className=" leading-normal">
         <SidebarProvider>
           <main className="flex flex-col h-screen bg-background text-foreground">
-            <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+            <header className="flex items-center justify-between p-2  border-b border-border bg-background  shadow-sm sticky top-0 z-50 ">
               <div className="flex items-center">
                 <MenuToggle />
                 <Link

@@ -21,8 +21,8 @@ const FolderList: React.FC<FolderListProps> = ({
           className={cn(
             "rounded-md",
             selectedFolder?.id === folder.id
-              ? "bg-gray-200 dark:bg-gray-700"
-              : "hover:bg-gray-100 dark:hover:bg-gray-700"
+              ? "bg-gray-200 "
+              : "hover:bg-gray-100"
           )}
         >
           <Button

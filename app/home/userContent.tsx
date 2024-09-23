@@ -98,7 +98,7 @@ export default function UserContent({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="flex h-[calc(100vh-64px)] bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-[calc(100vh-64px)] bg-gray-50 ">
       <Sidebar
         folders={folders}
         setFolders={setFolders}
@@ -113,6 +113,8 @@ export default function UserContent({ userId }: { userId: string }) {
           contentList={contentList}
           setContentList={setContentList}
           userId={userId}
+          setFolders={setFolders}
+          setSelectedFolder={setSelectedFolder}
         />
       </div>
     </div>

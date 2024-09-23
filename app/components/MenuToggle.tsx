@@ -9,8 +9,13 @@ export default function MenuToggle() {
 
   return (
     <div className="md:hidden">
-      <Button variant="ghost" onClick={toggleMenu} aria-label="Toggle menu">
-        {menuOpen ? <X size={24} /> : <Menu size={24} />}
+      <Button
+        className="p-0"
+        variant="ghost"
+        onClick={toggleMenu}
+        aria-label="Toggle menu"
+      >
+        {menuOpen ? <X size={26} /> : <Menu size={26} />}
       </Button>
     </div>
   )

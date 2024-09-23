@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import AddNewContent from "./AddNewContent"
 import type { Content, Folder } from "@/types/types"
@@ -28,27 +28,34 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useMediaQuery } from "react-responsive"
 
 export default function ContentArea({
   selectedFolder,
   contentList,
   setContentList,
   userId,
-  onEditFolder,
-  onDeleteFolder,
+  setFolders,
+  setSelectedFolder,
 }: {
   selectedFolder: Folder | null
   contentList: Content[]
   setContentList: React.Dispatch<React.SetStateAction<Content[]>>
   userId: string
-  onEditFolder: (folder: Folder) => void
-  onDeleteFolder: (folderId: string) => void
+  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>
+  setSelectedFolder: React.Dispatch<React.SetStateAction<Folder | null>>
 }) {
   const supabase = createClient()
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isDeleteContentDialogOpen, setIsContentDeleteDialogOpen] =
+    useState(false)
+  const [isDeleteFolderDialogOpen, setIsDeleteFolderDialogOpen] =
+    useState(false)
   const [expandedContentId, setExpandedContentId] = useState<string | null>(
     null
   )
+
+  const [newFolderName, setNewFolderName] = useState("")
+  const [isEditFolderDialogOpen, setEditFolderDialogOpen] = useState(false)
   const [deletingContentId, setDeletingContentId] = useState<string | null>(
     null
   )
@@ -59,8 +66,51 @@ export default function ContentArea({
     setEditingContent(null)
   }
 
+  const isMobile = useMediaQuery({ maxWidth: 767 })
+
   const handleEditContent = (content: Content) => {
     setEditingContent(content)
+  }
+
+  const handleDeleteFolder = async () => {
+    const { error } = await supabase
+      .from("user_folders")
+      .delete()
+      .eq("id", selectedFolder?.id)
+
+    if (!error) {
+      setFolders((prevFolders) =>
+        prevFolders.filter((folder) => folder.id !== selectedFolder?.id)
+      )
+      setSelectedFolder(null)
+      setIsDeleteFolderDialogOpen(false)
+    }
+  }
+
+  const handleEditFolder = async () => {
+    if (newFolderName.trim() !== "") {
+      const { data, error } = await supabase
+        .from("user_folders")
+        .update({ name: newFolderName })
+        .eq("id", selectedFolder?.id)
+        .select()
+
+      if (!error && data) {
+        setFolders((prevFolders) =>
+          prevFolders.map((folder) =>
+            folder.id === selectedFolder?.id
+              ? { ...folder, name: newFolderName }
+              : folder
+          )
+        )
+        setSelectedFolder((prevSelected) =>
+          prevSelected ? { ...prevSelected, name: newFolderName } : prevSelected
+        )
+        setEditFolderDialogOpen(false)
+      } else if (error) {
+        console.error("Error updating folder:", error)
+      }
+    }
   }
 
   const handleSaveEdit = async () => {
@@ -96,7 +146,7 @@ export default function ContentArea({
 
       if (!error) {
         setContentList(contentList.filter((c) => c.id !== deletingContentId))
-        setIsDeleteDialogOpen(false)
+        setIsContentDeleteDialogOpen(false)
         setDeletingContentId(null)
         setExpandedContentId(null)
       } else {
@@ -106,27 +156,39 @@ export default function ContentArea({
   }
 
   return (
-    <div className="w-full max-w-3xl p-4 sm:p-6">
+    <div className="w-full max-w-3xl p-4 sm:p-6 ">
       {selectedFolder ? (
         <>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold">{selectedFolder.name}</h2>
+          <div className="sticky top-0 bg-background z-10 flex justify-between items-center mb-4 p-2 shadow-sm rounded-b-sm ">
+            <h2 className="text-2xl font-semibold px-4 ">
+              {selectedFolder.name}
+            </h2>
             <div className="flex items-center space-x-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setNewFolderName(selectedFolder.name)
+                      setEditFolderDialogOpen(true)
+                    }}
+                  >
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
-                    onClick={() => onEditFolder(selectedFolder)}
+                    onClick={() => {
+                      setNewFolderName(selectedFolder.name)
+                      setEditFolderDialogOpen(true)
+                    }}
                   >
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit Folder
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => onDeleteFolder(selectedFolder.id)}
+                    onClick={() => setIsDeleteFolderDialogOpen(true)}
                   >
                     <Trash className="mr-2 h-4 w-4" />
                     Delete Folder
@@ -148,9 +210,9 @@ export default function ContentArea({
           <div className="space-y-2">
             {contentList.length > 0 ? (
               contentList.map((content) => (
-                <Card key={content.id} className="overflow-hidden">
+                <Card key={content.id} className="overflow-hidden pl-2 sm:pl-4">
                   <CardHeader
-                    className="cursor-pointer p-3 flex flex-row items-center justify-between"
+                    className="cursor-pointer p-2 flex flex-row items-center justify-between"
                     onClick={() => handleToggleContent(content.id)}
                   >
                     <CardTitle className="text-sm pr-2 font-medium">
@@ -165,7 +227,7 @@ export default function ContentArea({
                     )}
                   </CardHeader>
                   {expandedContentId === content.id && (
-                    <CardContent className="p-3">
+                    <CardContent className="p-4">
                       {editingContent?.id === content.id ? (
                         <>
                           <Input
@@ -205,7 +267,7 @@ export default function ContentArea({
                         </>
                       ) : (
                         <>
-                          <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                          <p className="text-sm leading-relaxed text-gray-700  whitespace-pre-wrap">
                             {content.content}
                           </p>
                           <div className="flex justify-end space-x-2 mt-3">
@@ -220,7 +282,7 @@ export default function ContentArea({
                             <Button
                               onClick={() => {
                                 setDeletingContentId(content.id)
-                                setIsDeleteDialogOpen(true)
+                                setIsContentDeleteDialogOpen(true)
                               }}
                               variant="destructive"
                               size="sm"
@@ -243,12 +305,15 @@ export default function ContentArea({
           </div>
         </>
       ) : (
-        <p className="text-center text-gray-500 dark:text-gray-400">
+        <p className="text-center text-gray-500 ">
           Select a folder to view content
         </p>
       )}
 
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <Dialog
+        open={isDeleteContentDialogOpen}
+        onOpenChange={setIsContentDeleteDialogOpen}
+      >
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
@@ -259,7 +324,7 @@ export default function ContentArea({
           </DialogDescription>
           <DialogFooter>
             <Button
-              onClick={() => setIsDeleteDialogOpen(false)}
+              onClick={() => setIsContentDeleteDialogOpen(false)}
               variant="outline"
             >
               Cancel
@@ -267,6 +332,67 @@ export default function ContentArea({
             <Button onClick={handleDeleteContent} variant="destructive">
               Delete
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={isDeleteFolderDialogOpen}
+        onOpenChange={setIsDeleteFolderDialogOpen}
+      >
+        <DialogContent
+          className={`sm:max-w-[425px] ${isMobile ? "p-4" : "p-6"}`}
+        >
+          <DialogHeader>
+            <DialogTitle className="text-xl mb-2">
+              Confirm Folder Deletion
+            </DialogTitle>
+          </DialogHeader>
+          <DialogDescription className="text-base mb-4">
+            Are you sure you want to delete this folder? This action cannot be
+            undone and will delete all content within the folder.
+          </DialogDescription>
+          <DialogFooter
+            className={`${isMobile ? "flex-col space-y-2" : "sm:justify-end sm:space-x-2"}`}
+          >
+            <Button
+              onClick={() => setIsDeleteFolderDialogOpen(false)}
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDeleteFolder}
+              variant="destructive"
+              className="w-full sm:w-auto"
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={isEditFolderDialogOpen}
+        onOpenChange={setEditFolderDialogOpen}
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit Folder Name</DialogTitle>
+          </DialogHeader>
+          <Input
+            value={newFolderName}
+            onChange={(e) => setNewFolderName(e.target.value)}
+            placeholder="New folder name"
+          />
+          <DialogFooter>
+            <Button
+              onClick={() => setEditFolderDialogOpen(false)}
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleEditFolder}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
