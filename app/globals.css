@@ -7,19 +7,18 @@
 @layer base {
   :root {
     /* Vibrant Color Palette */
-    --background: #f0f4f8; /* Light Blue-50 */
-    --foreground: #1e293b; /* Cool Gray-900 */
+    --background: #f0f4f8;
+    --foreground: #1e293b;
     --card: #ffffff;
     --card-foreground: #1e293b;
     --popover: #ffffff;
     --popover-foreground: #1e293b;
-    --primary: #ec4899; /* Pink-500 */
+    --primary: #ec4899;
     --primary-foreground: #ffffff;
-    --secondary: #10b981; /* Emerald-500 */
-    --secondary-foreground: #ffffff;
-    --muted: #6b7280; /* Gray-500 */
+    --secondary: #ec7db456;
+    --muted: #6b7280;
     --muted-foreground: #ffffff;
-    --accent: #6366f1;
+    --accent: #ec4899;
     --accent-foreground: #ffffff;
     --destructive: #ef4444;
     --destructive-foreground: #ffffff;
@@ -27,11 +26,6 @@
     --input: #ffffff;
     --ring: #ec4899;
     --radius: 0.75rem;
-    --chart-1: #ec4899;
-    --chart-2: #10b981;
-    --chart-3: #f59e0b;
-    --chart-4: #ef4444;
-    --chart-5: #6366f1;
   }
 
   @layer base {

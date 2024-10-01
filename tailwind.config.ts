@@ -30,7 +30,7 @@ const config = {
         },
         secondary: {
           DEFAULT: "var(--secondary)",
-          foreground: "var(--secondary-foreground)",
+          foreground: "var(--primary-foreground)",
         },
         destructive: {
           DEFAULT: "var(--destructive)",

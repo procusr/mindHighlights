@@ -10,7 +10,7 @@ export default function MenuToggle() {
   return (
     <div className="md:hidden">
       <Button
-        className="p-0"
+        className="p-0 "
         variant="ghost"
         onClick={toggleMenu}
         aria-label="Toggle menu"

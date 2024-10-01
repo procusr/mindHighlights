@@ -11,6 +11,7 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { stripMarkdown } from "../../utils/utils"
 
 interface AddNewContentProps {
   selectedFolder: { id: string; name: string }
@@ -29,31 +30,50 @@ const AddNewContent: React.FC<AddNewContentProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [content, setContent] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   const supabase = createClient()
 
   async function handleSubmit() {
     if (!content.trim()) return
+    setIsLoading(true)
 
-    // Generate title without repeating if it's shorter than 170 characters
-    let title = content.trim().replace(/\s+/g, " ") // Remove extra whitespace
-    title = title.slice(0, 170) // Limit to 170 characters
-
-    const { data, error } = await supabase
-      .from("user_content")
-      .insert({
-        user_id: userId,
-        folder_id: selectedFolder.id,
-        title,
-        content,
+    try {
+      const response = await fetch("/api/generateTitle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
       })
-      .select()
 
-    if (data) {
-      setContentList([...contentList, data[0] as Content])
-      setContent("")
-      setIsOpen(false)
-    } else if (error) {
-      console.error("Error adding content:", error)
+      if (!response.ok) {
+        throw new Error("Failed to generate title")
+      }
+
+      const { title } = await response.json()
+
+      console.log("Generated title:", title)
+
+      // Insert content with generated title
+      const { data, error } = await supabase
+        .from("user_content")
+        .insert({
+          user_id: userId,
+          folder_id: selectedFolder.id,
+          title: title || stripMarkdown(content.slice(0, 170)), // Fallback to stripped content if title generation fails
+          content,
+        })
+        .select()
+
+      if (data) {
+        setContentList([...contentList, data[0] as Content])
+        setContent("")
+        setIsOpen(false)
+      } else if (error) {
+        console.error("Error adding content:", error)
+      }
+    } catch (error) {
+      console.error("Error generating title or saving content:", error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -72,12 +92,15 @@ const AddNewContent: React.FC<AddNewContentProps> = ({
               placeholder="Enter your content here..."
               className="min-h-[200px]"
             />
+            {/* Remove ReactMarkdown preview for simplicity */}
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button onClick={() => setIsOpen(false)} variant="outline">
               Cancel
             </Button>
-            <Button onClick={handleSubmit}>Add Content</Button>
+            <Button onClick={handleSubmit} disabled={isLoading}>
+              {isLoading ? "Adding..." : "Add Content"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
