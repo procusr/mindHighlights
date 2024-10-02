@@ -1,12 +1,22 @@
 // biome-ignore lint/style/useImportType: <explanation>
 import { NextRequest, NextResponse } from "next/server"
-import { openai } from "@/utils/utils"
+import OpenAI from "openai"
+
+export const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  organization: process.env.OPENAI_ORGANIZATION_ID,
+  project: process.env.OPENAI_PROJECT_ID,
+})
+
 
 export async function POST(req: NextRequest) {
-  try {
-    const { text } = await req.json()
 
-    console.log("Generating title question for text:", text)
+  console.log({req})
+
+  try {
+    const { content } = await req.json()
+
+    console.log("Generating title question for text:", content)
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini-2024-07-18",
@@ -15,10 +25,10 @@ export async function POST(req: NextRequest) {
         { role: "system", content: "You are a helpful assistant." },
         {
           role: "user",
-          content: `Given the text "${text}", return a title in the form of a question that tests if the user understands the concept.`,
+          content: `Given the text "${content}", return a title in the form of a question that tests if the user understands the concept.`,
         },
       ],
-      max_completion_tokens: 60,
+       max_completion_tokens: 60,
     })
 
     const titleQuestion = response.choices[0]?.message?.content?.trim()

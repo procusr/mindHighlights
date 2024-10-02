@@ -1,7 +1,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { StarOff, Edit, Trash } from "lucide-react"
+import {  Edit, Trash } from "lucide-react"
 import EditContentDialog from "./EditContentDialog"
 import { createClient } from "../../utils/supabase/client"
 import type { Content } from "@/types/types"

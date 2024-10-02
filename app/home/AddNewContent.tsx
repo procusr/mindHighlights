@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { stripMarkdown } from "../../utils/utils"
+import Markdown from "react-markdown"
 
 interface AddNewContentProps {
   selectedFolder: { id: string; name: string }
@@ -38,27 +39,27 @@ const AddNewContent: React.FC<AddNewContentProps> = ({
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/generateTitle", {
+      const response = await fetch("/ai/generateTitle", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content }),
       })
+      console.log("Response:", response)
 
       if (!response.ok) {
         throw new Error("Failed to generate title")
       }
 
-      const { title } = await response.json()
+      const { titleQuestion } = await response.json()
 
-      console.log("Generated title:", title)
+      console.log("Generated title:", titleQuestion)
 
-      // Insert content with generated title
       const { data, error } = await supabase
         .from("user_content")
         .insert({
           user_id: userId,
           folder_id: selectedFolder.id,
-          title: title || stripMarkdown(content.slice(0, 170)), // Fallback to stripped content if title generation fails
+          title: titleQuestion || stripMarkdown(content.slice(0, 170)), // Fallback to stripped content if title generation fails
           content,
         })
         .select()
@@ -92,7 +93,7 @@ const AddNewContent: React.FC<AddNewContentProps> = ({
               placeholder="Enter your content here..."
               className="min-h-[200px]"
             />
-            {/* Remove ReactMarkdown preview for simplicity */}
+            <Markdown>{ content}</Markdown>
           </div>
           <DialogFooter className="gap-2">
             <Button onClick={() => setIsOpen(false)} variant="outline">

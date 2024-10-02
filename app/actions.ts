@@ -127,3 +127,15 @@ export async function signOutAction() {
   await supabase.auth.signOut()
   redirect("/")
 }
+
+export async function addContentAction(formData: FormData) {
+  const supabase = createClient()
+  const content = formData.get("content") as string
+
+  if (error) {
+    return encodedRedirect("error", "/home", "Failed to add content")
+  }
+
+  return redirect("/home")
+
+}

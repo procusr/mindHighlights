@@ -19,7 +19,3 @@ export function encodedRedirect(
 export function stripMarkdown(text: string) {
   return text.replace(/[#*_~`>]+/g, "")
 }
-
-export const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
