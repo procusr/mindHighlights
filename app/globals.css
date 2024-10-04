@@ -46,9 +46,8 @@
       @apply shadow-2xl;
     }
 
-    /* Improved Button Focus States */
     button:focus {
-      @apply ring-2 ring-primary ring-offset-2;
+      /* @apply ring-2 ring-primary ring-offset-2; */
     }
   }
 }
