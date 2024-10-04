@@ -57,7 +57,7 @@ export default function EditContentDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="bg-bg-red">
+      <DialogContent className="bg-red">
         <DialogTitle>Edit Content</DialogTitle>
         <DialogDescription>
           Modify the content below and save your changes.
