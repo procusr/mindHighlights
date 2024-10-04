@@ -8,15 +8,9 @@ export const openai = new OpenAI({
   project: process.env.OPENAI_PROJECT_ID,
 })
 
-
 export async function POST(req: NextRequest) {
-
-  console.log({req})
-
   try {
     const { content } = await req.json()
-
-    console.log("Generating title question for text:", content)
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini-2024-07-18",
@@ -28,7 +22,7 @@ export async function POST(req: NextRequest) {
           content: `Given the text "${content}", return a title in the form of a question that tests if the user understands the concept.`,
         },
       ],
-       max_completion_tokens: 60,
+      max_completion_tokens: 60,
     })
 
     const titleQuestion = response.choices[0]?.message?.content?.trim()
