@@ -43,24 +43,26 @@ const AddNewContent: React.FC<AddNewContentProps> = ({
     setIsLoading(true)
 
     try {
-      const response = await fetch("/ai/generateTitle", {
+      const response = await fetch("/ai/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({
+          content: `Given the statement ${content}, respond with a concise question that critically engages with the main idea.".`,
+        }),
       })
 
       if (!response.ok) {
         throw new Error("Failed to generate title")
       }
 
-      const { titleQuestion } = await response.json()
+      const { generatedResponse } = await response.json()
 
       const { data, error } = await supabase
         .from("user_content")
         .insert({
           user_id: userId,
           folder_id: selectedFolder.id,
-          title: titleQuestion || stripMarkdown(content.slice(0, 170)), // Fallback to stripped content if title generation fails
+          title: generatedResponse || stripMarkdown(content.slice(0, 170)), // Fallback to stripped content if title generation fails
           content,
           ...(title && { title }),
         })

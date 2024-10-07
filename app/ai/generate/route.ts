@@ -19,15 +19,16 @@ export async function POST(req: NextRequest) {
         { role: "system", content: "You are a helpful assistant." },
         {
           role: "user",
-          content: `Given the text "${content}", return a title in the form of a question that tests if the user understands the concept.`,
+          content,
         },
       ],
       max_completion_tokens: 60,
     })
 
-    const titleQuestion = response.choices[0]?.message?.content?.trim()
+    const generatedResponse = response.choices[0]?.message?.content?.trim()
+    console.log("Generated response:", generatedResponse)
 
-    return NextResponse.json({ titleQuestion }, { status: 200 })
+    return NextResponse.json({ generatedResponse }, { status: 200 })
   } catch (error) {
     return NextResponse.json(
       { error: (error as Error).message },

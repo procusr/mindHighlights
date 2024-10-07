@@ -10,6 +10,8 @@ import {
   ChevronDown,
   ChevronUp,
   MoreVertical,
+  Bomb,
+  RefreshCw,
 } from "lucide-react"
 import { createClient } from "../../utils/supabase/client"
 import { Input } from "@/components/ui/input"
@@ -54,6 +56,9 @@ export default function ContentArea({
     null
   )
   const [editingContent, setEditingContent] = useState<Content | null>(null)
+  const [generatingMemoryId, setGeneratingMemoryId] = useState<string | null>(
+    null
+  )
 
   const handleToggleContent = (contentId: string) => {
     setExpandedContentId(expandedContentId === contentId ? null : contentId)
@@ -146,6 +151,49 @@ export default function ContentArea({
       } else {
         console.error("Error deleting content:", error)
       }
+    }
+  }
+
+  const handleMemory = async (id: string, content: string) => {
+    if (!content.trim()) return
+    setGeneratingMemoryId(id)
+
+    try {
+      const response = await fetch("ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: `Given the statement "${content}", using out of proportion exaggeration and substitution methods of memory to create a memorable phrase or sentence that captures the essence of the statement.`,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to generate memory anchor")
+      }
+
+      const { generatedResponse } = await response.json()
+
+      // Update the content item with the new anchor
+      const { data, error } = await supabase
+        .from("user_content")
+        .update({ anchor: generatedResponse })
+        .eq("id", id)
+        .select()
+
+      if (error) {
+        throw new Error("Failed to update content with anchor")
+      }
+
+      // Update the local state
+      setContentList((prevList) =>
+        prevList.map((item) =>
+          item.id === id ? { ...item, anchor: generatedResponse } : item
+        )
+      )
+    } catch (error) {
+      console.error("Error generating or saving memory anchor:", error)
+    } finally {
+      setGeneratingMemoryId(null)
     }
   }
 
@@ -265,10 +313,48 @@ export default function ContentArea({
                         </>
                       ) : (
                         <>
-                          <p className="text-sm leading-relaxed text-gray-700  whitespace-pre-wrap">
+                          <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-wrap mb-4">
                             {content.content}
                           </p>
-                          <div className="flex justify-end space-x-2 mt-3">
+                          {content.anchor ? (
+                            <div className="mt-2 mb-4 flex items-center">
+                              <p className="text-sm italic text-gray-600 flex-grow">
+                                {content.anchor}
+                              </p>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  handleMemory(content.id, content.content)
+                                }
+                                aria-label="Regenerate memory anchor"
+                                disabled={generatingMemoryId === content.id}
+                                className="ml-2 p-1"
+                              >
+                                <RefreshCw className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="mt-2 mb-4">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  handleMemory(content.id, content.content)
+                                }
+                                aria-label="Make me remember"
+                                disabled={generatingMemoryId === content.id}
+                              >
+                                {generatingMemoryId === content.id ? (
+                                  <RefreshCw className="h-3 w-3 animate-spin mr-1" />
+                                ) : (
+                                  <Bomb className="h-3 w-3 mr-1" />
+                                )}
+                                Remember
+                              </Button>
+                            </div>
+                          )}
+                          <div className="flex justify-end space-x-2">
                             <Button
                               onClick={() => handleEditContent(content)}
                               variant="outline"
@@ -303,7 +389,7 @@ export default function ContentArea({
           </div>
         </>
       ) : (
-        <p className="text-center text-gray-500 ">
+        <p className="text-center text-gray-500">
           Select a folder to view content
         </p>
       )}

@@ -9,4 +9,5 @@ export interface Content {
   content: string
   folder_id: string
   user_id: string
+  anchor: string
 }
