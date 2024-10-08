@@ -4,7 +4,8 @@ import { SubmitButton } from "@/components/submit-button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
-import { SmtpMessage } from "../smtp-message"
+import { cn } from "../../../utils/cn"
+import AuthWrapper from "@/components/AuthWrapper"
 
 export default function ForgotPassword({
   searchParams,
@@ -12,27 +13,28 @@ export default function ForgotPassword({
   searchParams: Message
 }) {
   return (
-    <>
-      <form className="flex-1 flex flex-col w-full gap-2 text-foreground [&>input]:mb-6 min-w-64 max-w-64 mx-auto">
-        <div>
-          <h1 className="text-2xl font-medium">Reset Password</h1>
-          <p className="text-sm text-primary-foreground">
-            Already have an account?{" "}
-            <Link className="text-primary underline" href="/sign-in">
-              Sign in
-            </Link>
-          </p>
-        </div>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <Label htmlFor="email">Email</Label>
-          <Input name="email" placeholder="you@example.com" required />
-          <SubmitButton formAction={forgotPasswordAction}>
-            Reset Password
-          </SubmitButton>
-          <FormMessage message={searchParams} />
-        </div>
-      </form>
-      <SmtpMessage />
-    </>
+    <AuthWrapper>
+      <Link className="text-primary underline" href="/sign-in">
+        Back to sign in ?
+      </Link>
+      <div className="mt-8 space-y-3">
+        <Label className="text-sm/5 font-medium">Email</Label>
+        <Input
+          required
+          autoFocus
+          type="email"
+          name="email"
+          className={cn(
+            "block w-full rounded-lg border border-transparent shadow ring-1 ring-black/10",
+            "px-[calc(theme(spacing.2)-1px)] py-[calc(theme(spacing[1.5])-1px)] text-base/6 sm:text-sm/6",
+            "data-[focus]:outline data-[focus]:outline-2 data-[focus]:-outline-offset-1 data-[focus]:outline-black"
+          )}
+        />
+        <SubmitButton formAction={forgotPasswordAction}>
+          Reset Password
+        </SubmitButton>
+        <FormMessage message={searchParams} />
+      </div>
+    </AuthWrapper>
   )
 }

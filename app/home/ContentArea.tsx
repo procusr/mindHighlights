@@ -383,7 +383,7 @@ export default function ContentArea({
               ))
             ) : (
               <p className="text-center text-gray-500">
-                No content in this folder. Add some!
+                Folder empty. Add some!
               </p>
             )}
           </div>

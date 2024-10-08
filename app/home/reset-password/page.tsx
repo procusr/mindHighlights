@@ -1,16 +1,17 @@
-import { resetPasswordAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { resetPasswordAction } from "@/app/actions"
+import { FormMessage, type Message } from "@/components/form-message"
+import { SubmitButton } from "@/components/submit-button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import AuthWrapper from "@/components/AuthWrapper"
 
 export default async function ResetPassword({
   searchParams,
 }: {
-  searchParams: Message;
+  searchParams: Message
 }) {
   return (
-    <form className="flex flex-col w-full max-w-md p-4 gap-2 [&>input]:mb-4">
+    <AuthWrapper>
       <h1 className="text-2xl font-medium">Reset password</h1>
       <p className="text-sm text-foreground/60">
         Please enter your new password below.
@@ -33,6 +34,6 @@ export default async function ResetPassword({
         Reset password
       </SubmitButton>
       <FormMessage message={searchParams} />
-    </form>
-  );
+    </AuthWrapper>
+  )
 }
