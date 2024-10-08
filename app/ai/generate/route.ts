@@ -1,5 +1,4 @@
-// biome-ignore lint/style/useImportType: <explanation>
-import { NextRequest, NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
 import OpenAI from "openai"
 
 const openai = new OpenAI({

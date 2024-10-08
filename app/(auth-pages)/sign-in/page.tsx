@@ -62,8 +62,8 @@ export default function Login({ searchParams }: { searchParams: Message }) {
         <SubmitButton pendingText="Signing In..." formAction={signInAction}>
           Sign in
         </SubmitButton>
+        <FormMessage message={searchParams} />
       </div>
-      <FormMessage message={searchParams} />
 
       <div className="m-1.5 rounded-lg bg-ba py-4 text-center text-sm/5 ">
         Not a member?&nbsp;
