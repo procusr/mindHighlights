@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import AddNewContent from "./AddNewContent"
 import type { Content, Folder } from "@/types/types"
@@ -12,13 +12,19 @@ import {
   ChevronDown,
   ChevronUp,
   RefreshCw,
+  MoreVertical,
 } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useMediaQuery } from "react-responsive"
 import ConfirmDialog from "../../components/ConfirmDialog"
 import EditFolderDialog from "../../components/EditFolderDialog"
-import { useEffect } from "react"
 import {
   fetchContentForFolder,
   updateContent,
@@ -168,39 +174,52 @@ export default function ContentArea({
     <div className="w-full max-w-2xl p-4 sm:p-6">
       {selectedFolder ? (
         <>
-          <div className="sticky top-0 bg-background z-10 flex justify-between items-center mb-6 p-4 rounded-lg shadow-sm border-b border-primary/20">
-            <h2 className="text-2xl font-bold text-primary">
-              {selectedFolder.name}
-            </h2>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setNewFolderName(selectedFolder.name)
-                  setEditFolderDialogOpen(true)
-                }}
-                className="text-muted-foreground hover:text-primary"
-              >
-                <Pencil className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsDeleteFolderDialogOpen(true)}
-                className="text-muted-foreground hover:text-destructive"
-              >
-                <Trash className="h-4 w-4 mr-2" />
-                Delete
-              </Button>
+          <div className="sticky top-0 bg-background z-10 flex flex-col mb-6 p-4 rounded-lg shadow-sm border-b border-primary/20">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-0">
+              <div className="flex items-center gap-2 flex-grow">
+                <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
+                  {selectedFolder.name}
+                </h2>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-muted-foreground hover:text-primary hover:bg-accent p-1"
+                    >
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setNewFolderName(selectedFolder.name)
+                        setEditFolderDialogOpen(true)
+                      }}
+                    >
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Edit Folder
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setIsDeleteFolderDialogOpen(true)}
+                    >
+                      <Trash className="h-4 w-4 mr-2" />
+                      Delete Folder
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
               <AddNewContent
                 selectedFolder={selectedFolder}
                 userId={userId}
                 setContentList={setContentList}
                 contentList={contentList}
               >
-                <Button variant="default" size="sm" className="btn-primary">
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="hover:bg-primary/90 w-full sm:w-auto"
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Add Highlight
                 </Button>
@@ -212,22 +231,51 @@ export default function ContentArea({
               contentList.map((content) => (
                 <Card
                   key={content.id}
-                  className="overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-1"
+                  className="overflow-hidden transition-all duration-200 hover:shadow-md"
                 >
                   <CardHeader
                     className="cursor-pointer p-4 flex flex-row items-center justify-between bg-secondary/50"
                     onClick={() => handleToggleContent(content.id)}
                   >
-                    <CardTitle className="text-sm font-medium">
-                      {content.title.length > 100
-                        ? `${content.title.slice(0, 100)}...`
-                        : content.title}
+                    <CardTitle className="text-sm font-medium truncate mr-2">
+                      {content.title}
                     </CardTitle>
-                    {expandedContentId === content.id ? (
-                      <ChevronUp className="h-5 w-5 flex-shrink-0 text-primary" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 flex-shrink-0 text-primary" />
-                    )}
+                    <div className="flex items-center">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-muted-foreground hover:text-primary hover:bg-accent p-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem
+                            onClick={() => handleEditContent(content)}
+                          >
+                            <Pencil className="h-4 w-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setDeletingContentId(content.id)
+                              setIsContentDeleteDialogOpen(true)
+                            }}
+                          >
+                            <Trash className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      {expandedContentId === content.id ? (
+                        <ChevronUp className="h-5 w-5 flex-shrink-0 text-primary ml-2" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 flex-shrink-0 text-primary ml-2" />
+                      )}
+                    </div>
                   </CardHeader>
                   {expandedContentId === content.id && (
                     <CardContent className="p-4">
@@ -271,7 +319,9 @@ export default function ContentArea({
                       ) : (
                         <>
                           <p className="text-base leading-relaxed text-foreground whitespace-pre-wrap mb-4 prose">
-                            <span className="highlight">{content.content}</span>
+                            <span className="bg-highlight">
+                              {content.content}
+                            </span>
                           </p>
                           {content.anchor && (
                             <div className="mt-2 mb-4 flex items-center">
@@ -284,7 +334,6 @@ export default function ContentArea({
                                 onClick={() =>
                                   handleMemory(content.id, content.content)
                                 }
-                                aria-label="Regenerate memory anchor"
                                 disabled={generatingMemoryId === content.id}
                                 className="ml-2 p-1 hover:text-primary"
                               >
@@ -292,28 +341,6 @@ export default function ContentArea({
                               </Button>
                             </div>
                           )}
-                          <div className="flex justify-end space-x-2">
-                            <Button
-                              onClick={() => handleEditContent(content)}
-                              variant="outline"
-                              size="sm"
-                              className="hover:text-primary"
-                            >
-                              <Pencil className="h-3 w-3 mr-1" />
-                              Edit
-                            </Button>
-                            <Button
-                              onClick={() => {
-                                setDeletingContentId(content.id)
-                                setIsContentDeleteDialogOpen(true)
-                              }}
-                              variant="destructive"
-                              size="sm"
-                            >
-                              <Trash className="h-3 w-3 mr-1" />
-                              Delete
-                            </Button>
-                          </div>
                         </>
                       )}
                     </CardContent>

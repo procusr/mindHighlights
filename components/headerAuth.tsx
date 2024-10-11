@@ -1,4 +1,4 @@
-import { signOutAction } from "@/app/actions"
+import { signOut } from "@/app/actions"
 import { createClient } from "@/utils/supabase/server"
 import Link from "next/link"
 import { Button } from "./ui/button"
@@ -30,13 +30,9 @@ export default async function HeaderAuth() {
           <Menubar>
             <MenubarMenu>
               <MenubarTrigger>Archived</MenubarTrigger>
-              <MenubarContent className="bg-white  border border-gray-200  w-48">
+              <MenubarContent className="bg-white border border-gray-200 w-48">
                 {folders.map((folder, index) => (
-                  <MenubarItem
-                    // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                    key={index}
-                    className="flex items-center gap-2"
-                  >
+                  <MenubarItem key={index} className="flex items-center gap-2">
                     <Folder className="w-4 h-4" />
                     <span>{folder}</span>
                   </MenubarItem>
@@ -50,30 +46,29 @@ export default async function HeaderAuth() {
                 {user.email?.charAt(0).toUpperCase()}
               </MenubarTrigger>
               <MenubarContent className="bg-white w-48">
-                <MenubarItem className="text-gray-700 ">
+                <MenubarItem className="text-gray-700">
                   {user.email}
                 </MenubarItem>
                 <MenubarSeparator />
-                <SubmitButton
-                  formAction={signOutAction}
-                  className="w-full text-left "
-                  variant="ghost"
-                  size="sm"
-                >
-                  Sign out
-                </SubmitButton>
+                <form action={signOut} method="post">
+                  <SubmitButton
+                    type="submit"
+                    className="w-full text-left"
+                    variant="ghost"
+                    size="sm"
+                  >
+                    Sign out
+                  </SubmitButton>
+                </form>
               </MenubarContent>
             </MenubarMenu>
           </Menubar>
         </>
       ) : (
         <div className="flex gap-2">
-          <Button asChild size="sm" variant={"outline"}>
+          <Button asChild size="sm" variant="outline">
             <Link href="/sign-in">Sign in</Link>
           </Button>
-          {/* <Button asChild size="sm" variant={"default"}>
-            <Link href="/sign-up">Sign up</Link>
-          </Button> */}
         </div>
       )}
     </div>

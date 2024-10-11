@@ -10,20 +10,21 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
+    --primary: 200 70% 50%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
+    --accent: 200 70% 95%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --ring: 200 70% 50%;
     --radius: 0.5rem;
+    --highlight: 63.1, 87.3%, 56.7%;
   }
 
   .dark {
@@ -33,19 +34,20 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
+    --primary: 200 70% 50%;
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 200 70% 20%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --ring: 200 70% 50%;
+    --highlight: 63.1, 87.3%, 56.7%;
   }
 }
 
@@ -63,29 +65,44 @@
 
 /* Keep the rest of your custom styles here */
 @layer components {
-  .card {
-    @apply bg-card text-card-foreground p-6 rounded-lg shadow-md transition-all duration-300;
-    border-left: 4px solid hsl(var(--primary));
-  }
-
-  .card:hover {
-    @apply shadow-lg transform -translate-y-1;
-  }
-
   .btn {
     @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background;
   }
 
   .btn-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+    @apply bg-primary text-primary-foreground hover:bg-primary-600 relative overflow-hidden;
   }
 
   .btn-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary-600;
   }
 
   .btn-ghost {
     @apply hover:bg-accent hover:text-accent-foreground;
+  }
+
+  /* Updated hover effect for default buttons */
+  .btn-default {
+    @apply bg-primary text-primary-foreground hover:bg-primary-700;
+  }
+
+  /* Removed pseudo-element hover effect for clarity */
+  .btn-primary::before {
+    content: "";
+    @apply absolute inset-0 bg-transparent opacity-0 transition-opacity duration-300 ease-in-out;
+  }
+
+  .btn-primary:hover::before {
+    @apply opacity-0;
+  }
+
+  .card {
+    @apply bg-card text-card-foreground p-6 rounded-lg shadow-md transition-all duration-300 overflow-hidden relative;
+    border-left: 4px solid hsl(var(--primary));
+  }
+
+  .card:hover {
+    @apply shadow-lg;
   }
 
   .input,
@@ -94,7 +111,7 @@
   }
 
   .dialog {
-    @apply bg-background text-foreground border border-border shadow-lg rounded-lg;
+    @apply bg-background text-foreground border border-border shadow-lg rounded-lg p-6;
   }
 }
 

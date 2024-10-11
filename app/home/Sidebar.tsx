@@ -34,40 +34,40 @@ export default function Sidebar({
     <aside
       className={`${
         menuOpen ? "translate-x-0" : "-translate-x-full"
-      } p-6 fixed left-0 top-16 bottom-0 z-40 w-80 bg-background transition-transform duration-300 ease-in-out sm:static sm:translate-x-0 overflow-y-auto border-r border-border`}
+      } fixed left-0 top-0 bottom-0 z-40 w-80 bg-background transition-transform duration-300 ease-in-out sm:static sm:translate-x-0 overflow-y-auto border-r border-border flex flex-col`}
       aria-labelledby="sidebar-heading"
     >
-      <div className="flex flex-col h-full gap-2">
-        <div className="sticky top-0 bg-background border-none z-10 flex justify-between items-center p-4 shadow-sm">
-          <h2 id="sidebar-heading" className="text-md font-bold">
-            Folders
-          </h2>
-          <AddNewFolder userId={userId} setFolders={setFolders}>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10 p-0 text-primary"
-              aria-label="Add new folder"
-            >
-              <Plus className="h-6 w-6" />
-            </Button>
-          </AddNewFolder>
-        </div>
+      <div className="sticky top-0 bg-background z-10 flex justify-between items-center p-4 border-b border-border">
+        <h2 id="sidebar-heading" className="text-lg font-bold text-primary">
+          Folders
+        </h2>
+        <AddNewFolder userId={userId} setFolders={setFolders}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 p-0 text-primary hover:bg-accent hover:text-accent-foreground"
+            aria-label="Add new folder"
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+        </AddNewFolder>
+      </div>
+      <div className="px-4 pb-4">
         <Input
           id="folder-search-input"
           type="text"
           placeholder="Search folders..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="my-3 px-2 py-2 rounded-xl focus:ring-primary border-border"
+          className="w-full px-3 py-2 rounded-md focus:ring-primary border-border"
         />
-        <div className="flex-grow overflow-y-auto p-3">
-          <FolderList
-            folders={filteredFolders}
-            selectedFolder={selectedFolder}
-            onFolderSelect={setSelectedFolder}
-          />
-        </div>
+      </div>
+      <div className="flex-grow overflow-y-auto p-4">
+        <FolderList
+          folders={filteredFolders}
+          selectedFolder={selectedFolder}
+          onFolderSelect={setSelectedFolder}
+        />
       </div>
     </aside>
   )

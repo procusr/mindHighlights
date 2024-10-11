@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { SmtpMessage } from "../smtp-message"
-import { cn } from "../../../utils/cn"
+import { cn } from "@/utils/cn"
 
 export default function Signup({ searchParams }: { searchParams: Message }) {
   if ("message" in searchParams) {
@@ -26,7 +26,7 @@ export default function Signup({ searchParams }: { searchParams: Message }) {
         <div className="flex items-start text-lg font-semibold">
           <Link href="/" title="Home">
             Mind
-            <span className=" bg-yellow-300 font-light">Highlights</span>
+            <span className="bg-highlight font-light">Highlights</span>
           </Link>
         </div>
         <h1 className="text-xl font-medium mt-5">Sign up</h1>
