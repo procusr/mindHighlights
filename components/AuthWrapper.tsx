@@ -1,5 +1,6 @@
 import Link from "next/link"
 import Logo from "./Logo"
+import { GradientBackground } from "@/app/components/GradientBackground"
 
 export default function AuthWrapper({
   children,
@@ -7,15 +8,18 @@ export default function AuthWrapper({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col w-full max-w-sm rounded-md bg-white shadow-md ring-1 ring-black/5 mt-10">
-      <div className="flex items-start text-lg font-semibold p-7 sm:p-7 ">
-        <Link href="/" title="Home">
-          <Logo />
-        </Link>
+    <div className="relative min-h-screen flex flex-col items-center justify-center">
+      <GradientBackground />
+      <div className="w-full max-w-sm space-y-8 relative z-10 animate-fade-in-up">
+        <div className="bg-white/80 dark:bg-gray-800/80 shadow-2xl rounded-2xl overflow-hidden backdrop-blur-xl">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <Link href="/" title="Home" className="block w-fit mx-auto">
+              <Logo />
+            </Link>
+          </div>
+          <div className="px-6 py-6">{children}</div>
+        </div>
       </div>
-      <form action="#" method="POST" className="px-7 pt-7">
-        {children}
-      </form>
     </div>
   )
 }

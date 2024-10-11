@@ -12,65 +12,80 @@ import AuthWrapper from "@/components/AuthWrapper"
 export default function Login({ searchParams }: { searchParams: Message }) {
   return (
     <AuthWrapper>
-      <p className="text-sm/5 text-gray-600">Sign in to continue.</p>
-      <div className="mt-3 space-y-3">
-        <Label className="text-sm/5 font-medium">Email</Label>
-        <Input
-          required
-          autoFocus
-          type="email"
-          name="email"
-          className={cn(
-            "block w-full rounded-lg border border-transparent shadow ring-1 ring-black/10",
-            "px-[calc(theme(spacing.2)-1px)] py-[calc(theme(spacing[1.5])-1px)] text-base/6 sm:text-sm/6",
-            "data-[focus]:outline data-[focus]:outline-2 data-[focus]:-outline-offset-1 data-[focus]:outline-black"
-          )}
-        />
-      </div>
-      <div className=" flex flex-col mt-8 space-y-3">
-        <Label className="text-sm/5 font-medium">Password</Label>
-        <Input
-          required
-          type="password"
-          name="password"
-          className={cn(
-            "block w-full rounded-lg border border-transparent shadow ring-1 ring-black/10",
-            "px-[calc(theme(spacing.2)-1px)] py-[calc(theme(spacing[1.5])-1px)] text-base/6 sm:text-sm/6",
-            "data-[focus]:outline data-[focus]:outline-2 data-[focus]:-outline-offset-1 data-[focus]:outline-black"
-          )}
-        />
-        <Link href="/forgot-password" className="text-sm/5 ">
-          Forgot password?
-        </Link>
-      </div>
-      <div className="mt-8 flex items-center justify-between text-sm/5">
-        <div className="flex items-center gap-3">
-          <Checkbox
-            name="remember-me"
-            className={cn(
-              "group block size-4 rounded border border-transparent shadow ring-1 ring-black/10 focus:outline-none",
-              "data-[checked]:bg-black data-[checked]:ring-black",
-              "data-[focus]:outline data-[focus]:outline-2 data-[focus]:outline-offset-2 data-[focus]:outline-black"
-            )}
-          >
-            <CheckIcon className="fill-white opacity-0 group-data-[checked]:opacity-100" />
-          </Checkbox>
-          <Label>Remember me</Label>
+      <form action="#" method="POST" className="space-y-5">
+        {" "}
+        {/* Reduced space-y-6 to space-y-5 */}
+        <h1 className="text-xl font-semibold mb-4">Sign in</h1>{" "}
+        {/* Reduced text size and margin */}
+        <div className="space-y-3">
+          {" "}
+          {/* Reduced space-y-4 to space-y-3 */}
+          <div>
+            <Label htmlFor="email" className="block text-sm font-medium">
+              Email
+            </Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              className="mt-1 w-full"
+            />
+          </div>
+          <div>
+            <Label htmlFor="password" className="block text-sm font-medium">
+              Password
+            </Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              className="mt-1 w-full"
+            />
+          </div>
         </div>
-      </div>
-      <div className="mt-8">
-        <SubmitButton pendingText="Signing In..." formAction={signInAction}>
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center">
+            <Checkbox
+              id="remember-me"
+              name="remember-me"
+              className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+            />
+            <Label
+              htmlFor="remember-me"
+              className="ml-2 block text-gray-900 dark:text-gray-300"
+            >
+              Remember me
+            </Label>
+          </div>
+          <Link
+            href="/forgot-password"
+            className="font-medium text-primary hover:text-primary-dark"
+          >
+            Forgot password?
+          </Link>
+        </div>
+        <SubmitButton
+          pendingText="Signing In..."
+          formAction={signInAction}
+          className="w-full"
+        >
           Sign in
         </SubmitButton>
         <FormMessage message={searchParams} />
-      </div>
-
-      <div className="m-1.5 rounded-lg bg-ba py-4 text-center text-sm/5 ">
-        Not a member?&nbsp;
-        <Link href="/sign-up" className="font-medium hover:text-gray-600">
-          Create an account
-        </Link>
-      </div>
+        <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          Not a member?{" "}
+          <Link
+            href="/sign-up"
+            className="font-medium text-primary hover:text-primary-dark"
+          >
+            Create an account
+          </Link>
+        </p>
+      </form>
     </AuthWrapper>
   )
 }

@@ -4,73 +4,64 @@ import { SubmitButton } from "@/components/submit-button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
-import { SmtpMessage } from "../smtp-message"
-import { cn } from "@/utils/cn"
+import AuthWrapper from "../../../components/AuthWrapper"
 
 export default function Signup({ searchParams }: { searchParams: Message }) {
-  if ("message" in searchParams) {
-    return (
-      <div className="w-full flex-1 flex items-center h-screen sm:max-w-md justify-center gap-2 p-4">
-        <FormMessage message={searchParams} />
-      </div>
-    )
-  }
-
   return (
-    <div className="w-full max-w-sm rounded-md bg-white shadow-md ring-1 ring-black/5">
-      <form
-        action="#"
-        method="POST"
-        className="flex flex-col gap-2 p-7 sm:p-11"
-      >
-        <div className="flex items-start text-lg font-semibold">
-          <Link href="/" title="Home">
-            Mind
-            <span className="bg-highlight font-light">Highlights</span>
-          </Link>
+    <AuthWrapper>
+      <form action="#" method="POST" className="space-y-5">
+        {" "}
+        {/* Reduced space-y-6 to space-y-5 */}
+        <h1 className="text-xl font-semibold mb-4">Create an account</h1>{" "}
+        {/* Reduced text size and margin */}
+        <div className="space-y-3">
+          {" "}
+          {/* Reduced space-y-4 to space-y-3 */}
+          <div>
+            <Label htmlFor="email" className="block text-sm font-medium">
+              Email
+            </Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              className="mt-1 w-full"
+            />
+          </div>
+          <div>
+            <Label htmlFor="password" className="block text-sm font-medium">
+              Password
+            </Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              required
+              className="mt-1 w-full"
+            />
+          </div>
         </div>
-        <h1 className="text-xl font-medium mt-5">Sign up</h1>
-        <p className="text-sm text text-foreground">
+        <SubmitButton
+          pendingText="Signing Up..."
+          formAction={signUpAction}
+          className="w-full"
+        >
+          Sign up
+        </SubmitButton>
+        <FormMessage message={searchParams} />
+        <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
           Already have an account?{" "}
-          <Link className="text-primary font-medium underline" href="/sign-in">
+          <Link
+            href="/sign-in"
+            className="font-medium text-primary hover:text-primary-dark"
+          >
             Sign in
           </Link>
         </p>
-        <div className="mt-8 space-y-3">
-          <Label className="text-sm/5 font-medium">Email</Label>
-          <Input
-            required
-            autoFocus
-            type="email"
-            name="email"
-            className={cn(
-              "block w-full rounded-lg border border-transparent shadow ring-1 ring-black/10",
-              "px-[calc(theme(spacing.2)-1px)] py-[calc(theme(spacing[1.5])-1px)] text-base/6 sm:text-sm/6",
-              "data-[focus]:outline data-[focus]:outline-2 data-[focus]:-outline-offset-1 data-[focus]:outline-black"
-            )}
-          />
-        </div>
-        <div className="mt-8 space-y-3">
-          <Label className="text-sm/5 font-medium">Password</Label>
-          <Input
-            required
-            type="password"
-            name="password"
-            className={cn(
-              "block w-full rounded-lg border border-transparent shadow ring-1 ring-black/10",
-              "px-[calc(theme(spacing.2)-1px)] py-[calc(theme(spacing[1.5])-1px)] text-base/6 sm:text-sm/6",
-              "data-[focus]:outline data-[focus]:outline-2 data-[focus]:-outline-offset-1 data-[focus]:outline-black"
-            )}
-          />
-          <div className="mt-8">
-            <SubmitButton pendingText="Signing In..." formAction={signUpAction}>
-              Register
-            </SubmitButton>
-          </div>
-          <FormMessage message={searchParams} />
-        </div>
       </form>
-      <SmtpMessage />
-    </div>
+    </AuthWrapper>
   )
 }

@@ -1,4 +1,4 @@
-import { signOut } from "@/app/actions"
+import { signOutAction } from "@/app/actions"
 import { createClient } from "@/utils/supabase/server"
 import Link from "next/link"
 import { Button } from "./ui/button"
@@ -50,7 +50,7 @@ export default async function HeaderAuth() {
                   {user.email}
                 </MenubarItem>
                 <MenubarSeparator />
-                <form action={signOut} method="post">
+                <form action={signOutAction} method="post">
                   <SubmitButton
                     type="submit"
                     className="w-full text-left"

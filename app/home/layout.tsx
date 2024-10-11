@@ -11,7 +11,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <header className="flex items-center justify-between p-2  border-b border-border bg-background  shadow-sm sticky top-0 z-50 ">
           <div className="flex items-center">
             <MenuToggle />
-            <Link href="/" title="Home" className="text-2xl font-semibold ml-3">
+            <Link
+              href="/"
+              title="Home"
+              className="text-2xl font-semibold ml-3 "
+            >
               <Logo />
             </Link>
           </div>
