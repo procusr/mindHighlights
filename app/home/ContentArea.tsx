@@ -171,203 +171,209 @@ export default function ContentArea({
   }
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-background">
-      <div className="max-w-2xl mx-auto p-4 sm:p-6">
-        {selectedFolder ? (
-          <>
-            <div className="sticky top-0 bg-background z-10 flex flex-col mb-6 p-4 rounded-lg shadow-sm border-b border-primary/20">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-0">
-                <div className="flex items-center gap-2 flex-grow">
-                  <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
-                    {selectedFolder.name}
-                  </h2>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-muted-foreground hover:text-primary hover:bg-accent p-1"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setNewFolderName(selectedFolder.name)
-                          setEditFolderDialogOpen(true)
-                        }}
-                      >
-                        <Pencil className="h-4 w-4 mr-2" />
-                        Edit Folder
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setIsDeleteFolderDialogOpen(true)}
-                      >
-                        <Trash className="h-4 w-4 mr-2" />
-                        Delete Folder
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                <AddNewContent
-                  selectedFolder={selectedFolder}
-                  userId={userId}
-                  setContentList={setContentList}
-                  contentList={contentList}
-                >
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="hover:bg-primary/90 w-full sm:w-auto"
+    <div className="flex-1 overflow-hidden bg-background">
+      <div className="h-full overflow-y-auto">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+          {selectedFolder ? (
+            <>
+              <div className="sticky top-0 bg-background z-10 pb-4">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-0">
+                  <div className="flex items-center gap-2 flex-grow">
+                    <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
+                      {selectedFolder.name}
+                    </h2>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground hover:text-primary hover:bg-accent p-1"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setNewFolderName(selectedFolder.name)
+                            setEditFolderDialogOpen(true)
+                          }}
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Edit Folder
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setIsDeleteFolderDialogOpen(true)}
+                        >
+                          <Trash className="h-4 w-4 mr-2" />
+                          Delete Folder
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                  <AddNewContent
+                    selectedFolder={selectedFolder}
+                    userId={userId}
+                    setContentList={setContentList}
+                    contentList={contentList}
                   >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Highlight
-                  </Button>
-                </AddNewContent>
-              </div>
-            </div>
-            <div className="space-y-6 pb-6">
-              {contentList?.length > 0 ? (
-                contentList.map((content) => (
-                  <Card
-                    key={content.id}
-                    className="overflow-hidden transition-all duration-200 hover:shadow-md"
-                  >
-                    <CardHeader
-                      className="cursor-pointer p-4 flex flex-row items-center justify-between bg-secondary/50"
-                      onClick={() => handleToggleContent(content.id)}
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="hover:bg-primary/90 w-full sm:w-auto"
                     >
-                      <CardTitle className="text-sm font-medium truncate mr-2">
-                        {content.title}
-                      </CardTitle>
-                      <div className="flex items-center">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-muted-foreground hover:text-primary hover:bg-accent p-1"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuItem
-                              onClick={() => handleEditContent(content)}
-                            >
-                              <Pencil className="h-4 w-4 mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setDeletingContentId(content.id)
-                                setIsContentDeleteDialogOpen(true)
-                              }}
-                            >
-                              <Trash className="h-4 w-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                        {expandedContentId === content.id ? (
-                          <ChevronUp className="h-5 w-5 flex-shrink-0 text-primary ml-2" />
-                        ) : (
-                          <ChevronDown className="h-5 w-5 flex-shrink-0 text-primary ml-2" />
-                        )}
-                      </div>
-                    </CardHeader>
-                    {expandedContentId === content.id && (
-                      <CardContent className="p-4">
-                        {editingContent?.id === content.id ? (
-                          <>
-                            <Input
-                              value={editingContent.title}
-                              onChange={(e) =>
-                                setEditingContent({
-                                  ...editingContent,
-                                  title: e.target.value,
-                                })
-                              }
-                              placeholder="Enter title"
-                              className="input mb-2"
-                            />
-                            <Textarea
-                              value={editingContent.content}
-                              onChange={(e) =>
-                                setEditingContent({
-                                  ...editingContent,
-                                  content: e.target.value,
-                                })
-                              }
-                              placeholder="Enter content"
-                              className="min-h-[100px] mb-2"
-                            />
-                            <div className="flex justify-end space-x-2">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Highlight
+                    </Button>
+                  </AddNewContent>
+                </div>
+              </div>
+              <div className="space-y-6">
+                {contentList?.length > 0 ? (
+                  contentList.map((content) => (
+                    <Card
+                      key={content.id}
+                      className="overflow-hidden transition-all duration-200 hover:shadow-md"
+                    >
+                      <CardHeader
+                        className="cursor-pointer p-4 flex flex-row items-center justify-between bg-secondary/50"
+                        onClick={() => handleToggleContent(content.id)}
+                      >
+                        <CardTitle className="text-sm font-medium mr-2 break-words">
+                          {content.title}
+                        </CardTitle>
+                        <div className="flex items-center">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
                               <Button
-                                onClick={() => setEditingContent(null)}
-                                variant="outline"
+                                variant="ghost"
                                 size="sm"
+                                className="text-muted-foreground hover:text-primary hover:bg-accent p-1"
+                                onClick={(e) => e.stopPropagation()}
                               >
-                                Cancel
+                                <MoreVertical className="h-4 w-4" />
                               </Button>
-                              <Button onClick={handleSaveEdit} size="sm">
-                                Save
-                              </Button>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <p className="text-base leading-relaxed text-foreground whitespace-pre-wrap mb-4 prose">
-                              <span className="bg-highlight">
-                                {content.content}
-                              </span>
-                            </p>
-                            {content.anchor && (
-                              <div className="mt-2 mb-4 flex items-center">
-                                <p className="text-sm italic text-muted-foreground flex-grow">
-                                  {content.anchor}
-                                </p>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleEditContent(content)
+                                }}
+                              >
+                                <Pencil className="h-4 w-4 mr-2" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setDeletingContentId(content.id)
+                                  setIsContentDeleteDialogOpen(true)
+                                }}
+                              >
+                                <Trash className="h-4 w-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                          {expandedContentId === content.id ? (
+                            <ChevronUp className="h-5 w-5 flex-shrink-0 text-primary ml-2" />
+                          ) : (
+                            <ChevronDown className="h-5 w-5 flex-shrink-0 text-primary ml-2" />
+                          )}
+                        </div>
+                      </CardHeader>
+                      {expandedContentId === content.id && (
+                        <CardContent className="p-4">
+                          {editingContent?.id === content.id ? (
+                            <>
+                              <Input
+                                value={editingContent.title}
+                                onChange={(e) =>
+                                  setEditingContent({
+                                    ...editingContent,
+                                    title: e.target.value,
+                                  })
+                                }
+                                placeholder="Enter title"
+                                className="input mb-2"
+                              />
+                              <Textarea
+                                value={editingContent.content}
+                                onChange={(e) =>
+                                  setEditingContent({
+                                    ...editingContent,
+                                    content: e.target.value,
+                                  })
+                                }
+                                placeholder="Enter content"
+                                className="min-h-[100px] mb-2"
+                              />
+                              <div className="flex justify-end space-x-2">
                                 <Button
-                                  variant="ghost"
+                                  onClick={() => setEditingContent(null)}
+                                  variant="outline"
                                   size="sm"
-                                  onClick={() =>
-                                    handleMemory(content.id, content.content)
-                                  }
-                                  disabled={generatingMemoryId === content.id}
-                                  className="ml-2 p-1 hover:text-primary"
                                 >
-                                  <RefreshCw className="h-3 w-3" />
+                                  Cancel
+                                </Button>
+                                <Button onClick={handleSaveEdit} size="sm">
+                                  Save
                                 </Button>
                               </div>
-                            )}
-                          </>
-                        )}
-                      </CardContent>
-                    )}
-                  </Card>
-                ))
-              ) : (
-                <p className="text-center text-muted-foreground">
-                  This folder is empty. Add some highlights to get started!
-                </p>
-              )}
+                            </>
+                          ) : (
+                            <>
+                              <p className="text-base leading-relaxed text-foreground whitespace-pre-wrap mb-4 prose">
+                                <span className="bg-highlight">
+                                  {content.content}
+                                </span>
+                              </p>
+                              {content.anchor && (
+                                <div className="mt-2 mb-4 flex items-center">
+                                  <p className="text-sm italic text-muted-foreground flex-grow">
+                                    {content.anchor}
+                                  </p>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() =>
+                                      handleMemory(content.id, content.content)
+                                    }
+                                    disabled={generatingMemoryId === content.id}
+                                    className="ml-2 p-1 hover:text-primary"
+                                  >
+                                    <RefreshCw className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </CardContent>
+                      )}
+                    </Card>
+                  ))
+                ) : (
+                  <p className="text-center text-muted-foreground">
+                    This folder is empty. Add some highlights to get started!
+                  </p>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full min-h-[50vh]">
+              <p className="text-center text-muted-foreground mb-4">
+                Select a folder to view your highlights or create a new one
+              </p>
+              <AddNewFolder userId={userId} setFolders={setFolders}>
+                <Button variant="outline" onClick={() => {}}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create New Folder
+                </Button>
+              </AddNewFolder>
             </div>
-          </>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full min-h-[50vh]">
-            <p className="text-center text-muted-foreground mb-4">
-              Select a folder to view your highlights or create a new one
-            </p>
-            <AddNewFolder userId={userId} setFolders={setFolders}>
-              <Button variant="outline" onClick={() => {}}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create New Folder
-              </Button>
-            </AddNewFolder>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       <ConfirmDialog

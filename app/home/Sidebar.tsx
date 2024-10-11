@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import type { Folder } from "../../types/types"
 import AddNewFolder from "./AddNewFolder"
@@ -6,6 +6,7 @@ import FolderList from "../../components/FolderList"
 import { Button } from "@/components/ui/button"
 import { Plus, Search, FolderIcon } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useSidebar } from "../contexts/SidebarContext"
 
 interface SidebarProps {
   folders: Folder[]
@@ -13,7 +14,6 @@ interface SidebarProps {
   selectedFolder: Folder | null
   setSelectedFolder: (folder: Folder) => void
   userId: string
-  menuOpen: boolean
 }
 
 export default function Sidebar({
@@ -22,19 +22,30 @@ export default function Sidebar({
   selectedFolder,
   setSelectedFolder,
   userId,
-  menuOpen,
 }: SidebarProps) {
   const [searchTerm, setSearchTerm] = useState("")
+  const { menuOpen, closeMenu } = useSidebar()
 
   const filteredFolders = folders.filter((folder) =>
     folder.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        closeMenu()
+      }
+    }
+
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [closeMenu])
+
   return (
     <aside
       className={`${
         menuOpen ? "translate-x-0" : "-translate-x-full"
-      } fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-b from-background to-background/95 transition-transform duration-300 ease-in-out sm:static sm:translate-x-0 border-r border-border flex flex-col`}
+      } fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-b from-background to-background/95 transition-transform duration-300 ease-in-out md:static md:translate-x-0 border-r border-border flex flex-col`}
       aria-labelledby="sidebar-heading"
     >
       <div className="sticky top-0 bg-background/80 backdrop-blur-sm z-10 p-4 border-b border-border">
