@@ -1,6 +1,5 @@
-import { cn } from "../lib/utils"
-import type { Folder } from "../types/types"
-import { Button } from "@/components/ui/button"
+import type { Folder } from "@/types/types"
+import { FolderIcon } from "lucide-react"
 
 interface FolderListProps {
   folders: Folder[]
@@ -18,27 +17,22 @@ const FolderList: React.FC<FolderListProps> = ({
       {folders.map((folder) => (
         <li
           key={folder.id}
-          className={cn(
-            "rounded-md",
+          className={`cursor-pointer p-2 rounded-md transition-colors duration-200 ${
             selectedFolder?.id === folder.id
-              ? "bg-gray-200 "
-              : "hover:bg-gray-100"
-          )}
+              ? "bg-primary text-primary-foreground font-semibold"
+              : "hover:bg-accent"
+          }`}
+          onClick={() => onFolderSelect(folder)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              onFolderSelect(folder)
+            }
+          }}
         >
-          <Button
-            size="sm"
-            variant="ghost"
-            className="flex-grow justify-start text-left text-sm truncate bg-inherit w-full"
-            onClick={() => onFolderSelect(folder)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                onFolderSelect(folder)
-              }
-            }}
-            type="button"
-          >
-            {folder.name}
-          </Button>
+          <div className="flex items-center space-x-2">
+            <FolderIcon className="h-5 w-5" />
+            <span>{folder.name}</span>
+          </div>
         </li>
       ))}
     </ul>

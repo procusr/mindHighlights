@@ -50,7 +50,7 @@ const AddNewFolder: React.FC<AddNewFolderProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-white">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogTitle>Create New Folder</DialogTitle>
         <DialogDescription>Enter a name for your new folder.</DialogDescription>
         <Input

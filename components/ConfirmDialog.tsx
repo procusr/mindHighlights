@@ -28,7 +28,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 }) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
     <DialogContent
-      className={cn(isMobile ? 'p-4' : 'p-6', 'rounded-2xl bg-card')}
+      className={cn(isMobile ? "p-4" : "p-6", "rounded-2xl bg-card")}
     >
       <DialogHeader>
         <DialogTitle className="text-2xl font-bold text-primary">
@@ -39,7 +39,9 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         {description}
       </DialogDescription>
       <DialogFooter
-        className={ cn(isMobile ? 'flex-col space-y-2 gap-4' : 'sm:justify-end sm:space-x-2')}
+        className={cn(
+          isMobile ? "flex-col space-y-2 gap-4" : "sm:justify-end sm:space-x-2"
+        )}
       >
         <Button
           onClick={() => onOpenChange(false)}

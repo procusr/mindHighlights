@@ -39,14 +39,14 @@ export default function Sidebar({
     >
       <div className="flex flex-col h-full gap-2">
         <div className="sticky top-0 bg-background border-none z-10 flex justify-between items-center p-4 shadow-sm">
-          <h2 id="sidebar-heading" className="text-xl font-bold">
+          <h2 id="sidebar-heading" className="text-md font-bold">
             Folders
           </h2>
           <AddNewFolder userId={userId} setFolders={setFolders}>
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10 p-0 text-primary hover:text-pink-600"
+              className="h-10 w-10 p-0 text-primary"
               aria-label="Add new folder"
             >
               <Plus className="h-6 w-6" />
@@ -59,9 +59,9 @@ export default function Sidebar({
           placeholder="Search folders..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="my-3 px-2 py-2 rounded-xl focus:ring-primary border-border bg-input "
+          className="my-3 px-2 py-2 rounded-xl focus:ring-primary border-border"
         />
-        <div className="flex-grow overflow-y-auto p-3 ">
+        <div className="flex-grow overflow-y-auto p-3">
           <FolderList
             folders={filteredFolders}
             selectedFolder={selectedFolder}

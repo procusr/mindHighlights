@@ -86,7 +86,7 @@ const AddNewContent: React.FC<AddNewContentProps> = ({
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="sm:max-w-[425px] bg-card">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader className="flex-col justify-between gap-2">
             <DialogTitle>Add New Content</DialogTitle>
             <div className="flex items-center space-x-2">
@@ -113,7 +113,7 @@ const AddNewContent: React.FC<AddNewContentProps> = ({
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Enter your content here..."
-              className="min-h-[200px]"
+              className="min-h-[200px] "
             />
             <Markdown>{content}</Markdown>
           </div>

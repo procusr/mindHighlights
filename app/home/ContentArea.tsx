@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import AddNewContent from "./AddNewContent"
@@ -9,39 +11,37 @@ import {
   Pencil,
   ChevronDown,
   ChevronUp,
-  MoreVertical,
-  Bomb,
   RefreshCw,
 } from "lucide-react"
-import { createClient } from "../../utils/supabase/client"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { useMediaQuery } from "react-responsive"
 import ConfirmDialog from "../../components/ConfirmDialog"
 import EditFolderDialog from "../../components/EditFolderDialog"
+import { useEffect } from "react"
+import {
+  fetchContentForFolder,
+  updateContent,
+  deleteContent,
+  updateFolder,
+  deleteFolder,
+  generateMemoryAnchor,
+  updateContentAnchor,
+} from "../actions/contentActions"
+import AddNewFolder from "./AddNewFolder"
 
 export default function ContentArea({
   selectedFolder,
-  contentList,
-  setContentList,
   userId,
   setFolders,
   setSelectedFolder,
 }: {
   selectedFolder: Folder | null
-  contentList: Content[]
-  setContentList: React.Dispatch<React.SetStateAction<Content[]>>
   userId: string
   setFolders: React.Dispatch<React.SetStateAction<Folder[]>>
   setSelectedFolder: React.Dispatch<React.SetStateAction<Folder | null>>
 }) {
-  const supabase = createClient()
+  const [contentList, setContentList] = useState<Content[]>([])
   const [isDeleteContentDialogOpen, setIsContentDeleteDialogOpen] =
     useState(false)
   const [isDeleteFolderDialogOpen, setIsDeleteFolderDialogOpen] =
@@ -49,7 +49,6 @@ export default function ContentArea({
   const [expandedContentId, setExpandedContentId] = useState<string | null>(
     null
   )
-
   const [newFolderName, setNewFolderName] = useState("")
   const [isEditFolderDialogOpen, setEditFolderDialogOpen] = useState(false)
   const [deletingContentId, setDeletingContentId] = useState<string | null>(
@@ -60,53 +59,55 @@ export default function ContentArea({
     null
   )
 
+  const isMobile = useMediaQuery({ maxWidth: 767 })
+
+  useEffect(() => {
+    if (selectedFolder) {
+      fetchContentForFolder(selectedFolder.id, userId)
+        .then(setContentList)
+        .catch(console.error)
+    }
+  }, [selectedFolder, userId])
+
   const handleToggleContent = (contentId: string) => {
     setExpandedContentId(expandedContentId === contentId ? null : contentId)
     setEditingContent(null)
   }
-
-  const isMobile = useMediaQuery({ maxWidth: 767 })
 
   const handleEditContent = (content: Content) => {
     setEditingContent(content)
   }
 
   const handleDeleteFolder = async () => {
-    const { error } = await supabase
-      .from("user_folders")
-      .delete()
-      .eq("id", selectedFolder?.id)
-
-    if (!error) {
-      setFolders((prevFolders) =>
-        prevFolders.filter((folder) => folder.id !== selectedFolder?.id)
-      )
-      setSelectedFolder(null)
-      setIsDeleteFolderDialogOpen(false)
+    if (selectedFolder) {
+      try {
+        await deleteFolder(selectedFolder.id)
+        setFolders((prevFolders) =>
+          prevFolders.filter((folder) => folder.id !== selectedFolder.id)
+        )
+        setSelectedFolder(null)
+        setIsDeleteFolderDialogOpen(false)
+      } catch (error) {
+        console.error("Error deleting folder:", error)
+      }
     }
   }
 
   const handleEditFolder = async () => {
-    if (newFolderName.trim() !== "") {
-      const { data, error } = await supabase
-        .from("user_folders")
-        .update({ name: newFolderName })
-        .eq("id", selectedFolder?.id)
-        .select()
-
-      if (!error && data) {
+    if (selectedFolder && newFolderName.trim() !== "") {
+      try {
+        const updatedFolder = await updateFolder(
+          selectedFolder.id,
+          newFolderName
+        )
         setFolders((prevFolders) =>
           prevFolders.map((folder) =>
-            folder.id === selectedFolder?.id
-              ? { ...folder, name: newFolderName }
-              : folder
+            folder.id === selectedFolder.id ? updatedFolder : folder
           )
         )
-        setSelectedFolder((prevSelected) =>
-          prevSelected ? { ...prevSelected, name: newFolderName } : prevSelected
-        )
+        setSelectedFolder(updatedFolder)
         setEditFolderDialogOpen(false)
-      } else if (error) {
+      } catch (error) {
         console.error("Error updating folder:", error)
       }
     }
@@ -114,23 +115,19 @@ export default function ContentArea({
 
   const handleSaveEdit = async () => {
     if (editingContent) {
-      const { data, error } = await supabase
-        .from("user_content")
-        .update({
-          title: editingContent.title,
-          content: editingContent.content,
-        })
-        .eq("id", editingContent.id)
-        .select()
-
-      if (data) {
+      try {
+        const updatedContent = await updateContent(
+          editingContent.id,
+          editingContent.title,
+          editingContent.content
+        )
         setContentList(
           contentList.map((c) =>
-            c.id === editingContent.id ? { ...editingContent } : c
+            c.id === updatedContent.id ? updatedContent : c
           )
         )
         setEditingContent(null)
-      } else if (error) {
+      } catch (error) {
         console.error("Error updating content:", error)
       }
     }
@@ -138,17 +135,13 @@ export default function ContentArea({
 
   const handleDeleteContent = async () => {
     if (deletingContentId) {
-      const { error } = await supabase
-        .from("user_content")
-        .delete()
-        .eq("id", deletingContentId)
-
-      if (!error) {
+      try {
+        await deleteContent(deletingContentId)
         setContentList(contentList.filter((c) => c.id !== deletingContentId))
         setIsContentDeleteDialogOpen(false)
         setDeletingContentId(null)
         setExpandedContentId(null)
-      } else {
+      } catch (error) {
         console.error("Error deleting content:", error)
       }
     }
@@ -159,36 +152,10 @@ export default function ContentArea({
     setGeneratingMemoryId(id)
 
     try {
-      const response = await fetch("ai/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content: `Given the statement "${content}", using out of proportion exaggeration and substitution methods of memory to create a memorable phrase or sentence that captures the essence of the statement.`,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to generate memory anchor")
-      }
-
-      const { generatedResponse } = await response.json()
-
-      // Update the content item with the new anchor
-      const { data, error } = await supabase
-        .from("user_content")
-        .update({ anchor: generatedResponse })
-        .eq("id", id)
-        .select()
-
-      if (error) {
-        throw new Error("Failed to update content with anchor")
-      }
-
-      // Update the local state
+      const anchor = await generateMemoryAnchor(content)
+      const updatedContent = await updateContentAnchor(id, anchor)
       setContentList((prevList) =>
-        prevList.map((item) =>
-          item.id === id ? { ...item, anchor: generatedResponse } : item
-        )
+        prevList.map((item) => (item.id === id ? updatedContent : item))
       )
     } catch (error) {
       console.error("Error generating or saving memory anchor:", error)
@@ -201,75 +168,65 @@ export default function ContentArea({
     <div className="w-full max-w-2xl p-4 sm:p-6">
       {selectedFolder ? (
         <>
-          <div className="sticky top-0 bg-background z-10 flex justify-between items-center mb-4 p-2 shadow-sm rounded-b-sm fixed-container">
-            <h2 className="text-xl font-semibold px-4">
+          <div className="sticky top-0 bg-background z-10 flex justify-between items-center mb-6 p-4 rounded-lg shadow-sm border-b border-primary/20">
+            <h2 className="text-2xl font-bold text-primary">
               {selectedFolder.name}
             </h2>
             <div className="flex items-center space-x-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    className="text-primary"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setNewFolderName(selectedFolder.name)
-                      setEditFolderDialogOpen(true)
-                    }}
-                  >
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setNewFolderName(selectedFolder.name)
-                      setEditFolderDialogOpen(true)
-                    }}
-                  >
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Edit Folder
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setIsDeleteFolderDialogOpen(true)}
-                  >
-                    <Trash className="mr-2 h-4 w-4" />
-                    Delete Folder
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setNewFolderName(selectedFolder.name)
+                  setEditFolderDialogOpen(true)
+                }}
+                className="text-muted-foreground hover:text-primary"
+              >
+                <Pencil className="h-4 w-4 mr-2" />
+                Edit
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsDeleteFolderDialogOpen(true)}
+                className="text-muted-foreground hover:text-destructive"
+              >
+                <Trash className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
               <AddNewContent
                 selectedFolder={selectedFolder}
                 userId={userId}
                 setContentList={setContentList}
                 contentList={contentList}
               >
-                <Button variant="ghost" size="icon" className="text-primary">
-                  <Plus className="h-6 w-6" />
+                <Button variant="default" size="sm" className="btn-primary">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Highlight
                 </Button>
               </AddNewContent>
             </div>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-6">
             {contentList.length > 0 ? (
               contentList.map((content) => (
                 <Card
                   key={content.id}
-                  className="overflow-hidden pl-2 sm:pl-4 py-2 sm:py-3"
+                  className="overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-1"
                 >
                   <CardHeader
-                    className="cursor-pointer p-2 flex flex-row items-center justify-between"
+                    className="cursor-pointer p-4 flex flex-row items-center justify-between bg-secondary/50"
                     onClick={() => handleToggleContent(content.id)}
                   >
-                    <CardTitle className="text-sm pr-2 font-medium">
-                      {content.title.length > 170
-                        ? `${content.title.slice(0, 170)}...`
+                    <CardTitle className="text-sm font-medium">
+                      {content.title.length > 100
+                        ? `${content.title.slice(0, 100)}...`
                         : content.title}
                     </CardTitle>
                     {expandedContentId === content.id ? (
-                      <ChevronUp className="h-5 w-5 flex-shrink-0" />
+                      <ChevronUp className="h-5 w-5 flex-shrink-0 text-primary" />
                     ) : (
-                      <ChevronDown className="h-5 w-5 flex-shrink-0" />
+                      <ChevronDown className="h-5 w-5 flex-shrink-0 text-primary" />
                     )}
                   </CardHeader>
                   {expandedContentId === content.id && (
@@ -284,8 +241,8 @@ export default function ContentArea({
                                 title: e.target.value,
                               })
                             }
-                            placeholder="Title"
-                            className="mb-2"
+                            placeholder="Enter title"
+                            className="input mb-2"
                           />
                           <Textarea
                             value={editingContent.content}
@@ -295,7 +252,7 @@ export default function ContentArea({
                                 content: e.target.value,
                               })
                             }
-                            placeholder="Content"
+                            placeholder="Enter content"
                             className="min-h-[100px] mb-2"
                           />
                           <div className="flex justify-end space-x-2">
@@ -313,12 +270,12 @@ export default function ContentArea({
                         </>
                       ) : (
                         <>
-                          <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-wrap mb-4">
-                            {content.content}
+                          <p className="text-base leading-relaxed text-foreground whitespace-pre-wrap mb-4 prose">
+                            <span className="highlight">{content.content}</span>
                           </p>
-                          {content.anchor ? (
+                          {content.anchor && (
                             <div className="mt-2 mb-4 flex items-center">
-                              <p className="text-sm italic text-gray-600 flex-grow">
+                              <p className="text-sm italic text-muted-foreground flex-grow">
                                 {content.anchor}
                               </p>
                               <Button
@@ -329,28 +286,9 @@ export default function ContentArea({
                                 }
                                 aria-label="Regenerate memory anchor"
                                 disabled={generatingMemoryId === content.id}
-                                className="ml-2 p-1"
+                                className="ml-2 p-1 hover:text-primary"
                               >
                                 <RefreshCw className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          ) : (
-                            <div className="mt-2 mb-4">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() =>
-                                  handleMemory(content.id, content.content)
-                                }
-                                aria-label="Make me remember"
-                                disabled={generatingMemoryId === content.id}
-                              >
-                                {generatingMemoryId === content.id ? (
-                                  <RefreshCw className="h-3 w-3 animate-spin mr-1" />
-                                ) : (
-                                  <Bomb className="h-3 w-3 mr-1" />
-                                )}
-                                Remember
                               </Button>
                             </div>
                           )}
@@ -359,6 +297,7 @@ export default function ContentArea({
                               onClick={() => handleEditContent(content)}
                               variant="outline"
                               size="sm"
+                              className="hover:text-primary"
                             >
                               <Pencil className="h-3 w-3 mr-1" />
                               Edit
@@ -382,16 +321,24 @@ export default function ContentArea({
                 </Card>
               ))
             ) : (
-              <p className="text-center text-gray-500">
-                Folder empty. Add some!
+              <p className="text-center text-muted-foreground">
+                This folder is empty. Add some highlights to get started!
               </p>
             )}
           </div>
         </>
       ) : (
-        <p className="text-center text-gray-500">
-          Select a folder to view content
-        </p>
+        <div className="flex flex-col items-center justify-center h-full">
+          <p className="text-center text-muted-foreground mb-4">
+            Select a folder to view your highlights or create a new one
+          </p>
+          <AddNewFolder userId={userId} setFolders={setFolders}>
+            <Button variant="outline" onClick={() => {}}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create New Folder
+            </Button>
+          </AddNewFolder>
+        </div>
       )}
 
       <ConfirmDialog
