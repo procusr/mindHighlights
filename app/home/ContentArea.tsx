@@ -227,7 +227,7 @@ export default function ContentArea({
             </div>
           </div>
           <div className="space-y-6">
-            {contentList.length > 0 ? (
+            {contentList?.length > 0 ? (
               contentList.map((content) => (
                 <Card
                   key={content.id}
