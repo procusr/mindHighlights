@@ -14,6 +14,7 @@ interface SidebarProps {
   selectedFolder: Folder | null
   setSelectedFolder: (folder: Folder) => void
   userId: string
+  menuOpen: boolean
 }
 
 export default function Sidebar({
@@ -22,9 +23,10 @@ export default function Sidebar({
   selectedFolder,
   setSelectedFolder,
   userId,
+  menuOpen,
 }: SidebarProps) {
   const [searchTerm, setSearchTerm] = useState("")
-  const { menuOpen, closeMenu } = useSidebar()
+  const { closeMenu } = useSidebar()
 
   const filteredFolders = folders.filter((folder) =>
     folder.name.toLowerCase().includes(searchTerm.toLowerCase())
