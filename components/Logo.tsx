@@ -2,7 +2,7 @@ import React from "react"
 
 export default function Logo() {
   return (
-    <div className="text-3xl font-bold inline-flex items-center">
+    <div className="text-xl sm:text-2xl font-bold inline-flex items-center">
       <span className="text-primary">Mind</span>
       <span className="relative inline-block ml-1">
         <span className="relative z-10 text-gray-800 dark:text-gray-200">

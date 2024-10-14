@@ -1,8 +1,8 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useSidebar } from "../contexts/SidebarContext"
-import type { Content, Folder } from "../../types/types"
+import type { Folder } from "../../types/types"
 import Sidebar from "./Sidebar"
 import ContentArea from "./ContentArea"
 import { useMediaQuery } from "react-responsive"
@@ -19,6 +19,12 @@ export default function UserContent({
   const { menuOpen, closeMenu } = useSidebar()
   const isMobile = useMediaQuery({ maxWidth: 767 })
 
+  useEffect(() => {
+    if (!isMobile && !selectedFolder && folders.length > 0) {
+      setSelectedFolder(folders[0])
+    }
+  }, [isMobile, selectedFolder, folders])
+
   const handleFolderSelect = (folder: Folder) => {
     setSelectedFolder(folder)
     if (isMobile) {
@@ -27,7 +33,7 @@ export default function UserContent({
   }
 
   return (
-    <div className="flex h-[calc(100vh-64px)] bg-gray-50 ">
+    <div className="flex h-[calc(100vh-64px)] bg-gray-50">
       <Sidebar
         folders={folders}
         setFolders={setFolders}

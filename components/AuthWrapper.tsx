@@ -1,5 +1,5 @@
 import Link from "next/link"
-import Logo from "./Logo"
+import { Logo } from "./Logo"
 import { GradientBackground } from "@/app/components/GradientBackground"
 
 export default function AuthWrapper({

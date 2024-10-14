@@ -24,15 +24,15 @@ export default async function HeaderAuth() {
   } = await createClient().auth.getUser()
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-1">
       {user ? (
         <>
-          <Menubar>
+          <Menubar className="p-1 ">
             <MenubarMenu>
-              <MenubarTrigger>Archived</MenubarTrigger>
-              <MenubarContent className="bg-white border border-gray-200 w-48">
-                {folders.map((folder, index) => (
-                  <MenubarItem key={index} className="flex items-center gap-2">
+              <MenubarTrigger className="p-0">Archived</MenubarTrigger>
+              <MenubarContent className="bg-white border border-gray-200 max-w-full sm:w-48">
+                {folders.map((folder) => (
+                  <MenubarItem key={folder} className="flex items-center gap-2">
                     <Folder className="w-4 h-4" />
                     <span>{folder}</span>
                   </MenubarItem>
@@ -40,12 +40,12 @@ export default async function HeaderAuth() {
               </MenubarContent>
             </MenubarMenu>
           </Menubar>
-          <Menubar>
+          <Menubar className="border-none">
             <MenubarMenu>
-              <MenubarTrigger>
+              <MenubarTrigger className="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-white text-sm sm:text-base ">
                 {user.email?.charAt(0).toUpperCase()}
               </MenubarTrigger>
-              <MenubarContent className="bg-white w-48">
+              <MenubarContent className="bg-white w-48 max-w-full">
                 <MenubarItem className="text-gray-700">
                   {user.email}
                 </MenubarItem>
@@ -53,7 +53,7 @@ export default async function HeaderAuth() {
                 <form action={signOutAction} method="post">
                   <SubmitButton
                     type="submit"
-                    className="w-full text-left"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100"
                     variant="ghost"
                     size="sm"
                   >

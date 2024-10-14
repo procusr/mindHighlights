@@ -8,20 +8,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <div className="flex flex-col min-h-screen w-full bg-background text-foreground">
-        <header className="flex items-center justify-between p-2 border-b border-border bg-background shadow-sm sticky top-0 z-50 w-full">
-          <div className="flex items-center">
+        <header className="flex items-center justify-between py-2 pl-2 border-b border-border bg-background shadow-sm sticky top-0 z-50 w-full">
+          <div className="flex items-center flex-grow">
             <MenuToggle />
-            <Link
-              href="/"
-              title="Home"
-              className="text-xl md:text-2xl font-semibold ml-3"
-            >
+            <Link href="/" title="Home" className="sm:ml-3 flex-shrink-0">
               <Logo />
             </Link>
           </div>
           <HeaderAuth />
         </header>
-        <main className="flex flex-1 w-full">{children}</main>
+        <main className="flex flex-1 w-full overflow-hidden">{children}</main>
       </div>
     </SidebarProvider>
   )

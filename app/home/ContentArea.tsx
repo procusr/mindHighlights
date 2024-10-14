@@ -173,13 +173,13 @@ export default function ContentArea({
   return (
     <div className="flex-1 overflow-hidden bg-background">
       <div className="h-full overflow-y-auto">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           {selectedFolder ? (
             <>
               <div className="sticky top-0 bg-background z-10 pb-4">
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-0">
+                <div className="flex items-center justify-between gap-2 mb-2 sm:mb-4">
                   <div className="flex items-center gap-2 flex-grow">
-                    <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
+                    <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[60%]">
                       {selectedFolder.name}
                     </h2>
                     <DropdownMenu>
@@ -220,7 +220,7 @@ export default function ContentArea({
                     <Button
                       variant="default"
                       size="sm"
-                      className="hover:bg-primary/90 w-full sm:w-auto"
+                      className="hover:bg-primary/90"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Add Highlight
@@ -228,7 +228,7 @@ export default function ContentArea({
                   </AddNewContent>
                 </div>
               </div>
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {contentList?.length > 0 ? (
                   contentList.map((content) => (
                     <Card
@@ -361,8 +361,8 @@ export default function ContentArea({
               </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full min-h-[50vh]">
-              <p className="text-center text-muted-foreground mb-4">
+            <div className="flex flex-col items-center justify-center h-full min-h-[60vh]">
+              <p className="text-center text-muted-foreground mb-4 px-4">
                 Select a folder to view your highlights or create a new one
               </p>
               <AddNewFolder userId={userId} setFolders={setFolders}>
