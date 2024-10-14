@@ -1,8 +1,17 @@
-import { GeistSans } from "geist/font/sans"
-import { Montserrat } from "next/font/google"
+import { Inter, Lora } from "next/font/google"
 import "./globals.css"
 
-const montserrat = Montserrat({ subsets: ["latin"] })
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+})
+
+const lora = Lora({
+  subsets: ["latin"],
+  variable: "--font-lora",
+  display: "swap",
+})
 
 export default function RootLayout({
   children,
@@ -10,11 +19,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html
-      lang="en"
-      className={`${GeistSans.className} ${montserrat.className}`}
-    >
-      <body className=" leading-normal">
+    <html lang="en" className={`${inter.variable} ${lora.variable}`}>
+      <body className="leading-normal">
         <main className="flex flex-col h-screen bg-background text-foreground">
           {children}
         </main>
