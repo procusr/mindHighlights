@@ -1,22 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import AddNewContent from "./AddNewContent"
-import type { Content, Folder } from "@/types/types"
 import { Button } from "@/components/ui/button"
-import {
-  Plus,
-  Trash,
-  Pencil,
-  ChevronDown,
-  ChevronUp,
-  RefreshCw,
-  MoreVertical,
-  Edit,
-  Delete,
-  ChevronRight,
-} from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,23 +10,34 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import type { Content, Folder } from "@/types/types"
+import { AnimatePresence, motion } from "framer-motion"
+import {
+  Delete,
+  Edit,
+  MoreVertical,
+  Pencil,
+  Plus,
+  RefreshCw,
+  Trash,
+} from "lucide-react"
+import { Sparkles } from "lucide-react"
+import { useEffect, useState } from "react"
 import { useMediaQuery } from "react-responsive"
 import ConfirmDialog from "../../components/ConfirmDialog"
 import EditFolderDialog from "../../components/EditFolderDialog"
+
 import {
-  fetchContentForFolder,
-  updateContent,
   deleteContent,
-  updateFolder,
   deleteFolder,
+  fetchContentForFolder,
   generateMemoryAnchor,
+  updateContent,
   updateContentAnchor,
+  updateFolder,
 } from "../actions/contentActions"
+import AddNewContent from "./AddNewContent"
 import AddNewFolder from "./AddNewFolder"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "../../components/ui/separator"
-import { motion, AnimatePresence } from "framer-motion"
-import { Sparkles } from "lucide-react"
 
 export default function ContentArea({
   selectedFolder,
@@ -346,7 +342,7 @@ export default function ContentArea({
                                         {content.content}
                                       </span>
                                     </p>
-                                    {content.anchor && (
+                                    {content.anchor ? (
                                       <div className="mt-4 p-3 bg-primary/5 rounded-md">
                                         <div className="flex items-center justify-between">
                                           <p className="text-sm italic text-muted-foreground flex-grow mr-2">
@@ -367,11 +363,26 @@ export default function ContentArea({
                                             }
                                             className="flex-shrink-0"
                                           >
-                                            <Sparkles className="h-3 w-3 mr-2" />
-                                            Refresh Memory
+                                            <RefreshCw className="size-3" />
                                           </Button>
                                         </div>
                                       </div>
+                                    ) : (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="inline-flex justify-between gap-2"
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          handleMemory(
+                                            content.id,
+                                            content.content
+                                          )
+                                        }}
+                                      >
+                                        Help me remember
+                                        <Sparkles className="size-3" />
+                                      </Button>
                                     )}
                                   </>
                                 )}

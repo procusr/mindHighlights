@@ -40,7 +40,6 @@ const FolderList: React.FC<FolderListProps> = ({
             }}
             onMouseEnter={() => setHoveredFolder(folder.id)}
             onMouseLeave={() => setHoveredFolder(null)}
-            tabIndex={0}
           >
             <div className="flex items-center py-2 px-3 overflow-hidden">
               <span className="truncate flex-grow" title={folder.name}>
