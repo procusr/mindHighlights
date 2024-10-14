@@ -26,6 +26,12 @@ import { useEffect, useState } from "react"
 import { useMediaQuery } from "react-responsive"
 import ConfirmDialog from "../../components/ConfirmDialog"
 import EditFolderDialog from "../../components/EditFolderDialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 import {
   deleteContent,
@@ -67,6 +73,7 @@ export default function ContentArea({
   const [generatingMemoryId, setGeneratingMemoryId] = useState<string | null>(
     null
   )
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   const isMobile = useMediaQuery({ maxWidth: 767 })
 
@@ -85,6 +92,7 @@ export default function ContentArea({
 
   const handleEditContent = (content: Content) => {
     setEditingContent(content)
+    setIsEditDialogOpen(true)
   }
 
   const handleDeleteFolder = async () => {
@@ -136,6 +144,7 @@ export default function ContentArea({
           )
         )
         setEditingContent(null)
+        setIsEditDialogOpen(false)
       } catch (error) {
         console.error("Error updating content:", error)
       }
@@ -295,83 +304,20 @@ export default function ContentArea({
                               transition={{ duration: 0.3 }}
                             >
                               <CardContent className="p-4 bg-gradient-to-b from-transparent to-secondary/10">
-                                {editingContent?.id === content.id ? (
-                                  <>
-                                    <Input
-                                      value={editingContent.title}
-                                      onChange={(e) =>
-                                        setEditingContent({
-                                          ...editingContent,
-                                          title: e.target.value,
-                                        })
-                                      }
-                                      placeholder="Enter title"
-                                      className="input mb-2"
-                                    />
-                                    <Textarea
-                                      value={editingContent.content}
-                                      onChange={(e) =>
-                                        setEditingContent({
-                                          ...editingContent,
-                                          content: e.target.value,
-                                        })
-                                      }
-                                      placeholder="Enter content"
-                                      className="min-h-[100px] mb-2"
-                                    />
-                                    <div className="flex justify-end space-x-2">
+                                <p className="text-base leading-relaxed text-foreground whitespace-pre-wrap mb-4">
+                                  <span className="bg-highlight">
+                                    {content.content}
+                                  </span>
+                                </p>
+                                {content.anchor ? (
+                                  <div className="mt-4 p-3 bg-primary/5 rounded-md">
+                                    <div className="flex items-center justify-between">
+                                      <p className="text-sm italic text-muted-foreground flex-grow mr-2">
+                                        {content.anchor}
+                                      </p>
                                       <Button
-                                        onClick={() => setEditingContent(null)}
                                         variant="outline"
                                         size="sm"
-                                      >
-                                        Cancel
-                                      </Button>
-                                      <Button
-                                        onClick={handleSaveEdit}
-                                        size="sm"
-                                      >
-                                        Save
-                                      </Button>
-                                    </div>
-                                  </>
-                                ) : (
-                                  <>
-                                    <p className="text-base leading-relaxed text-foreground whitespace-pre-wrap mb-4">
-                                      <span className="bg-highlight">
-                                        {content.content}
-                                      </span>
-                                    </p>
-                                    {content.anchor ? (
-                                      <div className="mt-4 p-3 bg-primary/5 rounded-md">
-                                        <div className="flex items-center justify-between">
-                                          <p className="text-sm italic text-muted-foreground flex-grow mr-2">
-                                            {content.anchor}
-                                          </p>
-                                          <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={(e) => {
-                                              e.stopPropagation()
-                                              handleMemory(
-                                                content.id,
-                                                content.content
-                                              )
-                                            }}
-                                            disabled={
-                                              generatingMemoryId === content.id
-                                            }
-                                            className="flex-shrink-0"
-                                          >
-                                            <RefreshCw className="size-3" />
-                                          </Button>
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="inline-flex justify-between gap-2"
                                         onClick={(e) => {
                                           e.stopPropagation()
                                           handleMemory(
@@ -379,12 +325,28 @@ export default function ContentArea({
                                             content.content
                                           )
                                         }}
+                                        disabled={
+                                          generatingMemoryId === content.id
+                                        }
+                                        className="flex-shrink-0"
                                       >
-                                        Help me remember
-                                        <Sparkles className="size-3" />
+                                        <RefreshCw className="size-3" />
                                       </Button>
-                                    )}
-                                  </>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="inline-flex justify-between gap-2"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleMemory(content.id, content.content)
+                                    }}
+                                  >
+                                    Help me remember
+                                    <Sparkles className="size-3" />
+                                  </Button>
                                 )}
                               </CardContent>
                             </motion.div>
@@ -438,6 +400,48 @@ export default function ContentArea({
         setNewFolderName={setNewFolderName}
         onSave={handleEditFolder}
       />
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Content</DialogTitle>
+          </DialogHeader>
+          {editingContent && (
+            <>
+              <Input
+                value={editingContent.title}
+                onChange={(e) =>
+                  setEditingContent({
+                    ...editingContent,
+                    title: e.target.value,
+                  })
+                }
+                placeholder="Enter title"
+                className="mb-2"
+              />
+              <Textarea
+                value={editingContent.content}
+                onChange={(e) =>
+                  setEditingContent({
+                    ...editingContent,
+                    content: e.target.value,
+                  })
+                }
+                placeholder="Enter content"
+                className="min-h-[100px] mb-2"
+              />
+              <div className="flex justify-end space-x-2">
+                <Button
+                  onClick={() => setIsEditDialogOpen(false)}
+                  variant="outline"
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleSaveEdit}>Save</Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
