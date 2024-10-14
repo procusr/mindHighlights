@@ -42,7 +42,7 @@ export default async function HeaderAuth() {
           </Menubar>
           <Menubar className="border-none">
             <MenubarMenu>
-              <MenubarTrigger className="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-white text-sm sm:text-base ">
+              <MenubarTrigger className="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-white text-sm sm:text-base sm:mr-4">
                 {user.email?.charAt(0).toUpperCase()}
               </MenubarTrigger>
               <MenubarContent className="bg-white w-48 max-w-full">

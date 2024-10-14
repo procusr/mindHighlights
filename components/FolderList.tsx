@@ -1,5 +1,6 @@
+import { useState } from "react"
 import type { Folder } from "@/types/types"
-import { FolderIcon } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 
 interface FolderListProps {
   folders: Folder[]
@@ -12,29 +13,49 @@ const FolderList: React.FC<FolderListProps> = ({
   selectedFolder,
   onFolderSelect,
 }) => {
+  const [hoveredFolder, setHoveredFolder] = useState<string | null>(null)
+
   return (
-    <ul className="space-y-2">
-      {folders.map((folder) => (
-        <li
-          key={folder.id}
-          className={`cursor-pointer p-2 rounded-md transition-colors duration-200 ${
-            selectedFolder?.id === folder.id
-              ? "bg-primary text-primary-foreground font-semibold"
-              : "hover:bg-accent"
-          }`}
-          onClick={() => onFolderSelect(folder)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              onFolderSelect(folder)
-            }
-          }}
-        >
-          <div className="flex items-center space-x-2">
-            <FolderIcon className="h-5 w-5" />
-            <span>{folder.name}</span>
-          </div>
-        </li>
-      ))}
+    <ul className="space-y-1">
+      {folders.map((folder) => {
+        const isSelected = selectedFolder?.id === folder.id
+        const isHovered = hoveredFolder === folder.id
+
+        return (
+          <li
+            key={folder.id}
+            className={`
+              relative cursor-pointer transition-all duration-200
+              ${
+                isSelected
+                  ? "bg-primary/10 text-primary font-medium"
+                  : "hover:bg-accent/50"
+              }
+            `}
+            onClick={() => onFolderSelect(folder)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onFolderSelect(folder)
+              }
+            }}
+            onMouseEnter={() => setHoveredFolder(folder.id)}
+            onMouseLeave={() => setHoveredFolder(null)}
+            tabIndex={0}
+          >
+            <div className="flex items-center py-2 px-3 overflow-hidden">
+              <span className="truncate flex-grow" title={folder.name}>
+                {folder.name}
+              </span>
+              {(isSelected || isHovered) && (
+                <ChevronRight className="h-4 w-4 flex-shrink-0 ml-2 text-primary/70" />
+              )}
+            </div>
+            {isSelected && (
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary" />
+            )}
+          </li>
+        )
+      })}
     </ul>
   )
 }

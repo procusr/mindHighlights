@@ -15,6 +15,7 @@ import {
   MoreVertical,
   Edit,
   Delete,
+  ChevronRight,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -37,6 +38,10 @@ import {
   updateContentAnchor,
 } from "../actions/contentActions"
 import AddNewFolder from "./AddNewFolder"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "../../components/ui/separator"
+import { motion, AnimatePresence } from "framer-motion"
+import { Sparkles } from "lucide-react"
 
 export default function ContentArea({
   selectedFolder,
@@ -173,17 +178,45 @@ export default function ContentArea({
   }
 
   return (
-    <div className="flex-1 overflow-hidden bg-background">
-      <div className="h-full overflow-y-auto">
+    <div className="flex-1 overflow-hidden">
+      <div className="h-full overflow-y-auto max-w-3xl">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           {selectedFolder ? (
             <>
-              <div className="sticky top-0 bg-background z-10 pb-4">
-                <div className="flex items-center justify-between gap-2 mb-2 sm:mb-4">
-                  <div className="flex items-center gap-2 flex-grow">
-                    <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[60%]">
+              <div className="sticky top-0  z-10 pb-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 sm:mb-4">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
                       {selectedFolder.name}
                     </h2>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground hover:text-primary hover:bg-accent p-1"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setNewFolderName(selectedFolder.name)
+                            setEditFolderDialogOpen(true)
+                          }}
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Edit Folder
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setIsDeleteFolderDialogOpen(true)}
+                        >
+                          <Trash className="h-4 w-4 mr-2" />
+                          Delete Folder
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                   <AddNewContent
                     selectedFolder={selectedFolder}
@@ -194,7 +227,7 @@ export default function ContentArea({
                     <Button
                       variant="default"
                       size="sm"
-                      className="hover:bg-primary/90"
+                      className="hover:bg-primary/90 w-full sm:w-auto"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Add Highlight
@@ -205,131 +238,149 @@ export default function ContentArea({
               <div className="space-y-4 sm:space-y-6">
                 {contentList?.length > 0 ? (
                   contentList.map((content) => (
-                    <Card
+                    <motion.div
                       key={content.id}
-                      className="overflow-hidden transition-all duration-200 hover:shadow-md"
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      <CardHeader
-                        className="cursor-pointer p-4 flex flex-col bg-secondary/50 relative"
+                      <Card
+                        className="overflow-hidden transition-all duration-300 hover:shadow-lg group cursor-pointer"
                         onClick={() => handleToggleContent(content.id)}
                       >
-                        <div className="flex justify-between items-center w-full mb-2">
-                          <CardTitle className="text-sm font-medium break-words pr-8">
-                            {content.title}
-                          </CardTitle>
-                          <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-muted-foreground hover:text-primary p-1"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <MoreVertical className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent>
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleEditContent(content)
-                                  }}
-                                >
-                                  <Edit className="h-4 w-4 mr-2" />
-                                  Edit
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setDeletingContentId(content.id)
-                                    setIsContentDeleteDialogOpen(true)
-                                  }}
-                                >
-                                  <Delete className="h-4 w-4 mr-2" />
-                                  Delete
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        </div>
-                        <div className="w-full flex justify-center mt-1">
-                          {expandedContentId === content.id ? (
-                            <ChevronUp className="h-5 w-5 text-primary" />
-                          ) : (
-                            <ChevronDown className="h-5 w-5 text-primary" />
-                          )}
-                        </div>
-                      </CardHeader>
-                      {expandedContentId === content.id && (
-                        <CardContent className="p-4">
-                          {editingContent?.id === content.id ? (
-                            <>
-                              <Input
-                                value={editingContent.title}
-                                onChange={(e) =>
-                                  setEditingContent({
-                                    ...editingContent,
-                                    title: e.target.value,
-                                  })
-                                }
-                                placeholder="Enter title"
-                                className="input mb-2"
-                              />
-                              <Textarea
-                                value={editingContent.content}
-                                onChange={(e) =>
-                                  setEditingContent({
-                                    ...editingContent,
-                                    content: e.target.value,
-                                  })
-                                }
-                                placeholder="Enter content"
-                                className="min-h-[100px] mb-2"
-                              />
-                              <div className="flex justify-end space-x-2">
-                                <Button
-                                  onClick={() => setEditingContent(null)}
-                                  variant="outline"
-                                  size="sm"
-                                >
-                                  Cancel
-                                </Button>
-                                <Button onClick={handleSaveEdit} size="sm">
-                                  Save
-                                </Button>
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <p className="text-base leading-relaxed text-foreground whitespace-pre-wrap mb-4 prose">
-                                <span className="bg-highlight">
-                                  {content.content}
-                                </span>
-                              </p>
-                              {content.anchor && (
-                                <div className="mt-2 mb-4 flex items-center">
-                                  <p className="text-sm italic text-muted-foreground flex-grow">
-                                    {content.anchor}
-                                  </p>
+                        <CardHeader className="p-4 bg-gradient-to-r from-secondary/30 to-primary/10 relative">
+                          <div className="flex justify-between items-center w-full">
+                            <CardTitle className="text-sm font-medium break-words mr-2 flex-grow">
+                              {content.title}
+                            </CardTitle>
+                            <div className="flex items-center">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    onClick={() =>
-                                      handleMemory(content.id, content.content)
-                                    }
-                                    disabled={generatingMemoryId === content.id}
-                                    className="ml-2 p-1 hover:text-primary"
+                                    className="text-primary p-1"
+                                    onClick={(e) => e.stopPropagation()}
                                   >
-                                    <RefreshCw className="h-3 w-3" />
+                                    <MoreVertical className="h-4 w-4" />
                                   </Button>
-                                </div>
-                              )}
-                            </>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                  <DropdownMenuItem
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleEditContent(content)
+                                    }}
+                                  >
+                                    <Edit className="h-4 w-4 mr-2" /> Edit
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      setDeletingContentId(content.id)
+                                      setIsContentDeleteDialogOpen(true)
+                                    }}
+                                  >
+                                    <Delete className="h-4 w-4 mr-2" /> Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <AnimatePresence>
+                          {expandedContentId === content.id && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <CardContent className="p-4 bg-gradient-to-b from-transparent to-secondary/10">
+                                {editingContent?.id === content.id ? (
+                                  <>
+                                    <Input
+                                      value={editingContent.title}
+                                      onChange={(e) =>
+                                        setEditingContent({
+                                          ...editingContent,
+                                          title: e.target.value,
+                                        })
+                                      }
+                                      placeholder="Enter title"
+                                      className="input mb-2"
+                                    />
+                                    <Textarea
+                                      value={editingContent.content}
+                                      onChange={(e) =>
+                                        setEditingContent({
+                                          ...editingContent,
+                                          content: e.target.value,
+                                        })
+                                      }
+                                      placeholder="Enter content"
+                                      className="min-h-[100px] mb-2"
+                                    />
+                                    <div className="flex justify-end space-x-2">
+                                      <Button
+                                        onClick={() => setEditingContent(null)}
+                                        variant="outline"
+                                        size="sm"
+                                      >
+                                        Cancel
+                                      </Button>
+                                      <Button
+                                        onClick={handleSaveEdit}
+                                        size="sm"
+                                      >
+                                        Save
+                                      </Button>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <p className="text-base leading-relaxed text-foreground whitespace-pre-wrap mb-4">
+                                      <span className="bg-highlight">
+                                        {content.content}
+                                      </span>
+                                    </p>
+                                    {content.anchor && (
+                                      <div className="mt-4 p-3 bg-primary/5 rounded-md">
+                                        <div className="flex items-center justify-between">
+                                          <p className="text-sm italic text-muted-foreground flex-grow mr-2">
+                                            {content.anchor}
+                                          </p>
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={(e) => {
+                                              e.stopPropagation()
+                                              handleMemory(
+                                                content.id,
+                                                content.content
+                                              )
+                                            }}
+                                            disabled={
+                                              generatingMemoryId === content.id
+                                            }
+                                            className="flex-shrink-0"
+                                          >
+                                            <Sparkles className="h-3 w-3 mr-2" />
+                                            Refresh Memory
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </>
+                                )}
+                              </CardContent>
+                            </motion.div>
                           )}
-                        </CardContent>
-                      )}
-                    </Card>
+                        </AnimatePresence>
+                      </Card>
+                    </motion.div>
                   ))
                 ) : (
                   <p className="text-center text-muted-foreground">
