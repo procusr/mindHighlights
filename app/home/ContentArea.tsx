@@ -13,6 +13,8 @@ import {
   ChevronUp,
   RefreshCw,
   MoreVertical,
+  Edit,
+  Delete,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -182,34 +184,6 @@ export default function ContentArea({
                     <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[60%]">
                       {selectedFolder.name}
                     </h2>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-muted-foreground hover:text-primary hover:bg-accent p-1"
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setNewFolderName(selectedFolder.name)
-                            setEditFolderDialogOpen(true)
-                          }}
-                        >
-                          <Pencil className="h-4 w-4 mr-2" />
-                          Edit Folder
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => setIsDeleteFolderDialogOpen(true)}
-                        >
-                          <Trash className="h-4 w-4 mr-2" />
-                          Delete Folder
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </div>
                   <AddNewContent
                     selectedFolder={selectedFolder}
@@ -236,50 +210,54 @@ export default function ContentArea({
                       className="overflow-hidden transition-all duration-200 hover:shadow-md"
                     >
                       <CardHeader
-                        className="cursor-pointer p-4 flex flex-row items-center justify-between bg-secondary/50"
+                        className="cursor-pointer p-4 flex flex-col bg-secondary/50 relative"
                         onClick={() => handleToggleContent(content.id)}
                       >
-                        <CardTitle className="text-sm font-medium mr-2 break-words">
-                          {content.title}
-                        </CardTitle>
-                        <div className="flex items-center">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-muted-foreground hover:text-primary hover:bg-accent p-1"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              <DropdownMenuItem
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleEditContent(content)
-                                }}
-                              >
-                                <Pencil className="h-4 w-4 mr-2" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setDeletingContentId(content.id)
-                                  setIsContentDeleteDialogOpen(true)
-                                }}
-                              >
-                                <Trash className="h-4 w-4 mr-2" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                        <div className="flex justify-between items-center w-full mb-2">
+                          <CardTitle className="text-sm font-medium break-words pr-8">
+                            {content.title}
+                          </CardTitle>
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-muted-foreground hover:text-primary p-1"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleEditContent(content)
+                                  }}
+                                >
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setDeletingContentId(content.id)
+                                    setIsContentDeleteDialogOpen(true)
+                                  }}
+                                >
+                                  <Delete className="h-4 w-4 mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </div>
+                        <div className="w-full flex justify-center mt-1">
                           {expandedContentId === content.id ? (
-                            <ChevronUp className="h-5 w-5 flex-shrink-0 text-primary ml-2" />
+                            <ChevronUp className="h-5 w-5 text-primary" />
                           ) : (
-                            <ChevronDown className="h-5 w-5 flex-shrink-0 text-primary ml-2" />
+                            <ChevronDown className="h-5 w-5 text-primary" />
                           )}
                         </div>
                       </CardHeader>
