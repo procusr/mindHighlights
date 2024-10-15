@@ -3,3 +3,5 @@
 # nextjs
 
 # Shadcn
+
+#pnpm
