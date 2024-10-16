@@ -1,51 +1,89 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
-import { useSidebar } from "../contexts/SidebarContext"
-import type { Folder } from "../../types/types"
+import { useState, useEffect, type Dispatch, type SetStateAction } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import type { Folder } from "@/types/types"
 import Sidebar from "./Sidebar"
 import ContentArea from "./ContentArea"
-import { useMediaQuery } from "react-responsive"
+import { SidebarProvider, useSidebar } from "../contexts/SidebarContext"
 
 export default function UserContent({
   userId,
   initialFolders,
+  selectedFolderId,
 }: {
   userId: string
   initialFolders: Folder[]
+  selectedFolderId?: string
 }) {
-  const [folders, setFolders] = useState<Folder[]>(initialFolders)
-  const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null)
-  const { menuOpen, closeMenu } = useSidebar()
-  const isMobile = useMediaQuery({ maxWidth: 767 })
+  const [folders, setFolders] = useState(initialFolders)
+  const [selectedFolder, setSelectedFolder] = useState<Folder | null>(
+    initialFolders.find((f) => f.id === selectedFolderId) || null
+  )
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
-    if (!isMobile && !selectedFolder && folders.length > 0) {
-      setSelectedFolder(folders[0])
+    const folderId = searchParams.get("folderId")
+    if (folderId) {
+      const folder = folders.find((f) => f.id === folderId)
+      setSelectedFolder(folder || null)
+    } else {
+      setSelectedFolder(null)
     }
-  }, [isMobile, selectedFolder, folders])
+  }, [searchParams, folders])
 
-  const handleFolderSelect = (folder: Folder) => {
+  const handleFolderSelect = (folder: Folder | null) => {
     setSelectedFolder(folder)
-    if (isMobile) {
-      closeMenu()
+    if (folder) {
+      router.push(`/home?folderId=${folder.id}`)
+    } else {
+      router.push("/home")
     }
   }
 
   return (
-    <div className="flex h-[calc(100vh-64px)] bg-gray-50">
-      <Sidebar
+    <SidebarProvider>
+      <UserContentInner
+        userId={userId}
         folders={folders}
         setFolders={setFolders}
         selectedFolder={selectedFolder}
-        setSelectedFolder={handleFolderSelect}
+        setSelectedFolder={setSelectedFolder}
+      />
+    </SidebarProvider>
+  )
+}
+
+function UserContentInner({
+  userId,
+  folders,
+  setFolders,
+  selectedFolder,
+  setSelectedFolder,
+}: {
+  userId: string
+  folders: Folder[]
+  setFolders: Dispatch<SetStateAction<Folder[]>>
+  selectedFolder: Folder | null
+  setSelectedFolder: Dispatch<SetStateAction<Folder | null>>
+}) {
+  const { menuOpen } = useSidebar()
+
+  return (
+    <div className="flex h-[calc(100vh-64px)] bg-gray-50">
+      <Sidebar
         userId={userId}
+        folders={folders}
+        selectedFolder={selectedFolder}
+        setSelectedFolder={setSelectedFolder}
+        setFolders={setFolders}
         menuOpen={menuOpen}
       />
       <div className="flex-1 overflow-y-auto">
         <ContentArea
-          selectedFolder={selectedFolder}
           userId={userId}
+          selectedFolder={selectedFolder}
           setFolders={setFolders}
           setSelectedFolder={setSelectedFolder}
         />

@@ -44,18 +44,21 @@ import {
 } from "../actions/contentActions"
 import AddNewContent from "./AddNewContent"
 import AddNewFolder from "./AddNewFolder"
+import { Dispatch, SetStateAction } from "react"
+
+interface ContentAreaProps {
+  selectedFolder: Folder | null
+  userId: string
+  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>
+  setSelectedFolder: Dispatch<SetStateAction<Folder | null>>
+}
 
 export default function ContentArea({
   selectedFolder,
   userId,
   setFolders,
   setSelectedFolder,
-}: {
-  selectedFolder: Folder | null
-  userId: string
-  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>
-  setSelectedFolder: React.Dispatch<React.SetStateAction<Folder | null>>
-}) {
+}: ContentAreaProps) {
   const [contentList, setContentList] = useState<Content[]>([])
   const [isDeleteContentDialogOpen, setIsContentDeleteDialogOpen] =
     useState(false)

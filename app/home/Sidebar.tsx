@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, Dispatch, SetStateAction } from "react"
 import { Input } from "@/components/ui/input"
 import type { Folder } from "../../types/types"
 import AddNewFolder from "./AddNewFolder"
@@ -12,7 +12,7 @@ interface SidebarProps {
   folders: Folder[]
   setFolders: React.Dispatch<React.SetStateAction<Folder[]>>
   selectedFolder: Folder | null
-  setSelectedFolder: (folder: Folder) => void
+  setSelectedFolder: React.Dispatch<React.SetStateAction<Folder | null>>
   userId: string
   menuOpen: boolean
 }
@@ -26,7 +26,6 @@ export default function Sidebar({
   menuOpen,
 }: SidebarProps) {
   const [searchTerm, setSearchTerm] = useState("")
-  const [isSearchFocused, setIsSearchFocused] = useState(false)
   const { closeMenu } = useSidebar()
 
   const filteredFolders = folders.filter((folder) =>
@@ -97,8 +96,11 @@ export default function Sidebar({
         <div className="px-4 py-6">
           <FolderList
             folders={filteredFolders}
-            selectedFolder={selectedFolder}
-            onFolderSelect={setSelectedFolder}
+            selectedFolderId={selectedFolder?.id}
+            onFolderSelect={(folderId) => {
+              const folder = folders.find((f) => f.id === folderId)
+              setSelectedFolder(folder || null)
+            }}
           />
         </div>
       </ScrollArea>
