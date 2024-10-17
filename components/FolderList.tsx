@@ -40,7 +40,6 @@ export default function FolderList({
               }
             }}
             tabIndex={0}
-            role="button"
             aria-selected={isSelected}
           >
             <div className="flex items-center py-2 px-3">

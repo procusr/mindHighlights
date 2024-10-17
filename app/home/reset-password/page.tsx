@@ -5,11 +5,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import AuthWrapper from "@/components/AuthWrapper"
 
-export default async function ResetPassword({
-  searchParams,
-}: {
-  searchParams: Message
-}) {
+export default async function ResetPassword(
+  props: {
+    searchParams: Promise<Message>
+  }
+) {
+  const searchParams = await props.searchParams;
   return (
     <AuthWrapper>
       <h1 className="text-2xl font-medium">Reset password</h1>

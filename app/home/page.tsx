@@ -13,11 +13,12 @@ async function fetchInitialData(userId: string): Promise<Folder[]> {
   return folders || []
 }
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: { folderId?: string }
-}) {
+export default async function HomePage(
+  props: {
+    searchParams: Promise<{ folderId?: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
   const supabase = createClient()
 
   const {

@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import AuthWrapper from "../../../components/AuthWrapper"
 
-export default function Signup({ searchParams }: { searchParams: Message }) {
+export default async function Signup(props: { searchParams: Promise<Message> }) {
+  const searchParams = await props.searchParams;
   return (
     <AuthWrapper>
       <form action="#" method="POST" className="space-y-5">

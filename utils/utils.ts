@@ -17,5 +17,5 @@ export function encodedRedirect(
 }
 
 export function stripMarkdown(text: string) {
-  return text.replace(/[#*_~`>]+/g, "")
+  return text.replace(/[#*_~`>]+/g, "");
 }

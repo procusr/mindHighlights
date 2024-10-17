@@ -9,7 +9,8 @@ import { cn } from "../../../utils/cn"
 import { CheckIcon } from "lucide-react"
 import AuthWrapper from "@/components/AuthWrapper"
 
-export default function Login({ searchParams }: { searchParams: Message }) {
+export default async function Login(props: { searchParams: Promise<Message> }) {
+  const searchParams = await props.searchParams;
   return (
     <AuthWrapper>
       <form action="#" method="POST" className="space-y-5">
