@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, type Dispatch, type SetStateAction } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import type { Folder } from "@/types/types"
 import Sidebar from "./Sidebar"
 import ContentArea from "./ContentArea"
@@ -20,7 +20,6 @@ export default function UserContent({
   const [selectedFolder, setSelectedFolder] = useState<Folder | null>(
     initialFolders.find((f) => f.id === selectedFolderId) || null
   )
-  const router = useRouter()
   const searchParams = useSearchParams()
 
   useEffect(() => {
@@ -32,15 +31,6 @@ export default function UserContent({
       setSelectedFolder(null)
     }
   }, [searchParams, folders])
-
-  const handleFolderSelect = (folder: Folder | null) => {
-    setSelectedFolder(folder)
-    if (folder) {
-      router.push(`/home?folderId=${folder.id}`)
-    } else {
-      router.push("/home")
-    }
-  }
 
   return (
     <SidebarProvider>
@@ -72,14 +62,6 @@ function UserContentInner({
 
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-50">
-      <Sidebar
-        userId={userId}
-        folders={folders}
-        selectedFolder={selectedFolder}
-        setSelectedFolder={setSelectedFolder}
-        setFolders={setFolders}
-        menuOpen={menuOpen}
-      />
       <div className="flex-1 overflow-y-auto">
         <ContentArea
           userId={userId}

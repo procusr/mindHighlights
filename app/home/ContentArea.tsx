@@ -22,8 +22,7 @@ import {
   Trash,
 } from "lucide-react"
 import { Sparkles } from "lucide-react"
-import { useEffect, useState } from "react"
-import { useMediaQuery } from "react-responsive"
+import { use, useState } from "react"
 import ConfirmDialog from "../../components/ConfirmDialog"
 import EditFolderDialog from "../../components/EditFolderDialog"
 import {
@@ -36,7 +35,6 @@ import {
 import {
   deleteContent,
   deleteFolder,
-  fetchContentForFolder,
   generateMemoryAnchor,
   updateContent,
   updateContentAnchor,
@@ -44,22 +42,25 @@ import {
 } from "../actions/contentActions"
 import AddNewContent from "./AddNewContent"
 import AddNewFolder from "./AddNewFolder"
-import { Dispatch, SetStateAction } from "react"
+import type { Dispatch, SetStateAction, Usable } from "react"
 
 interface ContentAreaProps {
-  selectedFolder: Folder | null
-  userId: string
+  selectedFolder: Folder
+  fetchContentList: Usable<Content[]>
   setFolders: React.Dispatch<React.SetStateAction<Folder[]>>
   setSelectedFolder: Dispatch<SetStateAction<Folder | null>>
+  folderId: string
 }
 
 export default function ContentArea({
-  selectedFolder,
-  userId,
+  fetchContentList,
+  folderId,
   setFolders,
   setSelectedFolder,
+  selectedFolder,
 }: ContentAreaProps) {
-  const [contentList, setContentList] = useState<Content[]>([])
+  const contentList = use(fetchContentList)
+
   const [isDeleteContentDialogOpen, setIsContentDeleteDialogOpen] =
     useState(false)
   const [isDeleteFolderDialogOpen, setIsDeleteFolderDialogOpen] =
@@ -78,16 +79,6 @@ export default function ContentArea({
   )
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
-  const isMobile = useMediaQuery({ maxWidth: 767 })
-
-  useEffect(() => {
-    if (selectedFolder) {
-      fetchContentForFolder(selectedFolder.id, userId)
-        .then(setContentList)
-        .catch(console.error)
-    }
-  }, [selectedFolder, userId])
-
   const handleToggleContent = (contentId: string) => {
     setExpandedContentId(expandedContentId === contentId ? null : contentId)
     setEditingContent(null)
@@ -99,11 +90,11 @@ export default function ContentArea({
   }
 
   const handleDeleteFolder = async () => {
-    if (selectedFolder) {
+    if (folderId) {
       try {
-        await deleteFolder(selectedFolder.id)
+        await deleteFolder(folderId)
         setFolders((prevFolders) =>
-          prevFolders.filter((folder) => folder.id !== selectedFolder.id)
+          prevFolders.filter((folder) => folder.id !== folderId)
         )
         setSelectedFolder(null)
         setIsDeleteFolderDialogOpen(false)
@@ -114,15 +105,12 @@ export default function ContentArea({
   }
 
   const handleEditFolder = async () => {
-    if (selectedFolder && newFolderName.trim() !== "") {
+    if (folderId && newFolderName.trim() !== "") {
       try {
-        const updatedFolder = await updateFolder(
-          selectedFolder.id,
-          newFolderName
-        )
+        const updatedFolder = await updateFolder(folderId, newFolderName)
         setFolders((prevFolders) =>
           prevFolders.map((folder) =>
-            folder.id === selectedFolder.id ? updatedFolder : folder
+            folder.id === folderId ? updatedFolder : folder
           )
         )
         setSelectedFolder(updatedFolder)
@@ -141,11 +129,7 @@ export default function ContentArea({
           editingContent.title,
           editingContent.content
         )
-        setContentList(
-          contentList.map((c) =>
-            c.id === updatedContent.id ? updatedContent : c
-          )
-        )
+
         setEditingContent(null)
         setIsEditDialogOpen(false)
       } catch (error) {
@@ -158,7 +142,6 @@ export default function ContentArea({
     if (deletingContentId) {
       try {
         await deleteContent(deletingContentId)
-        setContentList(contentList.filter((c) => c.id !== deletingContentId))
         setIsContentDeleteDialogOpen(false)
         setDeletingContentId(null)
         setExpandedContentId(null)
@@ -174,10 +157,7 @@ export default function ContentArea({
 
     try {
       const anchor = await generateMemoryAnchor(content)
-      const updatedContent = await updateContentAnchor(id, anchor)
-      setContentList((prevList) =>
-        prevList.map((item) => (item.id === id ? updatedContent : item))
-      )
+      await updateContentAnchor(id, anchor)
     } catch (error) {
       console.error("Error generating or saving memory anchor:", error)
     } finally {
@@ -189,13 +169,13 @@ export default function ContentArea({
     <div className="flex-1 overflow-hidden">
       <div className="h-full overflow-y-auto max-w-3xl">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-          {selectedFolder ? (
+          {folderId ? (
             <>
               <div className="sticky top-0  z-10 pb-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 sm:mb-4">
                   <div className="flex items-center gap-2 w-full sm:w-auto">
                     <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
-                      {selectedFolder.name}
+                      {selectedFolder?.name}
                     </h2>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -226,12 +206,7 @@ export default function ContentArea({
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-                  <AddNewContent
-                    selectedFolder={selectedFolder}
-                    userId={userId}
-                    setContentList={setContentList}
-                    contentList={contentList}
-                  >
+                  <AddNewContent folderId={folderId}>
                     <Button
                       variant="default"
                       size="sm"
@@ -370,7 +345,7 @@ export default function ContentArea({
               <p className="text-center text-muted-foreground mb-4 px-4">
                 Select a folder to view your highlights or create a new one
               </p>
-              <AddNewFolder userId={userId} setFolders={setFolders}>
+              <AddNewFolder setFolders={setFolders}>
                 <Button variant="outline" onClick={() => {}}>
                   <Plus className="h-4 w-4 mr-2" />
                   Create New Folder
@@ -394,7 +369,6 @@ export default function ContentArea({
         title="Confirm Folder Deletion"
         description="Are you sure you want to delete this folder? This action cannot be undone and will delete all content within the folder."
         onConfirm={handleDeleteFolder}
-        isMobile={isMobile}
       />
       <EditFolderDialog
         open={isEditFolderDialogOpen}

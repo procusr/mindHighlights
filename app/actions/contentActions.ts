@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/server"
 import OpenAI from "openai"
 import type { Content, Folder } from "@/types/types"
+import { revalidatePath } from "next/cache"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -10,14 +11,21 @@ const openai = new OpenAI({
   project: process.env.OPENAI_PROJECT_ID,
 })
 
-export async function fetchContentForFolder(folderId: string, userId: string) {
+export async function fetchContentForFolder(folderId: string) {
   const supabase = createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return
+  }
 
   const { data, error } = await supabase
     .from("user_content")
     .select("*")
     .eq("folder_id", folderId)
-    .eq("user_id", userId)
+    .eq("user_id", user?.id)
 
   if (error) throw new Error(error.message)
   return data as Content[]
@@ -26,10 +34,13 @@ export async function fetchContentForFolder(folderId: string, userId: string) {
 export async function addNewContent(
   content: string,
   folderId: string,
-  userId: string,
   title?: string
 ) {
   const supabase = createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   let generatedTitle = title
 
@@ -53,12 +64,14 @@ export async function addNewContent(
   const { data, error } = await supabase
     .from("user_content")
     .insert({
-      user_id: userId,
+      user_id: user?.id,
       folder_id: folderId,
       title: generatedTitle,
       content,
     })
     .select()
+
+  revalidatePath("/home/folderId")
 
   if (error) throw new Error(error.message)
   return data[0] as Content
@@ -76,6 +89,7 @@ export async function updateContent(
     .update({ title, content })
     .eq("id", contentId)
     .select()
+  revalidatePath("/home/folderId")
 
   if (error) throw new Error(error.message)
   return data[0] as Content
@@ -92,12 +106,20 @@ export async function deleteContent(contentId: string) {
   if (error) throw new Error(error.message)
 }
 
-export async function addNewFolder(name: string, userId: string) {
+export async function createNewFolder(name: string) {
+  if (!name.trim()) return
   const supabase = createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return
+  }
 
   const { data, error } = await supabase
     .from("user_folders")
-    .insert({ name, user_id: userId })
+    .insert({ name, user_id: user?.id })
     .select()
 
   if (error) throw new Error(error.message)
@@ -124,6 +146,8 @@ export async function deleteFolder(folderId: string) {
     .from("user_folders")
     .delete()
     .eq("id", folderId)
+
+  revalidatePath("/home/folderId")
 
   if (error) throw new Error(error.message)
 }
@@ -155,19 +179,4 @@ export async function updateContentAnchor(contentId: string, anchor: string) {
 
   if (error) throw new Error(error.message)
   return data[0] as Content
-}
-
-export async function createFolder(
-  userId: string,
-  folderName: string
-): Promise<Folder> {
-  const supabase = createClient()
-
-  const { data, error } = await supabase
-    .from("user_folders")
-    .insert({ name: folderName, user_id: userId })
-    .select()
-
-  if (error) throw new Error(error.message)
-  return data[0] as Folder
 }

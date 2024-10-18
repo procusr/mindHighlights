@@ -1,4 +1,6 @@
-import { useState, useEffect, Dispatch, SetStateAction } from "react"
+"use client"
+
+import { useState, useEffect, type Usable, use } from "react"
 import { Input } from "@/components/ui/input"
 import type { Folder } from "../../types/types"
 import AddNewFolder from "./AddNewFolder"
@@ -9,24 +11,15 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useSidebar } from "../contexts/SidebarContext"
 
 interface SidebarProps {
-  folders: Folder[]
-  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>
-  selectedFolder: Folder | null
-  setSelectedFolder: React.Dispatch<React.SetStateAction<Folder | null>>
-  userId: string
-  menuOpen: boolean
+  folderList: Folder[]
+  folderId: string
 }
 
-export default function Sidebar({
-  folders,
-  setFolders,
-  selectedFolder,
-  setSelectedFolder,
-  userId,
-  menuOpen,
-}: SidebarProps) {
+export default function Sidebar({ folderList, folderId }: SidebarProps) {
   const [searchTerm, setSearchTerm] = useState("")
-  const { closeMenu } = useSidebar()
+  const { closeMenu, menuOpen } = useSidebar()
+
+  const [folders, setFolders] = useState<Folder[]>(folderList)
 
   const filteredFolders = folders.filter((folder) =>
     folder.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -94,18 +87,11 @@ export default function Sidebar({
       </div>
       <ScrollArea className="flex-grow">
         <div className="px-4 py-6">
-          <FolderList
-            folders={filteredFolders}
-            selectedFolderId={selectedFolder?.id}
-            onFolderSelect={(folderId) => {
-              const folder = folders.find((f) => f.id === folderId)
-              setSelectedFolder(folder || null)
-            }}
-          />
+          <FolderList folders={filteredFolders} folderId={folderId} />
         </div>
       </ScrollArea>
       <div className="sticky bottom-0 bg-background/80 backdrop-blur-sm p-4 border-t border-border">
-        <AddNewFolder userId={userId} setFolders={setFolders}>
+        <AddNewFolder setFolders={setFolders}>
           <Button
             variant="outline"
             size="sm"

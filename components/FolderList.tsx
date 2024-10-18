@@ -1,30 +1,25 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+
 import type { Folder } from "@/types/types"
 
 interface FolderListProps {
   folders: Folder[]
-  selectedFolderId?: string
-  onFolderSelect: (folderId: string) => void
+  folderId: string
 }
 
-export default function FolderList({
-  folders,
-  selectedFolderId,
-  onFolderSelect,
-}: FolderListProps) {
+export default function FolderList({ folders, folderId }: FolderListProps) {
   const router = useRouter()
 
   const handleFolderClick = (folderId: string) => {
-    onFolderSelect(folderId)
     router.push(`/home?folderId=${folderId}`)
   }
 
   return (
     <ul className="space-y-1">
       {folders.map((folder) => {
-        const isSelected = selectedFolderId === folder.id
+        const isSelected = folderId === folder.id
 
         return (
           <li
@@ -39,7 +34,6 @@ export default function FolderList({
                 handleFolderClick(folder.id)
               }
             }}
-            tabIndex={0}
             aria-selected={isSelected}
           >
             <div className="flex items-center py-2 px-3">

@@ -15,7 +15,6 @@ interface ConfirmDialogProps {
   title: string
   description: string
   onConfirm: () => void
-  isMobile?: boolean
 }
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
@@ -24,12 +23,9 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   title,
   description,
   onConfirm,
-  isMobile,
 }) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogContent
-      className={cn(isMobile ? "p-4" : "p-6", "rounded-2xl bg-card")}
-    >
+    <DialogContent className="p-4 rounded-2xl bg-card">
       <DialogHeader>
         <DialogTitle className="text-2xl font-bold text-primary">
           {title}
@@ -40,7 +36,8 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       </DialogDescription>
       <DialogFooter
         className={cn(
-          isMobile ? "flex-col space-y-2 gap-4" : "sm:justify-end sm:space-x-2"
+          "flex-col space-y-2 gap-4",
+          "sm:justify-end sm:space-x-2"
         )}
       >
         <Button

@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import type { ReactNode } from "react"
 import { Button } from "@/components/ui/button"
@@ -10,42 +12,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { createClient } from "../../utils/supabase/client"
 import type { Folder } from "../../types/types"
+import { createNewFolder } from "../actions/contentActions"
 
 interface AddNewFolderProps {
-  userId: string
   setFolders: React.Dispatch<React.SetStateAction<Folder[]>>
   children: ReactNode
 }
 
 const AddNewFolder: React.FC<AddNewFolderProps> = ({
-  userId,
   setFolders,
   children,
 }) => {
   const [newFolderName, setNewFolderName] = useState("")
   const [isOpen, setIsOpen] = useState(false)
-  const supabase = createClient()
-
-  async function createNewFolder() {
-    if (!newFolderName.trim()) return
-    const { data, error } = await supabase
-      .from("user_folders")
-      .insert({ user_id: userId, name: newFolderName })
-      .select()
-
-    if (data) {
-      setFolders((prevFolders) => [
-        ...prevFolders,
-        { id: data[0].id, name: data[0].name },
-      ])
-      setNewFolderName("")
-      setIsOpen(false)
-    } else if (error) {
-      console.error("Error creating folder:", error)
-    }
-  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -59,7 +39,19 @@ const AddNewFolder: React.FC<AddNewFolderProps> = ({
           placeholder="Folder name"
         />
         <DialogFooter>
-          <Button onClick={createNewFolder}>Create Folder</Button>
+          <Button
+            onClick={async () =>
+              createNewFolder(newFolderName).then((folder) => {
+                if (folder) {
+                  setFolders((prevFolders) => [...prevFolders, folder])
+                }
+                setIsOpen(false)
+                setNewFolderName("")
+              })
+            }
+          >
+            Create Folder
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

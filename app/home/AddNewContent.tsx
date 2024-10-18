@@ -1,8 +1,6 @@
 import { useState, type ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { createClient } from "../../utils/supabase/client"
-import type { Content } from "@/types/types"
 import {
   Dialog,
   DialogContent,
@@ -11,24 +9,19 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { stripMarkdown } from "../../utils/utils"
+
 import Markdown from "react-markdown"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "../../components/ui/label"
+import { addNewContent } from "../actions/contentActions"
 
 interface AddNewContentProps {
-  selectedFolder: { id: string; name: string }
-  userId: string
-  setContentList: React.Dispatch<React.SetStateAction<Content[]>>
-  contentList: Content[]
+  folderId: string
   children: ReactNode
 }
 
 const AddNewContent: React.FC<AddNewContentProps> = ({
-  selectedFolder,
-  userId,
-  setContentList,
-  contentList,
+  folderId,
   children,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -36,51 +29,6 @@ const AddNewContent: React.FC<AddNewContentProps> = ({
   const [showInput, setShowInput] = useState(true)
   const [title, setTitle] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const supabase = createClient()
-
-  async function handleSubmit() {
-    if (!content.trim()) return
-    setIsLoading(true)
-
-    try {
-      const response = await fetch("/ai/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content: `Given the statement ${content}, respond with a concise question that critically engages with the main idea.".`,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to generate title")
-      }
-
-      const { generatedResponse } = await response.json()
-
-      const { data, error } = await supabase
-        .from("user_content")
-        .insert({
-          user_id: userId,
-          folder_id: selectedFolder.id,
-          title: generatedResponse || stripMarkdown(content.slice(0, 170)), // Fallback to stripped content if title generation fails
-          content,
-          ...(title && { title }),
-        })
-        .select()
-
-      if (data) {
-        setContentList([...contentList, data[0] as Content])
-        setContent("")
-        setIsOpen(false)
-      } else if (error) {
-        console.error("Error adding content:", error)
-      }
-    } catch (error) {
-      console.error("Error generating title or saving content:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   return (
     <>
@@ -121,7 +69,17 @@ const AddNewContent: React.FC<AddNewContentProps> = ({
             <Button onClick={() => setIsOpen(false)} variant="outline">
               Cancel
             </Button>
-            <Button onClick={handleSubmit} disabled={isLoading}>
+            <Button
+              onClick={async () => {
+                setIsLoading(true)
+                await addNewContent(content, folderId, title)
+                setIsLoading(false)
+                setIsOpen(false)
+                setContent("")
+                setTitle("")
+              }}
+              disabled={isLoading}
+            >
               {isLoading ? "Adding..." : "Add Content"}
             </Button>
           </DialogFooter>

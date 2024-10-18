@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation"
-import UserContent from "./userContent"
 import { createClient } from "@/utils/supabase/server"
-import type { Folder } from "@/types/types"
+import type { Content, Folder } from "@/types/types"
+import Sidebar from "./Sidebar"
+import ContentArea from "./ContentArea"
 
 async function fetchInitialData(userId: string): Promise<Folder[]> {
   const supabase = createClient()
@@ -13,13 +14,28 @@ async function fetchInitialData(userId: string): Promise<Folder[]> {
   return folders || []
 }
 
-export default async function HomePage(
-  props: {
-    searchParams: Promise<{ folderId?: string }>
-  }
-) {
-  const searchParams = await props.searchParams;
+async function fetchContentForFolder(folderId: string): Promise<Content[]> {
   const supabase = createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  const { data, error } = await supabase
+    .from("user_content")
+    .select("*")
+    .eq("folder_id", folderId)
+    .eq("user_id", user?.id)
+
+  if (error) throw new Error(error.message)
+  return data as Content[]
+}
+
+export default async function HomePage(props: {
+  searchParams: Promise<{ folderId?: string }>
+}) {
+  const supabase = createClient()
+
+  const folderId = (await props.searchParams)?.folderId ?? ""
 
   const {
     data: { user },
@@ -34,16 +50,24 @@ export default async function HomePage(
     return redirect("/sign-in")
   }
 
-  const initialFolders = await fetchInitialData(user.id)
-  const selectedFolderId = searchParams.folderId
+  const initialFolders = (await fetchInitialData(user.id)) ?? []
+
+  const selectedFolder = initialFolders.find(
+    (folder: Folder) => folder.id === folderId
+  )
+
+  const contentList = fetchContentForFolder(folderId)
 
   return (
     <div className="flex-1 w-full flex flex-col gap-12">
-      <UserContent
-        userId={user.id}
-        initialFolders={initialFolders}
-        selectedFolderId={selectedFolderId}
-      />
+      <div className="flex h-[calc(100vh-64px)] bg-gray-50">
+        <Sidebar folderList={initialFolders} folderId={folderId} />
+        <ContentArea
+          folderId={folderId}
+          selectedFolder={selectedFolder}
+          fetchContentList={contentList}
+        />
+      </div>
     </div>
   )
 }
