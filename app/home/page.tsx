@@ -66,6 +66,8 @@ export default async function HomePage(props: {
           folderId={folderId}
           selectedFolder={selectedFolder}
           fetchContentList={contentList}
+          setFolders={() => {}}
+          setSelectedFolder={() => {}}
         />
       </div>
     </div>
