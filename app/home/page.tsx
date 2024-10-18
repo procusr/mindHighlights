@@ -52,9 +52,9 @@ export default async function HomePage(props: {
 
   const initialFolders = (await fetchInitialData(user.id)) ?? []
 
-  const selectedFolder = initialFolders.find(
-    (folder: Folder) => folder.id === folderId
-  )
+  const selectedFolder =
+    initialFolders.find((folder: Folder) => folder.id === folderId) ||
+    initialFolders[0]
 
   const contentList = fetchContentForFolder(folderId)
 

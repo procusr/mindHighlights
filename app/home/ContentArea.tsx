@@ -47,16 +47,12 @@ import type { Dispatch, SetStateAction, Usable } from "react"
 interface ContentAreaProps {
   selectedFolder: Folder
   fetchContentList: Usable<Content[]>
-  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>
-  setSelectedFolder: Dispatch<SetStateAction<Folder | null>>
   folderId: string
 }
 
 export default function ContentArea({
   fetchContentList,
   folderId,
-  setFolders,
-  setSelectedFolder,
   selectedFolder,
 }: ContentAreaProps) {
   const contentList = use(fetchContentList)
