@@ -91,7 +91,7 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
         </div>
       </ScrollArea>
       <div className="sticky bottom-0 bg-background/80 backdrop-blur-sm p-4 border-t border-border">
-        <AddNewFolder setFolders={setFolders}>
+        <AddNewFolder>
           <Button
             variant="outline"
             size="sm"
