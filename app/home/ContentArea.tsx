@@ -113,7 +113,8 @@ export default function ContentArea({
         await updateContent(
           editingContent.id,
           editingContent.title,
-          editingContent.content
+          editingContent.content,
+          folderId
         )
 
         setEditingContent(null)
@@ -127,7 +128,7 @@ export default function ContentArea({
   const handleDeleteContent = async () => {
     if (deletingContentId) {
       try {
-        await deleteContent(deletingContentId)
+        await deleteContent(deletingContentId, folderId)
         setIsContentDeleteDialogOpen(false)
         setDeletingContentId(null)
         setExpandedContentId(null)

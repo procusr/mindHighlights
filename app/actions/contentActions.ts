@@ -60,7 +60,8 @@ export async function addNewContent(
 export async function updateContent(
   contentId: string,
   title: string,
-  content: string
+  content: string,
+  folderId: string
 ) {
   const supabase = createClient()
 
@@ -75,7 +76,7 @@ export async function updateContent(
   return data[0] as Content
 }
 
-export async function deleteContent(contentId: string) {
+export async function deleteContent(contentId: string, folderId: string) {
   const supabase = createClient()
 
   const { error } = await supabase
