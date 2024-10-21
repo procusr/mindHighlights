@@ -22,7 +22,7 @@ import {
   Trash,
 } from "lucide-react"
 import { Sparkles } from "lucide-react"
-import { use, useState } from "react"
+import { type Usable, use, useState } from "react"
 import ConfirmDialog from "../../components/ConfirmDialog"
 import EditFolderDialog from "../../components/EditFolderDialog"
 import {
@@ -42,7 +42,6 @@ import {
 } from "../actions/contentActions"
 import AddNewContent from "./AddNewContent"
 import AddNewFolder from "./AddNewFolder"
-import type { Dispatch, SetStateAction, Usable } from "react"
 
 interface ContentAreaProps {
   selectedFolder: Folder
@@ -89,10 +88,6 @@ export default function ContentArea({
     if (folderId) {
       try {
         await deleteFolder(folderId)
-        setFolders((prevFolders) =>
-          prevFolders.filter((folder) => folder.id !== folderId)
-        )
-        setSelectedFolder(null)
         setIsDeleteFolderDialogOpen(false)
       } catch (error) {
         console.error("Error deleting folder:", error)
@@ -103,13 +98,8 @@ export default function ContentArea({
   const handleEditFolder = async () => {
     if (folderId && newFolderName.trim() !== "") {
       try {
-        const updatedFolder = await updateFolder(folderId, newFolderName)
-        setFolders((prevFolders) =>
-          prevFolders.map((folder) =>
-            folder.id === folderId ? updatedFolder : folder
-          )
-        )
-        setSelectedFolder(updatedFolder)
+        await updateFolder(folderId, newFolderName)
+
         setEditFolderDialogOpen(false)
       } catch (error) {
         console.error("Error updating folder:", error)
@@ -120,7 +110,7 @@ export default function ContentArea({
   const handleSaveEdit = async () => {
     if (editingContent) {
       try {
-        const updatedContent = await updateContent(
+        await updateContent(
           editingContent.id,
           editingContent.title,
           editingContent.content
@@ -153,7 +143,7 @@ export default function ContentArea({
 
     try {
       const anchor = await generateMemoryAnchor(content)
-      await updateContentAnchor(id, anchor)
+      await updateContentAnchor(id, anchor, folderId)
     } catch (error) {
       console.error("Error generating or saving memory anchor:", error)
     } finally {
@@ -341,8 +331,8 @@ export default function ContentArea({
               <p className="text-center text-muted-foreground mb-4 px-4">
                 Select a folder to view your highlights or create a new one
               </p>
-              <AddNewFolder setFolders={setFolders}>
-                <Button variant="outline" onClick={() => {}}>
+              <AddNewFolder>
+                <Button variant="outline">
                   <Plus className="h-4 w-4 mr-2" />
                   Create New Folder
                 </Button>

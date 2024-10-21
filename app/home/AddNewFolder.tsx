@@ -12,18 +12,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import type { Folder } from "../../types/types"
+
 import { createNewFolder } from "../actions/contentActions"
 
 interface AddNewFolderProps {
-  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>
   children: ReactNode
 }
 
-const AddNewFolder: React.FC<AddNewFolderProps> = ({
-  setFolders,
-  children,
-}) => {
+const AddNewFolder: React.FC<AddNewFolderProps> = ({ children }) => {
   const [newFolderName, setNewFolderName] = useState("")
   const [isOpen, setIsOpen] = useState(false)
 
@@ -40,15 +36,11 @@ const AddNewFolder: React.FC<AddNewFolderProps> = ({
         />
         <DialogFooter>
           <Button
-            onClick={async () =>
-              createNewFolder(newFolderName).then((folder) => {
-                if (folder) {
-                  setFolders((prevFolders) => [...prevFolders, folder])
-                }
-                setIsOpen(false)
-                setNewFolderName("")
-              })
-            }
+            onClick={async () => {
+              createNewFolder(newFolderName)
+              setIsOpen(false)
+              setNewFolderName("")
+            }}
           >
             Create Folder
           </Button>

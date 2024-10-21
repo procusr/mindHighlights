@@ -11,26 +11,6 @@ const openai = new OpenAI({
   project: process.env.OPENAI_PROJECT_ID,
 })
 
-export async function fetchContentForFolder(folderId: string) {
-  const supabase = createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return
-  }
-
-  const { data, error } = await supabase
-    .from("user_content")
-    .select("*")
-    .eq("folder_id", folderId)
-    .eq("user_id", user?.id)
-
-  if (error) throw new Error(error.message)
-  return data as Content[]
-}
-
 export async function addNewContent(
   content: string,
   folderId: string,
@@ -71,7 +51,7 @@ export async function addNewContent(
     })
     .select()
 
-  revalidatePath("/home/folderId")
+  revalidatePath(`/home/${folderId}`)
 
   if (error) throw new Error(error.message)
   return data[0] as Content
@@ -89,7 +69,7 @@ export async function updateContent(
     .update({ title, content })
     .eq("id", contentId)
     .select()
-  revalidatePath("/home/folderId")
+  revalidatePath(`/home/${folderId}`)
 
   if (error) throw new Error(error.message)
   return data[0] as Content
@@ -102,6 +82,7 @@ export async function deleteContent(contentId: string) {
     .from("user_content")
     .delete()
     .eq("id", contentId)
+  revalidatePath(`/home/${folderId}`)
 
   if (error) throw new Error(error.message)
 }
@@ -122,6 +103,8 @@ export async function createNewFolder(name: string) {
     .insert({ name, user_id: user?.id })
     .select()
 
+  revalidatePath("/home")
+
   if (error) throw new Error(error.message)
   return data[0] as Folder
 }
@@ -135,6 +118,8 @@ export async function updateFolder(folderId: string, name: string) {
     .eq("id", folderId)
     .select()
 
+  revalidatePath(`/home/${folderId}`)
+
   if (error) throw new Error(error.message)
   return data[0] as Folder
 }
@@ -147,7 +132,7 @@ export async function deleteFolder(folderId: string) {
     .delete()
     .eq("id", folderId)
 
-  revalidatePath("/home/folderId")
+  revalidatePath(`/home/${folderId}`)
 
   if (error) throw new Error(error.message)
 }
@@ -168,7 +153,11 @@ export async function generateMemoryAnchor(content: string) {
   return response.choices[0]?.message?.content?.trim() || ""
 }
 
-export async function updateContentAnchor(contentId: string, anchor: string) {
+export async function updateContentAnchor(
+  contentId: string,
+  anchor: string,
+  folderId: string
+) {
   const supabase = createClient()
 
   const { data, error } = await supabase
@@ -176,6 +165,8 @@ export async function updateContentAnchor(contentId: string, anchor: string) {
     .update({ anchor })
     .eq("id", contentId)
     .select()
+
+  revalidatePath(`/home/${folderId}`)
 
   if (error) throw new Error(error.message)
   return data[0] as Content
