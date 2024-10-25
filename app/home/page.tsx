@@ -17,10 +17,10 @@ async function fetchInitialData(userId: string): Promise<Folder[]> {
 
   const { data: folders, error } = await supabase
     .from("user_folders")
-    .select("id, name")
+    .select("id, name, user_id, created_at")
     .eq("user_id", userId)
   if (error) throw new Error(error.message)
-  return folders || []
+  return folders as Folder[]
 }
 
 async function fetchContentForFolder(folderId: string): Promise<Content[]> {
@@ -90,7 +90,7 @@ export default async function HomePage(props: {
                           folderName={selectedFolder.name}
                         />
                       </div>
-                      <AddNewContent folderId={folderId} contents={[]}>
+                      <AddNewContent folderId={folderId}>
                         <Button
                           variant="default"
                           size="sm"
