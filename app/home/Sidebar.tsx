@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, type Usable, use } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import type { Folder } from "../../types/types"
 import AddNewFolder from "./AddNewFolder"
@@ -19,9 +19,7 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const { closeMenu, menuOpen } = useSidebar()
 
-  const [folders, setFolders] = useState<Folder[]>(folderList)
-
-  const filteredFolders = folders.filter((folder) =>
+  const filteredFolders = folderList.filter((folder) =>
     folder.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 

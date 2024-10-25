@@ -1,197 +1,39 @@
-"use client"
-
+import { Suspense, type Usable, use } from "react"
+import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import type { Content, Folder } from "@/types/types"
-import { AnimatePresence, motion } from "framer-motion"
-import {
-  Delete,
-  Edit,
-  MoreVertical,
-  Pencil,
-  Plus,
-  RefreshCw,
-  Trash,
-} from "lucide-react"
-import { Sparkles } from "lucide-react"
-import { type Usable, use, useState } from "react"
-import ConfirmDialog from "../../components/ConfirmDialog"
-import EditFolderDialog from "../../components/EditFolderDialog"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-
-import {
-  deleteContent,
-  deleteFolder,
-  generateMemoryAnchor,
-  updateContent,
-  updateContentAnchor,
-  updateFolder,
-} from "../actions/contentActions"
 import AddNewContent from "./AddNewContent"
-import AddNewFolder from "./AddNewFolder"
+import FolderActions from "./FolderActions"
+import ContentList from "./ContentList"
+import EmptyState from "./EmptyState"
 
 interface ContentAreaProps {
-  selectedFolder: Folder
-  fetchContentList: Usable<Content[]>
-  folderId: string
+  folderId: string | null
+  selectedFolder: Folder | null
+  contentList: Usable<Content[]>
 }
 
-export default function ContentArea({
-  fetchContentList,
+export default async function ContentArea({
   folderId,
   selectedFolder,
+  contentList,
 }: ContentAreaProps) {
-  const contentList = use(fetchContentList)
-
-  const [isDeleteContentDialogOpen, setIsContentDeleteDialogOpen] =
-    useState(false)
-  const [isDeleteFolderDialogOpen, setIsDeleteFolderDialogOpen] =
-    useState(false)
-  const [expandedContentId, setExpandedContentId] = useState<string | null>(
-    null
-  )
-  const [newFolderName, setNewFolderName] = useState("")
-  const [isEditFolderDialogOpen, setEditFolderDialogOpen] = useState(false)
-  const [deletingContentId, setDeletingContentId] = useState<string | null>(
-    null
-  )
-  const [editingContent, setEditingContent] = useState<Content | null>(null)
-  const [generatingMemoryId, setGeneratingMemoryId] = useState<string | null>(
-    null
-  )
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-
-  const handleToggleContent = (contentId: string) => {
-    setExpandedContentId(expandedContentId === contentId ? null : contentId)
-    setEditingContent(null)
-  }
-
-  const handleEditContent = (content: Content) => {
-    setEditingContent(content)
-    setIsEditDialogOpen(true)
-  }
-
-  const handleDeleteFolder = async () => {
-    if (folderId) {
-      try {
-        await deleteFolder(folderId)
-        setIsDeleteFolderDialogOpen(false)
-      } catch (error) {
-        console.error("Error deleting folder:", error)
-      }
-    }
-  }
-
-  const handleEditFolder = async () => {
-    if (folderId && newFolderName.trim() !== "") {
-      try {
-        await updateFolder(folderId, newFolderName)
-
-        setEditFolderDialogOpen(false)
-      } catch (error) {
-        console.error("Error updating folder:", error)
-      }
-    }
-  }
-
-  const handleSaveEdit = async () => {
-    if (editingContent) {
-      try {
-        await updateContent(
-          editingContent.id,
-          editingContent.title,
-          editingContent.content,
-          folderId
-        )
-
-        setEditingContent(null)
-        setIsEditDialogOpen(false)
-      } catch (error) {
-        console.error("Error updating content:", error)
-      }
-    }
-  }
-
-  const handleDeleteContent = async () => {
-    if (deletingContentId) {
-      try {
-        await deleteContent(deletingContentId, folderId)
-        setIsContentDeleteDialogOpen(false)
-        setDeletingContentId(null)
-        setExpandedContentId(null)
-      } catch (error) {
-        console.error("Error deleting content:", error)
-      }
-    }
-  }
-
-  const handleMemory = async (id: string, content: string) => {
-    if (!content.trim()) return
-    setGeneratingMemoryId(id)
-
-    try {
-      const anchor = await generateMemoryAnchor(content)
-      await updateContentAnchor(id, anchor, folderId)
-    } catch (error) {
-      console.error("Error generating or saving memory anchor:", error)
-    } finally {
-      setGeneratingMemoryId(null)
-    }
-  }
-
   return (
     <div className="flex-1 overflow-hidden">
       <div className="h-full overflow-y-auto max-w-3xl">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-          {folderId ? (
+          {folderId && selectedFolder ? (
             <>
-              <div className="sticky top-0  z-10 pb-4">
+              <div className="sticky top-0 z-10 pb-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 sm:mb-4">
                   <div className="flex items-center gap-2 w-full sm:w-auto">
                     <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
-                      {selectedFolder?.name}
+                      {selectedFolder.name}
                     </h2>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-muted-foreground hover:text-primary hover:bg-accent p-1"
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setNewFolderName(selectedFolder.name)
-                            setEditFolderDialogOpen(true)
-                          }}
-                        >
-                          <Pencil className="h-4 w-4 mr-2" />
-                          Edit Folder
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => setIsDeleteFolderDialogOpen(true)}
-                        >
-                          <Trash className="h-4 w-4 mr-2" />
-                          Delete Folder
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <FolderActions
+                      folderId={folderId}
+                      folderName={selectedFolder.name}
+                    />
                   </div>
                   <AddNewContent folderId={folderId}>
                     <Button
@@ -205,207 +47,15 @@ export default function ContentArea({
                   </AddNewContent>
                 </div>
               </div>
-              <div className="space-y-4 sm:space-y-6">
-                {contentList?.length > 0 ? (
-                  contentList.map((content) => (
-                    <motion.div
-                      key={content.id}
-                      layout
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Card
-                        className="overflow-hidden transition-all duration-300 hover:shadow-lg group cursor-pointer"
-                        onClick={() => handleToggleContent(content.id)}
-                      >
-                        <CardHeader className="p-4 bg-gradient-to-r from-secondary/30 to-primary/10 relative">
-                          <div className="flex justify-between items-center w-full">
-                            <CardTitle className="text-sm font-medium break-words mr-2 flex-grow">
-                              {content.title}
-                            </CardTitle>
-                            <div className="flex items-center">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-primary p-1"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <MoreVertical className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                  <DropdownMenuItem
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      handleEditContent(content)
-                                    }}
-                                  >
-                                    <Edit className="h-4 w-4 mr-2" /> Edit
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      setDeletingContentId(content.id)
-                                      setIsContentDeleteDialogOpen(true)
-                                    }}
-                                  >
-                                    <Delete className="h-4 w-4 mr-2" /> Delete
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <AnimatePresence>
-                          {expandedContentId === content.id && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3 }}
-                            >
-                              <CardContent className="p-4 bg-gradient-to-b from-transparent to-secondary/10">
-                                <p className="text-base leading-relaxed text-foreground whitespace-pre-wrap mb-4">
-                                  <span className="bg-highlight">
-                                    {content.content}
-                                  </span>
-                                </p>
-                                {content.anchor ? (
-                                  <div className="mt-4 p-3 bg-primary/5 rounded-md">
-                                    <div className="flex items-center justify-between">
-                                      <p className="text-sm italic text-muted-foreground flex-grow mr-2">
-                                        {content.anchor}
-                                      </p>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={(e) => {
-                                          e.stopPropagation()
-                                          handleMemory(
-                                            content.id,
-                                            content.content
-                                          )
-                                        }}
-                                        disabled={
-                                          generatingMemoryId === content.id
-                                        }
-                                        className="flex-shrink-0"
-                                      >
-                                        <RefreshCw className="size-3" />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="inline-flex justify-between gap-2"
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      handleMemory(content.id, content.content)
-                                    }}
-                                  >
-                                    Help me remember
-                                    <Sparkles className="size-3" />
-                                  </Button>
-                                )}
-                              </CardContent>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </Card>
-                    </motion.div>
-                  ))
-                ) : (
-                  <p className="text-center text-muted-foreground">
-                    This folder is empty. Add some highlights to get started!
-                  </p>
-                )}
-              </div>
+              <Suspense fallback={<div>Loading contents...</div>}>
+                <ContentList contentList={contentList} folderId={folderId} />
+              </Suspense>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full min-h-[60vh]">
-              <p className="text-center text-muted-foreground mb-4 px-4">
-                Select a folder to view your highlights or create a new one
-              </p>
-              <AddNewFolder>
-                <Button variant="outline">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create New Folder
-                </Button>
-              </AddNewFolder>
-            </div>
+            <EmptyState />
           )}
         </div>
       </div>
-
-      <ConfirmDialog
-        open={isDeleteContentDialogOpen}
-        onOpenChange={setIsContentDeleteDialogOpen}
-        title="Confirm Deletion"
-        description="Are you sure you want to delete this content? This action cannot be undone."
-        onConfirm={handleDeleteContent}
-      />
-      <ConfirmDialog
-        open={isDeleteFolderDialogOpen}
-        onOpenChange={setIsDeleteFolderDialogOpen}
-        title="Confirm Folder Deletion"
-        description="Are you sure you want to delete this folder? This action cannot be undone and will delete all content within the folder."
-        onConfirm={handleDeleteFolder}
-      />
-      <EditFolderDialog
-        open={isEditFolderDialogOpen}
-        onOpenChange={setEditFolderDialogOpen}
-        newFolderName={newFolderName}
-        setNewFolderName={setNewFolderName}
-        onSave={handleEditFolder}
-      />
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Content</DialogTitle>
-          </DialogHeader>
-          {editingContent && (
-            <>
-              <Input
-                value={editingContent.title}
-                onChange={(e) =>
-                  setEditingContent({
-                    ...editingContent,
-                    title: e.target.value,
-                  })
-                }
-                placeholder="Enter title"
-                className="mb-2"
-              />
-              <Textarea
-                value={editingContent.content}
-                onChange={(e) =>
-                  setEditingContent({
-                    ...editingContent,
-                    content: e.target.value,
-                  })
-                }
-                placeholder="Enter content"
-                className="min-h-[100px] mb-2"
-              />
-              <div className="flex justify-end space-x-2">
-                <Button
-                  onClick={() => setIsEditDialogOpen(false)}
-                  variant="outline"
-                >
-                  Cancel
-                </Button>
-                <Button onClick={handleSaveEdit}>Save</Button>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

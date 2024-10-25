@@ -3,13 +3,11 @@ import { createClient } from "@/utils/supabase/server"
 import type { Content, Folder } from "@/types/types"
 import Sidebar from "./Sidebar"
 import ContentArea from "./ContentArea"
-import type { SupabaseClient } from "@supabase/supabase-js"
 
-async function fetchInitialData(
-  userId: string,
-  client: SupabaseClient
-): Promise<Folder[]> {
-  const { data: folders, error } = await client
+async function fetchInitialData(userId: string): Promise<Folder[]> {
+  const supabase = createClient()
+
+  const { data: folders, error } = await supabase
     .from("user_folders")
     .select("id, name")
     .eq("user_id", userId)
@@ -17,17 +15,13 @@ async function fetchInitialData(
   return folders || []
 }
 
-async function fetchContentForFolder(
-  folderId: string,
-  client: SupabaseClient
-): Promise<Content[]> {
+async function fetchContentForFolder(folderId: string): Promise<Content[]> {
+  const supabase = createClient()
   const {
     data: { user },
-  } = await client.auth.getUser()
+  } = await supabase.auth.getUser()
 
-  console.log("user", user)
-
-  const { data, error } = await client
+  const { data, error } = await supabase
     .from("user_content")
     .select("*")
     .eq("folder_id", folderId)
@@ -57,15 +51,12 @@ export default async function HomePage(props: {
     return redirect("/sign-in")
   }
 
-  const initialFolders = (await fetchInitialData(user.id, supabase)) ?? []
+  const initialFolders = (await fetchInitialData(user.id)) ?? []
 
   const selectedFolder =
-    initialFolders.find((folder: Folder) => folder.id === folderId) ||
-    initialFolders[0]
+    initialFolders.find((folder) => folder.id === folderId) || null
 
-  const contentList = folderId
-    ? fetchContentForFolder(folderId, supabase)
-    : Promise.resolve([])
+  const contentList = fetchContentForFolder(folderId)
 
   return (
     <div className="flex-1 w-full flex flex-col gap-12">
@@ -74,7 +65,7 @@ export default async function HomePage(props: {
         <ContentArea
           folderId={folderId}
           selectedFolder={selectedFolder}
-          fetchContentList={contentList}
+          contentList={contentList}
         />
       </div>
     </div>
