@@ -1,4 +1,4 @@
-import { Suspense, type Usable, use } from "react"
+import { Suspense } from "react"
 import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { Content, Folder } from "@/types/types"
@@ -6,14 +6,15 @@ import AddNewContent from "./AddNewContent"
 import FolderActions from "./FolderActions"
 import ContentList from "./ContentList"
 import EmptyState from "./EmptyState"
+import { ContentAreaSkeleton } from "@/components/ui/skeletons"
 
 interface ContentAreaProps {
   folderId: string | null
   selectedFolder: Folder | null
-  contentList: Usable<Content[]>
+  contentList: Promise<Content[]>
 }
 
-export default async function ContentArea({
+export default function ContentArea({
   folderId,
   selectedFolder,
   contentList,
@@ -35,7 +36,7 @@ export default async function ContentArea({
                       folderName={selectedFolder.name}
                     />
                   </div>
-                  <AddNewContent folderId={folderId}>
+                  <AddNewContent folderId={folderId} contents={[]}>
                     <Button
                       variant="default"
                       size="sm"
@@ -47,7 +48,21 @@ export default async function ContentArea({
                   </AddNewContent>
                 </div>
               </div>
-              <Suspense fallback={<div>Loading contents...</div>}>
+              <Suspense
+                fallback={
+                  <div className="space-y-4">
+                    <div className="relative">
+                      <input
+                        type="search"
+                        placeholder="Search highlights..."
+                        className="w-full px-4 py-2 rounded-md border border-input bg-muted/50"
+                        disabled
+                      />
+                    </div>
+                    <ContentAreaSkeleton />
+                  </div>
+                }
+              >
                 <ContentList contentList={contentList} folderId={folderId} />
               </Suspense>
             </>

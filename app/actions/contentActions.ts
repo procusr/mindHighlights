@@ -77,15 +77,21 @@ export async function updateContent(
 }
 
 export async function deleteContent(contentId: string, folderId: string) {
-  const supabase = createClient()
+  try {
+    const supabase = createClient()
 
-  const { error } = await supabase
-    .from("user_content")
-    .delete()
-    .eq("id", contentId)
-  revalidatePath(`/home/${folderId}`)
+    revalidatePath(`/home/${folderId}`)
 
-  if (error) throw new Error(error.message)
+    const { error } = await supabase
+      .from("user_content")
+      .delete()
+      .eq("id", contentId)
+
+    if (error) throw error
+  } catch (error) {
+    revalidatePath("/home")
+    throw error
+  }
 }
 
 export async function createNewFolder(name: string) {
