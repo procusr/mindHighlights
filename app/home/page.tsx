@@ -22,11 +22,11 @@ async function fetchInitialData(userId: string): Promise<Folder[]> {
   return folders as Folder[]
 }
 
-async function fetchContentForFolder(folderId: string): Promise<Content[]> {
+async function fetchContentForFolder(
+  folderId: string,
+  userId: string
+): Promise<Content[]> {
   const supabase = createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
 
   if (!folderId) return []
 
@@ -34,7 +34,9 @@ async function fetchContentForFolder(folderId: string): Promise<Content[]> {
     .from("user_content")
     .select("*")
     .eq("folder_id", folderId)
-    .eq("user_id", user?.id)
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(20) // Implement pagination
 
   if (error) throw new Error(error.message)
   return data as Content[]
@@ -44,9 +46,6 @@ export default async function HomePage(props: {
   searchParams: Promise<{ folderId?: string }>
 }) {
   const supabase = createClient()
-
-  const folderId = (await props.searchParams)?.folderId ?? ""
-  const contentListPromise = fetchContentForFolder(folderId)
 
   const {
     data: { user },
@@ -61,10 +60,13 @@ export default async function HomePage(props: {
     return redirect("/sign-in")
   }
 
-  const initialFolders = (await fetchInitialData(user.id)) ?? []
+  const folderId = (await props.searchParams)?.folderId ?? ""
+  const initialFolders = await fetchInitialData(user.id)
 
   const selectedFolder =
     initialFolders.find((folder) => folder.id === folderId) || null
+
+  const initialContent = await fetchContentForFolder(folderId, user.id)
 
   return (
     <div className="flex-1 w-full flex flex-col gap-12">
@@ -77,7 +79,7 @@ export default async function HomePage(props: {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
               {folderId && selectedFolder ? (
                 <>
-                  <div className="sticky top-0 z-10 pb-4">
+                  <div className="sticky top-0 z-10 pb-4 bg-gray-50">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 sm:mb-4">
                       <div className="flex items-center gap-2 w-full sm:w-auto">
                         <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
@@ -117,8 +119,9 @@ export default async function HomePage(props: {
                     }
                   >
                     <ContentList
-                      contentListPromise={contentListPromise}
+                      initialContent={initialContent}
                       folderId={folderId}
+                      userId={user.id}
                     />
                   </Suspense>
                 </>

@@ -19,12 +19,17 @@ import {
 import EditContentDialog from "./EditContentDialog"
 import ConfirmDialog from "../../components/ConfirmDialog"
 
-interface ContentCardProps {
+export interface ContentCardProps {
   content: Content
   folderId: string
+  onDelete: () => Promise<void>
 }
 
-export default function ContentCard({ content, folderId }: ContentCardProps) {
+export default function ContentCard({
+  content,
+  folderId,
+  onDelete,
+}: ContentCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isGeneratingMemory, setIsGeneratingMemory] = useState(false)
@@ -32,9 +37,8 @@ export default function ContentCard({ content, folderId }: ContentCardProps) {
   const handleDelete = async () => {
     await deleteContent(content.id, folderId)
   }
-
   const handleMemory = async () => {
-    if (!content.content.trim()) return
+    if (!content.content?.trim()) return
     setIsGeneratingMemory(true)
     try {
       const anchor = await generateMemoryAnchor(content.content)
