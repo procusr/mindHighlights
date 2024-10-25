@@ -14,6 +14,11 @@ interface ContentAreaProps {
   contentList: Promise<Content[]>
 }
 
+interface ContentListProps {
+  contentList: Promise<Content[]>
+  folderId: string
+}
+
 export default function ContentArea({
   folderId,
   selectedFolder,

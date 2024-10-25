@@ -1,29 +1,37 @@
 "use client"
 
-import { use, useOptimistic, useState, useDeferredValue } from "react"
+import { use, useDeferredValue, useState } from "react"
 import type { Content } from "@/types/types"
 import ContentCard from "./ContentCard"
 import { Search } from "lucide-react"
 
 interface ContentListProps {
-  contentList: Promise<Content[]>
+  contentListPromise: Promise<Content[]>
   folderId: string
 }
 
 export default function ContentList({
-  contentList,
+  contentListPromise,
   folderId,
 }: ContentListProps) {
-  const contents = use(contentList)
+  const resolvedContentList = use(contentListPromise)
+
+  if (resolvedContentList.length === 0) {
+    return <p>No content in this folder.</p>
+  }
+
   const [searchTerm, setSearchTerm] = useState("")
   const deferredSearchTerm = useDeferredValue(searchTerm)
 
-  const [optimisticContents] = useOptimistic<Content[]>(contents)
-
-  const filteredContent = optimisticContents.filter(
+  const filteredContent = resolvedContentList.filter(
     (content) =>
-      content.title.toLowerCase().includes(deferredSearchTerm.toLowerCase()) ||
-      content.content.toLowerCase().includes(deferredSearchTerm.toLowerCase())
+      (content?.title
+        ?.toLowerCase()
+        .includes(deferredSearchTerm.toLowerCase()) ||
+        content?.content
+          ?.toLowerCase()
+          .includes(deferredSearchTerm.toLowerCase())) ??
+      false
   )
 
   return (

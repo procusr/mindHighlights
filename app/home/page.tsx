@@ -2,7 +2,6 @@ import { redirect } from "next/navigation"
 import { createClient } from "@/utils/supabase/server"
 import type { Content, Folder } from "@/types/types"
 import Sidebar from "./Sidebar"
-import ContentArea from "./ContentArea"
 import { Suspense } from "react"
 import { SidebarSkeleton, ContentAreaSkeleton } from "@/components/ui/skeletons"
 import { Plus } from "lucide-react"
@@ -29,6 +28,8 @@ async function fetchContentForFolder(folderId: string): Promise<Content[]> {
     data: { user },
   } = await supabase.auth.getUser()
 
+  if (!folderId) return []
+
   const { data, error } = await supabase
     .from("user_content")
     .select("*")
@@ -45,6 +46,7 @@ export default async function HomePage(props: {
   const supabase = createClient()
 
   const folderId = (await props.searchParams)?.folderId ?? ""
+  const contentListPromise = fetchContentForFolder(folderId)
 
   const {
     data: { user },
@@ -64,22 +66,18 @@ export default async function HomePage(props: {
   const selectedFolder =
     initialFolders.find((folder) => folder.id === folderId) || null
 
-  const contentList = fetchContentForFolder(folderId)
-
   return (
     <div className="flex-1 w-full flex flex-col gap-12">
       <div className="flex h-[calc(100vh-64px)] bg-gray-50">
         <Suspense fallback={<SidebarSkeleton />}>
           <Sidebar folderList={initialFolders} folderId={folderId} />
         </Suspense>
-
-        {/* Keep the header visible and only show loading for content */}
         <div className="flex-1 overflow-hidden">
           <div className="h-full overflow-y-auto max-w-3xl">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
               {folderId && selectedFolder ? (
                 <>
-                  <div className="sticky top-0 z-10 pb-4 bg-background">
+                  <div className="sticky top-0 z-10 pb-4">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 sm:mb-4">
                       <div className="flex items-center gap-2 w-full sm:w-auto">
                         <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
@@ -119,7 +117,7 @@ export default async function HomePage(props: {
                     }
                   >
                     <ContentList
-                      contentList={contentList}
+                      contentListPromise={contentListPromise}
                       folderId={folderId}
                     />
                   </Suspense>

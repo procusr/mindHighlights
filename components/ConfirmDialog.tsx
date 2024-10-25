@@ -36,8 +36,8 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       </DialogDescription>
       <DialogFooter
         className={cn(
-          "flex-col space-y-2 gap-4",
-          "sm:justify-end sm:space-x-2"
+          "flex flex-col gap-2",
+          "sm:flex-row sm:justify-end sm:gap-2"
         )}
       >
         <Button

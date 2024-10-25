@@ -17,6 +17,7 @@ import {
   updateContentAnchor,
 } from "../actions/contentActions"
 import EditContentDialog from "./EditContentDialog"
+import ConfirmDialog from "../../components/ConfirmDialog"
 
 interface ContentCardProps {
   content: Content
@@ -27,7 +28,7 @@ export default function ContentCard({ content, folderId }: ContentCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isGeneratingMemory, setIsGeneratingMemory] = useState(false)
-
+  const [isDeleting, setIsDeleting] = useState(false)
   const handleDelete = async () => {
     await deleteContent(content.id, folderId)
   }
@@ -53,7 +54,17 @@ export default function ContentCard({ content, folderId }: ContentCardProps) {
           <CardTitle className="text-sm font-medium break-words mr-2 flex-grow">
             {content.title}
           </CardTitle>
-          <div onClick={(e) => e.stopPropagation()}>
+          <div
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                e.stopPropagation()
+              }
+            }}
+            role="button"
+            tabIndex={0}
+          >
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="text-primary p-1">
@@ -64,7 +75,7 @@ export default function ContentCard({ content, folderId }: ContentCardProps) {
                 <DropdownMenuItem onClick={() => setIsEditing(true)}>
                   <Edit className="h-4 w-4 mr-2" /> Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDelete}>
+                <DropdownMenuItem onClick={() => setIsDeleting(true)}>
                   <Delete className="h-4 w-4 mr-2" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -119,6 +130,13 @@ export default function ContentCard({ content, folderId }: ContentCardProps) {
         isOpen={isEditing}
         onClose={() => setIsEditing(false)}
         folderId={folderId}
+      />
+      <ConfirmDialog
+        open={isDeleting}
+        onOpenChange={setIsDeleting}
+        title="Delete Highlight"
+        description="Are you sure you want to delete this highlight?"
+        onConfirm={handleDelete}
       />
     </Card>
   )

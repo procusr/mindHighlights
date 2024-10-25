@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useTransition, startTransition } from "react"
+import { useState, useTransition, startTransition, useActionState } from "react"
 import type { ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import { Loader2, Check } from "lucide-react"
@@ -31,11 +31,11 @@ export default function AddNewContent({
   const [content, setContent] = useState("")
   const [title, setTitle] = useState("")
   const [isOpen, setIsOpen] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  const [isTransitionPending, startTransition] = useTransition()
   const [autoTitle, setAutoTitle] = useState(true)
 
   const handleAddContent = () => {
-    if (!content.trim() || isPending) return
+    if (!content.trim() || isTransitionPending) return
     if (!autoTitle && !title.trim()) return
 
     startTransition(async () => {
@@ -70,7 +70,7 @@ export default function AddNewContent({
               id="auto-title"
               checked={autoTitle}
               onCheckedChange={setAutoTitle}
-              disabled={isPending}
+              disabled={isTransitionPending}
             />
           </div>
 
@@ -79,7 +79,7 @@ export default function AddNewContent({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter title manually"
-              disabled={isPending}
+              disabled={isTransitionPending}
             />
           )}
           <Textarea
@@ -87,18 +87,20 @@ export default function AddNewContent({
             onChange={(e) => setContent(e.target.value)}
             placeholder="Enter your content here..."
             className="min-h-[100px]"
-            disabled={isPending}
+            disabled={isTransitionPending}
           />
         </div>
         <DialogFooter>
           <Button
             onClick={handleAddContent}
             disabled={
-              isPending || !content.trim() || (!autoTitle && !title.trim())
+              isTransitionPending ||
+              !content.trim() ||
+              (!autoTitle && !title.trim())
             }
             className="relative min-w-[100px]"
           >
-            {isPending ? (
+            {isTransitionPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               "Add Content"
