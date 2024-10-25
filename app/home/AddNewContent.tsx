@@ -1,134 +1,113 @@
-import { useState, type ReactNode } from "react"
+"use client"
+
+import { useState, useTransition, startTransition, useActionState } from "react"
+import type { ReactNode } from "react"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { createClient } from "../../utils/supabase/client"
-import type { Content } from "@/types/types"
+import { Loader2, Check } from "lucide-react"
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
+  DialogDescription,
   DialogFooter,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { stripMarkdown } from "../../utils/utils"
-import Markdown from "react-markdown"
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
-import { Label } from "../../components/ui/label"
+import { Label } from "@/components/ui/label"
+import type { Content } from "@/types/types"
+import { addNewContent } from "../actions/contentActions"
 
 interface AddNewContentProps {
-  selectedFolder: { id: string; name: string }
-  userId: string
-  setContentList: React.Dispatch<React.SetStateAction<Content[]>>
-  contentList: Content[]
   children: ReactNode
+  folderId: string
 }
 
-const AddNewContent: React.FC<AddNewContentProps> = ({
-  selectedFolder,
-  userId,
-  setContentList,
-  contentList,
+export default function AddNewContent({
   children,
-}) => {
-  const [isOpen, setIsOpen] = useState(false)
+  folderId,
+}: AddNewContentProps) {
   const [content, setContent] = useState("")
-  const [showInput, setShowInput] = useState(true)
   const [title, setTitle] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const supabase = createClient()
+  const [isOpen, setIsOpen] = useState(false)
+  const [isTransitionPending, startTransition] = useTransition()
+  const [autoTitle, setAutoTitle] = useState(true)
 
-  async function handleSubmit() {
-    if (!content.trim()) return
-    setIsLoading(true)
+  const handleAddContent = () => {
+    if (!content.trim() || isTransitionPending) return
+    if (!autoTitle && !title.trim()) return
 
-    try {
-      const response = await fetch("/ai/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content: `Given the statement ${content}, respond with a concise question that critically engages with the main idea.".`,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to generate title")
-      }
-
-      const { generatedResponse } = await response.json()
-
-      const { data, error } = await supabase
-        .from("user_content")
-        .insert({
-          user_id: userId,
-          folder_id: selectedFolder.id,
-          title: generatedResponse || stripMarkdown(content.slice(0, 170)), // Fallback to stripped content if title generation fails
-          content,
-          ...(title && { title }),
-        })
-        .select()
-
-      if (data) {
-        setContentList([...contentList, data[0] as Content])
+    startTransition(async () => {
+      try {
+        await addNewContent(content, folderId, autoTitle ? undefined : title)
         setContent("")
+        setTitle("")
         setIsOpen(false)
-      } else if (error) {
-        console.error("Error adding content:", error)
+      } catch (error) {
+        console.error("Failed to add content:", error)
       }
-    } catch (error) {
-      console.error("Error generating title or saving content:", error)
-    } finally {
-      setIsLoading(false)
-    }
+    })
   }
 
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader className="flex-col justify-between gap-2">
-            <DialogTitle>Add New Content</DialogTitle>
-            <div className="flex items-center space-x-2">
-              <Label className="text-xs">
-                Generate Title in a form of question
-              </Label>
-              <Switch
-                checked={showInput}
-                onClick={() => setShowInput((prev) => !prev)}
-              />
-            </div>
-          </DialogHeader>
-          {!showInput && (
-            <input
-              type="text"
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogTitle>Add New Highlight</DialogTitle>
+        <DialogDescription>
+          Enter the content you want to highlight.
+        </DialogDescription>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor="auto-title"
+              className="text-sm text-muted-foreground"
+            >
+              Generate title in a form of question
+            </Label>
+            <Switch
+              id="auto-title"
+              checked={autoTitle}
+              onCheckedChange={setAutoTitle}
+              disabled={isTransitionPending}
+            />
+          </div>
+
+          {!autoTitle && (
+            <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter your title here..."
-              className="w-full p-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+              placeholder="Enter title manually"
+              disabled={isTransitionPending}
             />
           )}
-          <div className="space-y-4">
-            <Textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Enter your content here..."
-              className="min-h-[200px] "
-            />
-            <Markdown>{content}</Markdown>
-          </div>
-          <DialogFooter className="gap-2">
-            <Button onClick={() => setIsOpen(false)} variant="outline">
-              Cancel
-            </Button>
-            <Button onClick={handleSubmit} disabled={isLoading}>
-              {isLoading ? "Adding..." : "Add Content"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+          <Textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Enter your content here..."
+            className="min-h-[100px]"
+            disabled={isTransitionPending}
+          />
+        </div>
+        <DialogFooter>
+          <Button
+            onClick={handleAddContent}
+            disabled={
+              isTransitionPending ||
+              !content.trim() ||
+              (!autoTitle && !title.trim())
+            }
+            className="relative min-w-[100px]"
+          >
+            {isTransitionPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              "Add Content"
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default AddNewContent

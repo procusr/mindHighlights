@@ -72,6 +72,7 @@ export default async function Index() {
           >
             <div className="text-4xl mb-4">{card.icon}</div>
             <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white relative inline-block">
+              {card.title}
               <span className="absolute inset-x-0 bottom-0 h-2 bg-highlight opacity-50" />
             </h2>
             <p className="text-gray-700 dark:text-gray-300">

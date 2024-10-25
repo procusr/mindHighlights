@@ -1,5 +1,3 @@
-import React from "react"
-
 interface HighlightedTextProps {
   children: React.ReactNode
   className?: string

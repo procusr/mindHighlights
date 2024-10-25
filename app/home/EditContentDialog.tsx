@@ -1,81 +1,79 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "../../components/ui/textarea"
-import { Label } from "@radix-ui/react-label"
-import { createClient } from "../../utils/supabase/client"
+import { updateContent } from "../actions/contentActions"
 import type { Content } from "@/types/types"
 
 interface EditContentDialogProps {
-  editingId: string | null
+  content: Content | null
   isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
-  contentList: Content[]
-  setContentList: React.Dispatch<React.SetStateAction<Content[]>>
+  onClose: () => void
+  folderId: string
 }
 
 export default function EditContentDialog({
-  editingId,
+  content,
   isOpen,
-  setIsOpen,
-  contentList,
-  setContentList,
+  onClose,
+  folderId,
 }: EditContentDialogProps) {
-  const [editingContent, setEditingContent] = useState("")
-  const supabase = createClient()
+  const [editedContent, setEditedContent] = useState<Content | null>(null)
 
   useEffect(() => {
-    if (editingId) {
-      const content = contentList.find((item) => item.id === editingId)
-      if (content) {
-        setEditingContent(content.content)
-      }
-    }
-  }, [editingId, contentList])
+    setEditedContent(content)
+  }, [content])
 
-  async function updateContent(id: string) {
-    const { error } = await supabase
-      .from("user_content")
-      .update({ content: editingContent })
-      .eq("id", id)
-
-    if (!error) {
-      setContentList(
-        contentList.map((item) =>
-          item.id === id ? { ...item, content: editingContent } : item
-        )
+  const handleSave = async () => {
+    if (editedContent) {
+      await updateContent(
+        editedContent.id,
+        editedContent.title ?? "",
+        editedContent.content ?? "",
+        folderId
       )
-      setIsOpen(false)
+      onClose()
     }
   }
 
+  if (!editedContent) return null
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
-        <DialogTitle>Edit Content</DialogTitle>
-        <DialogDescription>
-          Modify the content below and save your changes.
-        </DialogDescription>
-        <div className="mt-4">
-          <Label htmlFor="edit-content">Content Text</Label>
-          <Textarea
-            value={editingContent}
-            onChange={(e) => setEditingContent(e.target.value)}
-            className="w-full mb-4 break-words"
-            rows={7}
-          />
-        </div>
-        <DialogFooter>
-          <Button onClick={() => editingId && updateContent(editingId)}>
-            Save
+        <DialogHeader>
+          <DialogTitle>Edit Content</DialogTitle>
+        </DialogHeader>
+        <Input
+          value={editedContent.title ?? ""}
+          onChange={(e) =>
+            setEditedContent({ ...editedContent, title: e.target.value })
+          }
+          placeholder="Enter title"
+          className="mb-2"
+        />
+        <Textarea
+          value={editedContent.content ?? ""}
+          onChange={(e) =>
+            setEditedContent({ ...editedContent, content: e.target.value })
+          }
+          placeholder="Enter content"
+          className="min-h-[100px] mb-2"
+        />
+        <div className="flex justify-end space-x-2">
+          <Button onClick={onClose} variant="outline">
+            Cancel
           </Button>
-        </DialogFooter>
+          <Button onClick={handleSave}>Save</Button>
+        </div>
       </DialogContent>
     </Dialog>
   )
