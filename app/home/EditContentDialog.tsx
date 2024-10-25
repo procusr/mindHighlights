@@ -36,12 +36,11 @@ export default function EditContentDialog({
     if (editedContent) {
       await updateContent(
         editedContent.id,
-        editedContent.title,
-        editedContent.content,
+        editedContent.title ?? "",
+        editedContent.content ?? "",
         folderId
       )
       onClose()
-      // Update UI or refetch data as needed
     }
   }
 
@@ -54,7 +53,7 @@ export default function EditContentDialog({
           <DialogTitle>Edit Content</DialogTitle>
         </DialogHeader>
         <Input
-          value={editedContent.title}
+          value={editedContent.title ?? ""}
           onChange={(e) =>
             setEditedContent({ ...editedContent, title: e.target.value })
           }
@@ -62,7 +61,7 @@ export default function EditContentDialog({
           className="mb-2"
         />
         <Textarea
-          value={editedContent.content}
+          value={editedContent.content ?? ""}
           onChange={(e) =>
             setEditedContent({ ...editedContent, content: e.target.value })
           }

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import FolderActions from "./FolderActions"
 import AddNewContent from "./AddNewContent"
 import EmptyState from "./EmptyState"
-import ContentList from "./ContentList"
+import { ContentList } from "./ContentList"
 
 async function fetchInitialData(userId: string): Promise<Folder[]> {
   const supabase = createClient()

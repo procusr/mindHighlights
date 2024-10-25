@@ -1,10 +1,10 @@
-import { Suspense } from "react"
+import { Suspense, use } from "react"
 import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { Content, Folder } from "@/types/types"
 import AddNewContent from "./AddNewContent"
 import FolderActions from "./FolderActions"
-import ContentList from "./ContentList"
+import { ContentList } from "./ContentList"
 import EmptyState from "./EmptyState"
 import { ContentAreaSkeleton } from "@/components/ui/skeletons"
 
@@ -12,17 +12,14 @@ interface ContentAreaProps {
   folderId: string | null
   selectedFolder: Folder | null
   contentList: Promise<Content[]>
-}
-
-interface ContentListProps {
-  contentList: Promise<Content[]>
-  folderId: string
+  userId: string
 }
 
 export default function ContentArea({
   folderId,
   selectedFolder,
   contentList,
+  userId,
 }: ContentAreaProps) {
   return (
     <div className="flex-1 overflow-hidden">
@@ -41,7 +38,7 @@ export default function ContentArea({
                       folderName={selectedFolder.name}
                     />
                   </div>
-                  <AddNewContent folderId={folderId} contents={[]}>
+                  <AddNewContent folderId={folderId}>
                     <Button
                       variant="default"
                       size="sm"
@@ -68,7 +65,11 @@ export default function ContentArea({
                   </div>
                 }
               >
-                <ContentList contentList={contentList} folderId={folderId} />
+                <ContentList
+                  initialContent={use(contentList)}
+                  folderId={folderId}
+                  userId={userId}
+                />
               </Suspense>
             </>
           ) : (

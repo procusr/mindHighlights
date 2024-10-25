@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useTransition } from "react"
+import { useState, useEffect, useTransition, use } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
 import type { Content } from "@/types/types"
@@ -15,11 +15,11 @@ interface ContentListProps {
   userId: string
 }
 
-export default function ContentList({
+export const ContentList: React.FC<ContentListProps> = ({
   initialContent,
   folderId,
   userId,
-}: ContentListProps) {
+}) => {
   const [content, setContent] = useState<Content[]>(initialContent)
   const [isLoading, startTransition] = useTransition()
   const [page, setPage] = useState(1)
