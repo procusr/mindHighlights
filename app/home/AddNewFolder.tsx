@@ -2,7 +2,6 @@
 
 import { useState, useTransition, startTransition } from "react"
 import type { ReactNode } from "react"
-import { useOptimistic } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Loader2, Check, AlertCircle } from "lucide-react"
@@ -19,43 +18,35 @@ import { createNewFolder } from "../actions/contentActions"
 
 interface AddNewFolderProps {
   children: ReactNode
-  folders: Folder[]
+  onFolderCreated?: (newFolder: Folder) => void
 }
 
 export default function AddNewFolder({
   children,
-  folders = [],
+  onFolderCreated,
 }: AddNewFolderProps) {
   const [newFolderName, setNewFolderName] = useState("")
   const [isOpen, setIsOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [status, setStatus] = useState<"idle" | "error" | "success">("idle")
 
-  const [optimisticFolders, addOptimisticFolder] = useOptimistic<Folder[]>(
-    folders ?? [],
-    (state, newFolder: Folder) => [...state, newFolder]
-  )
-
   const handleCreateFolder = () => {
     if (!newFolderName.trim() || isPending) return
 
-    const optimisticFolder: Folder = {
-      id: `temp-${Date.now()}`,
-      name: newFolderName,
-      user_id: "",
-      created_at: new Date().toISOString(),
-    }
-
     startTransition(async () => {
       try {
-        addOptimisticFolder(optimisticFolder)
-        await createNewFolder(newFolderName)
-        setStatus("success")
-        setTimeout(() => {
-          setIsOpen(false)
-          setNewFolderName("")
-          setStatus("idle")
-        }, 1000)
+        const newFolder = await createNewFolder(newFolderName)
+        if (newFolder) {
+          setStatus("success")
+          onFolderCreated?.(newFolder)
+          setTimeout(() => {
+            setIsOpen(false)
+            setNewFolderName("")
+            setStatus("idle")
+          }, 1000)
+        } else {
+          throw new Error("Failed to create folder")
+        }
       } catch (error) {
         setStatus("error")
         console.error("Failed to create folder:", error)
