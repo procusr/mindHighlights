@@ -61,12 +61,13 @@ export default async function HomePage(props: {
   }
 
   const folderId = (await props.searchParams)?.folderId ?? ""
-  const initialFolders = await fetchInitialData(user.id)
+  const [initialFolders, initialContent] = await Promise.all([
+    fetchInitialData(user.id),
+    fetchContentForFolder(folderId, user.id),
+  ])
 
   const selectedFolder =
     initialFolders.find((folder) => folder.id === folderId) || null
-
-  const initialContent = await fetchContentForFolder(folderId, user.id)
 
   return (
     <div className="flex-1 w-full flex flex-col gap-12">

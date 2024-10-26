@@ -65,7 +65,6 @@ export const ContentList: React.FC<ContentListProps> = ({
 
   const handleDelete = async (contentId: string) => {
     try {
-      // Optimistically update UI
       setContent((prevContent) =>
         prevContent.filter((item) => item.id !== contentId)
       )
