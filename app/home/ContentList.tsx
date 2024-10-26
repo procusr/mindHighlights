@@ -8,6 +8,8 @@ import ContentCard from "./ContentCard"
 import { Search } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { useDebounce } from "../../hooks/useDebounce"
+import { Input } from "../../components/ui/input"
+import { deleteContent } from "../actions/contentActions"
 
 interface ContentListProps {
   initialContent: Content[]
@@ -62,19 +64,18 @@ export const ContentList: React.FC<ContentListProps> = ({
   }
 
   const handleDelete = async (contentId: string) => {
-    setContent((prevContent) =>
-      prevContent.filter((item) => item.id !== contentId)
-    )
+    try {
+      // Optimistically update UI
+      setContent((prevContent) =>
+        prevContent.filter((item) => item.id !== contentId)
+      )
 
-    const { error } = await supabase
-      .from("user_content")
-      .delete()
-      .eq("id", contentId)
-
-    if (error) {
-      loadContent(debouncedSearchTerm, page)
-    } else {
+      await deleteContent(contentId, folderId)
       router.refresh()
+    } catch (error) {
+      console.error("Error in deletion process:", error)
+      // Restore the content if deletion fails
+      loadContent(debouncedSearchTerm, page)
     }
   }
 
@@ -84,15 +85,15 @@ export const ContentList: React.FC<ContentListProps> = ({
   }, [debouncedSearchTerm])
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4  content-container">
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <input
+        <Input
           type="search"
           placeholder="Search highlights..."
           value={searchTerm}
           onChange={handleSearch}
-          className="w-full pl-10 pr-4 py-2 rounded-md border border-input"
+          className="w-full pl-10 pr-4  rounded-md border border-input mt-1"
         />
       </div>
 

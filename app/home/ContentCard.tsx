@@ -22,7 +22,7 @@ import ConfirmDialog from "../../components/ConfirmDialog"
 export interface ContentCardProps {
   content: Content
   folderId: string
-  onDelete: () => Promise<void>
+  onDelete: () => void
 }
 
 export default function ContentCard({
@@ -34,9 +34,7 @@ export default function ContentCard({
   const [isEditing, setIsEditing] = useState(false)
   const [isGeneratingMemory, setIsGeneratingMemory] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
-  const handleDelete = async () => {
-    await deleteContent(content.id, folderId)
-  }
+
   const handleMemory = async () => {
     if (!content.content?.trim()) return
     setIsGeneratingMemory(true)
@@ -75,11 +73,16 @@ export default function ContentCard({
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent className="bg-background">
                 <DropdownMenuItem onClick={() => setIsEditing(true)}>
                   <Edit className="h-4 w-4 mr-2" /> Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setIsDeleting(true)}>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setIsDeleting(true)
+                  }}
+                >
                   <Delete className="h-4 w-4 mr-2" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -140,7 +143,10 @@ export default function ContentCard({
         onOpenChange={setIsDeleting}
         title="Delete Highlight"
         description="Are you sure you want to delete this highlight?"
-        onConfirm={handleDelete}
+        onConfirm={() => {
+          onDelete()
+          setIsDeleting(false)
+        }}
       />
     </Card>
   )

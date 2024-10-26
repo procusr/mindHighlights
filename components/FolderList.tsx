@@ -17,7 +17,7 @@ export default function FolderList({ folders, folderId }: FolderListProps) {
   }
 
   return (
-    <ul className="space-y-1">
+    <ul className="space-y-1 ">
       {folders.map((folder) => {
         const isSelected = folderId === folder.id
 
@@ -26,7 +26,7 @@ export default function FolderList({ folders, folderId }: FolderListProps) {
             key={folder.id}
             className={`
               relative cursor-pointer transition-all duration-200
-              ${isSelected ? "bg-primary/10 text-primary font-medium" : "hover:bg-accent/50"}
+              ${isSelected ? "sidebar-item depth-shadow bg-primary/10 text-primary font-medium" : "hover:bg-primary/10"}
             `}
             onClick={() => handleFolderClick(folder.id)}
             onKeyDown={(e) => {

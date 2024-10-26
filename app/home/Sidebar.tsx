@@ -38,7 +38,7 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
     <aside
       className={`${
         menuOpen ? "translate-x-0" : "-translate-x-full"
-      } fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-b from-background to-background/95 transition-all duration-300 ease-in-out md:static md:translate-x-0 border-r border-border flex flex-col shadow-lg`}
+      } sidebar fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-b from-background to-background/95 transition-all duration-300 ease-in-out md:static md:translate-x-0 border-r border-border flex flex-col shadow-lg`}
       aria-labelledby="sidebar-heading"
     >
       <div className="sticky top-0 bg-background/80 backdrop-blur-sm z-10 p-4 border-b border-border">

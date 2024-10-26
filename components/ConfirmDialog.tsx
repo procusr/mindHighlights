@@ -25,13 +25,13 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onConfirm,
 }) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogContent className="p-4 rounded-2xl bg-card">
+    <DialogContent className="sm:max-w-[425px] bg-background border-border">
       <DialogHeader>
-        <DialogTitle className="text-2xl font-bold text-primary">
+        <DialogTitle className="text-xl font-semibold text-foreground">
           {title}
         </DialogTitle>
       </DialogHeader>
-      <DialogDescription className="text-gray-700">
+      <DialogDescription className="text-muted-foreground">
         {description}
       </DialogDescription>
       <DialogFooter
@@ -42,15 +42,15 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       >
         <Button
           onClick={() => onOpenChange(false)}
-          variant="ghost"
-          className="w-full sm:w-auto"
+          variant="outline"
+          className="w-full sm:w-auto hover:bg-secondary"
         >
           Cancel
         </Button>
         <Button
           onClick={onConfirm}
           variant="destructive"
-          className="w-full sm:w-auto"
+          className="w-full sm:w-auto hover:bg-destructive/90"
         >
           Delete
         </Button>
