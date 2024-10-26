@@ -74,7 +74,6 @@ export const ContentList: React.FC<ContentListProps> = ({
       router.refresh()
     } catch (error) {
       console.error("Error in deletion process:", error)
-      // Restore the content if deletion fails
       loadContent(debouncedSearchTerm, page)
     }
   }

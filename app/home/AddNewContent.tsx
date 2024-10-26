@@ -3,7 +3,7 @@
 import { useState, useTransition, startTransition, useActionState } from "react"
 import type { ReactNode } from "react"
 import { Button } from "@/components/ui/button"
-import { Loader2, Check } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import type { Content } from "@/types/types"
 import { addNewContent } from "../actions/contentActions"
 
 interface AddNewContentProps {

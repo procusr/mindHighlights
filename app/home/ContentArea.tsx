@@ -7,6 +7,7 @@ import FolderActions from "./FolderActions"
 import { ContentList } from "./ContentList"
 import EmptyState from "./EmptyState"
 import { ContentAreaSkeleton } from "@/components/ui/skeletons"
+import { Input } from "../../components/ui/input"
 
 interface ContentAreaProps {
   folderId: string | null
@@ -54,7 +55,7 @@ export default function ContentArea({
                 fallback={
                   <div className="space-y-4">
                     <div className="relative">
-                      <input
+                      <Input
                         type="search"
                         placeholder="Search highlights..."
                         className="w-full px-4 py-2 rounded-md border border-input bg-muted/50"

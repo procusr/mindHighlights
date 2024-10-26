@@ -36,7 +36,7 @@ async function fetchContentForFolder(
     .eq("folder_id", folderId)
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
-    .limit(20) // Implement pagination
+    .limit(20)
 
   if (error) throw new Error(error.message)
   return data as Content[]
