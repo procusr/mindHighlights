@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 export default function Logo() {
   return (
@@ -11,5 +11,5 @@ export default function Logo() {
         <span className="absolute inset-x-0 bottom-0 h-3/5 bg-highlight opacity-60 transform -skew-y-3 rounded-sm" />
       </span>
     </div>
-  )
+  );
 }

@@ -1,8 +1,8 @@
-import { signOutAction } from "@/app/actions"
-import { createClient } from "@/utils/supabase/server"
-import Link from "next/link"
-import { Button } from "./ui/button"
-import { Folder } from "lucide-react"
+import { signOutAction } from "@/app/actions";
+import { createClient } from "@/utils/supabase/server";
+import Link from "next/link";
+import { Button } from "./ui/button";
+import { Folder } from "lucide-react";
 
 import {
   Menubar,
@@ -11,17 +11,17 @@ import {
   MenubarMenu,
   MenubarTrigger,
   MenubarSeparator,
-} from "./ui/menubar"
+} from "./ui/menubar";
 
-import { SubmitButton } from "./submit-button"
+import { SubmitButton } from "./submit-button";
 
 // Mock function to generate random folders
-const folders = ["Research", "Notes", "Projects", "Ideas", "Assignments"]
+const folders = ["Research", "Notes", "Projects", "Ideas", "Assignments"];
 
 export default async function HeaderAuth() {
   const {
     data: { user },
-  } = await createClient().auth.getUser()
+  } = await createClient().auth.getUser();
 
   return (
     <div className="flex items-center gap-1">
@@ -72,5 +72,5 @@ export default async function HeaderAuth() {
         </div>
       )}
     </div>
-  )
+  );
 }

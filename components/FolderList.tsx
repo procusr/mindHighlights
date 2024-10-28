@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 
-import type { Folder } from "@/types/types"
+import type { Folder } from "@/types/types";
 
 interface FolderListProps {
-  folders: Folder[]
-  folderId: string
+  folders: Folder[];
+  folderId: string;
 }
 
 export default function FolderList({ folders, folderId }: FolderListProps) {
-  const router = useRouter()
+  const router = useRouter();
 
   const handleFolderClick = (folderId: string) => {
-    router.push(`/home?folderId=${folderId}`)
-  }
+    router.push(`/home?folderId=${folderId}`);
+  };
 
   return (
     <ul className="space-y-1 ">
       {folders.map((folder) => {
-        const isSelected = folderId === folder.id
+        const isSelected = folderId === folder.id;
 
         return (
           <li
@@ -31,7 +31,7 @@ export default function FolderList({ folders, folderId }: FolderListProps) {
             onClick={() => handleFolderClick(folder.id)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                handleFolderClick(folder.id)
+                handleFolderClick(folder.id);
               }
             }}
             aria-selected={isSelected}
@@ -45,8 +45,8 @@ export default function FolderList({ folders, folderId }: FolderListProps) {
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />
             )}
           </li>
-        )
+        );
       })}
     </ul>
-  )
+  );
 }

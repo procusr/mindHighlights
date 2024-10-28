@@ -1,42 +1,42 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { MoreVertical, Pencil, Trash } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { MoreVertical, Pencil, Trash } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import ConfirmDialog from "@/components/ConfirmDialog"
-import EditFolderDialog from "@/components/EditFolderDialog"
-import { deleteFolder, updateFolder } from "../actions/contentActions"
+} from "@/components/ui/dropdown-menu";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import EditFolderDialog from "@/components/EditFolderDialog";
+import { deleteFolder, updateFolder } from "../actions/contentActions";
 
 interface FolderActionsProps {
-  folderId: string
-  folderName: string
+  folderId: string;
+  folderName: string;
 }
 
 export default function FolderActions({
   folderId,
   folderName,
 }: FolderActionsProps) {
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [newFolderName, setNewFolderName] = useState(folderName)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [newFolderName, setNewFolderName] = useState(folderName);
 
   const handleDeleteFolder = async () => {
-    await deleteFolder(folderId)
-    setIsDeleteDialogOpen(false)
-  }
+    await deleteFolder(folderId);
+    setIsDeleteDialogOpen(false);
+  };
 
   const handleEditFolder = async () => {
     if (newFolderName.trim() && newFolderName !== folderName) {
-      await updateFolder(folderId, newFolderName)
-      setIsEditDialogOpen(false)
+      await updateFolder(folderId, newFolderName);
+      setIsEditDialogOpen(false);
     }
-  }
+  };
 
   return (
     <>
@@ -78,5 +78,5 @@ export default function FolderActions({
         onSave={handleEditFolder}
       />
     </>
-  )
+  );
 }

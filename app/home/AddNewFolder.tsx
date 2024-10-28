@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { useState, useTransition, startTransition } from "react"
-import type { ReactNode } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Loader2, Check, AlertCircle } from "lucide-react"
+import { useState, useTransition, startTransition } from "react";
+import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Loader2, Check, AlertCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,57 +12,57 @@ import {
   DialogFooter,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import type { Folder } from "@/types/types"
-import { createNewFolder } from "../actions/contentActions"
+} from "@/components/ui/dialog";
+import type { Folder } from "@/types/types";
+import { createNewFolder } from "../actions/contentActions";
 
 interface AddNewFolderProps {
-  children: ReactNode
-  onFolderCreated?: (newFolder: Folder) => void
+  children: ReactNode;
+  onFolderCreated?: (newFolder: Folder) => void;
 }
 
 export default function AddNewFolder({
   children,
   onFolderCreated,
 }: AddNewFolderProps) {
-  const [newFolderName, setNewFolderName] = useState("")
-  const [isOpen, setIsOpen] = useState(false)
-  const [isPending, startTransition] = useTransition()
-  const [status, setStatus] = useState<"idle" | "error" | "success">("idle")
+  const [newFolderName, setNewFolderName] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
 
   const handleCreateFolder = () => {
-    if (!newFolderName.trim() || isPending) return
+    if (!newFolderName.trim() || isPending) return;
 
     startTransition(async () => {
       try {
-        const newFolder = await createNewFolder(newFolderName)
+        const newFolder = await createNewFolder(newFolderName);
         if (newFolder) {
-          setStatus("success")
-          onFolderCreated?.(newFolder)
+          setStatus("success");
+          onFolderCreated?.(newFolder);
           setTimeout(() => {
-            setIsOpen(false)
-            setNewFolderName("")
-            setStatus("idle")
-          }, 1000)
+            setIsOpen(false);
+            setNewFolderName("");
+            setStatus("idle");
+          }, 1000);
         } else {
-          throw new Error("Failed to create folder")
+          throw new Error("Failed to create folder");
         }
       } catch (error) {
-        setStatus("error")
-        console.error("Failed to create folder:", error)
+        setStatus("error");
+        console.error("Failed to create folder:", error);
       }
-    })
-  }
+    });
+  };
 
   return (
     <Dialog
       open={isOpen}
       onOpenChange={(open) => {
         if (!isPending) {
-          setIsOpen(open)
+          setIsOpen(open);
           if (!open) {
-            setNewFolderName("")
-            setStatus("idle")
+            setNewFolderName("");
+            setStatus("idle");
           }
         }
       }}
@@ -102,5 +102,5 @@ export default function AddNewFolder({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

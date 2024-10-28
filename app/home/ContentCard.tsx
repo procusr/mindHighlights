@@ -1,28 +1,28 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { MoreVertical, Edit, Delete, RefreshCw, Sparkles } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from "react";
+import { MoreVertical, Edit, Delete, RefreshCw, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import type { Content } from "@/types/types"
+} from "@/components/ui/dropdown-menu";
+import type { Content } from "@/types/types";
 import {
   deleteContent,
   generateMemoryAnchor,
   updateContentAnchor,
-} from "../actions/contentActions"
-import EditContentDialog from "./EditContentDialog"
-import ConfirmDialog from "../../components/ConfirmDialog"
+} from "../actions/contentActions";
+import EditContentDialog from "./EditContentDialog";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 export interface ContentCardProps {
-  content: Content
-  folderId: string
-  onDelete: () => void
+  content: Content;
+  folderId: string;
+  onDelete: () => void;
 }
 
 export default function ContentCard({
@@ -30,21 +30,21 @@ export default function ContentCard({
   folderId,
   onDelete,
 }: ContentCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [isGeneratingMemory, setIsGeneratingMemory] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isGeneratingMemory, setIsGeneratingMemory] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleMemory = async () => {
-    if (!content.content?.trim()) return
-    setIsGeneratingMemory(true)
+    if (!content.content?.trim()) return;
+    setIsGeneratingMemory(true);
     try {
-      const anchor = await generateMemoryAnchor(content.content)
-      await updateContentAnchor(content.id, anchor, folderId)
+      const anchor = await generateMemoryAnchor(content.content);
+      await updateContentAnchor(content.id, anchor, folderId);
     } finally {
-      setIsGeneratingMemory(false)
+      setIsGeneratingMemory(false);
     }
-  }
+  };
 
   return (
     <Card
@@ -60,8 +60,8 @@ export default function ContentCard({
             onClick={(e) => e.stopPropagation()}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault()
-                e.stopPropagation()
+                e.preventDefault();
+                e.stopPropagation();
               }
             }}
             role="button"
@@ -79,8 +79,8 @@ export default function ContentCard({
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={(e) => {
-                    e.stopPropagation()
-                    setIsDeleting(true)
+                    e.stopPropagation();
+                    setIsDeleting(true);
                   }}
                 >
                   <Delete className="h-4 w-4 mr-2" /> Delete
@@ -105,8 +105,8 @@ export default function ContentCard({
                   variant="outline"
                   size="sm"
                   onClick={(e) => {
-                    e.stopPropagation()
-                    handleMemory()
+                    e.stopPropagation();
+                    handleMemory();
                   }}
                   disabled={isGeneratingMemory}
                   className="flex-shrink-0"
@@ -121,8 +121,8 @@ export default function ContentCard({
               size="sm"
               className="inline-flex justify-between gap-2"
               onClick={(e) => {
-                e.stopPropagation()
-                handleMemory()
+                e.stopPropagation();
+                handleMemory();
               }}
               disabled={isGeneratingMemory}
             >
@@ -144,10 +144,10 @@ export default function ContentCard({
         title="Delete Highlight"
         description="Are you sure you want to delete this highlight?"
         onConfirm={() => {
-          onDelete()
-          setIsDeleting(false)
+          onDelete();
+          setIsDeleting(false);
         }}
       />
     </Card>
-  )
+  );
 }

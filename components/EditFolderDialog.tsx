@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -6,18 +6,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface EditFolderDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  newFolderName: string
-  setNewFolderName: (name: string) => void
-  onSave: () => void
-  title?: string
-  confirmText?: string
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  newFolderName: string;
+  setNewFolderName: (name: string) => void;
+  onSave: () => void;
+  title?: string;
+  confirmText?: string;
 }
 
 export default function EditFolderDialog({
@@ -58,5 +58,5 @@ export default function EditFolderDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

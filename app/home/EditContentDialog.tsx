@@ -1,23 +1,23 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import { updateContent } from "../actions/contentActions"
-import type { Content } from "@/types/types"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { updateContent } from "../actions/contentActions";
+import type { Content } from "@/types/types";
 
 interface EditContentDialogProps {
-  content: Content | null
-  isOpen: boolean
-  onClose: () => void
-  folderId: string
+  content: Content | null;
+  isOpen: boolean;
+  onClose: () => void;
+  folderId: string;
 }
 
 export default function EditContentDialog({
@@ -26,11 +26,11 @@ export default function EditContentDialog({
   onClose,
   folderId,
 }: EditContentDialogProps) {
-  const [editedContent, setEditedContent] = useState<Content | null>(null)
+  const [editedContent, setEditedContent] = useState<Content | null>(null);
 
   useEffect(() => {
-    setEditedContent(content)
-  }, [content])
+    setEditedContent(content);
+  }, [content]);
 
   const handleSave = async () => {
     if (editedContent) {
@@ -39,12 +39,12 @@ export default function EditContentDialog({
         editedContent.title ?? "",
         editedContent.content ?? "",
         folderId
-      )
-      onClose()
+      );
+      onClose();
     }
-  }
+  };
 
-  if (!editedContent) return null
+  if (!editedContent) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -76,5 +76,5 @@ export default function EditContentDialog({
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import type { ReactNode } from "react"
-import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react"
+import { useState, useTransition } from "react";
+import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -11,43 +11,43 @@ import {
   DialogFooter,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { addNewContent } from "../actions/contentActions"
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { addNewContent } from "../actions/contentActions";
 
 interface AddNewContentProps {
-  children: ReactNode
-  folderId: string
+  children: ReactNode;
+  folderId: string;
 }
 
 export default function AddNewContent({
   children,
   folderId,
 }: AddNewContentProps) {
-  const [content, setContent] = useState("")
-  const [title, setTitle] = useState("")
-  const [isOpen, setIsOpen] = useState(false)
-  const [isTransitionPending, startTransition] = useTransition()
-  const [autoTitle, setAutoTitle] = useState(true)
+  const [content, setContent] = useState("");
+  const [title, setTitle] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [isTransitionPending, startTransition] = useTransition();
+  const [autoTitle, setAutoTitle] = useState(true);
 
   const handleAddContent = () => {
-    if (!content.trim() || isTransitionPending) return
-    if (!autoTitle && !title.trim()) return
+    if (!content.trim() || isTransitionPending) return;
+    if (!autoTitle && !title.trim()) return;
 
     startTransition(async () => {
       try {
-        await addNewContent(content, folderId, autoTitle ? undefined : title)
-        setContent("")
-        setTitle("")
-        setIsOpen(false)
+        await addNewContent(content, folderId, autoTitle ? undefined : title);
+        setContent("");
+        setTitle("");
+        setIsOpen(false);
       } catch (error) {
-        console.error("Failed to add content:", error)
+        console.error("Failed to add content:", error);
       }
-    })
-  }
+    });
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -108,5 +108,5 @@ export default function AddNewContent({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

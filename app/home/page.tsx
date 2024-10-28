@@ -1,35 +1,38 @@
-import { redirect } from "next/navigation"
-import { createClient } from "@/utils/supabase/server"
-import type { Content, Folder } from "@/types/types"
-import Sidebar from "./Sidebar"
-import { Suspense } from "react"
-import { SidebarSkeleton, ContentAreaSkeleton } from "@/components/ui/skeletons"
-import { Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import FolderActions from "./FolderActions"
-import AddNewContent from "./AddNewContent"
-import EmptyState from "./EmptyState"
-import { ContentList } from "./ContentList"
-import { Input } from "../../components/ui/input"
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
+import type { Content, Folder } from "@/types/types";
+import Sidebar from "./Sidebar";
+import { Suspense } from "react";
+import {
+  SidebarSkeleton,
+  ContentAreaSkeleton,
+} from "@/components/ui/skeletons";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import FolderActions from "./FolderActions";
+import AddNewContent from "./AddNewContent";
+import EmptyState from "./EmptyState";
+import { ContentList } from "./ContentList";
+import { Input } from "../../components/ui/input";
 
 async function fetchInitialData(userId: string): Promise<Folder[]> {
-  const supabase = createClient()
+  const supabase = createClient();
 
   const { data: folders, error } = await supabase
     .from("user_folders")
     .select("id, name, user_id, created_at")
-    .eq("user_id", userId)
-  if (error) throw new Error(error.message)
-  return folders as Folder[]
+    .eq("user_id", userId);
+  if (error) throw new Error(error.message);
+  return folders as Folder[];
 }
 
 async function fetchContentForFolder(
   folderId: string,
   userId: string
 ): Promise<Content[]> {
-  const supabase = createClient()
+  const supabase = createClient();
 
-  if (!folderId) return []
+  if (!folderId) return [];
 
   const { data, error } = await supabase
     .from("user_content")
@@ -37,38 +40,38 @@ async function fetchContentForFolder(
     .eq("folder_id", folderId)
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
-    .limit(20)
+    .limit(20);
 
-  if (error) throw new Error(error.message)
-  return data as Content[]
+  if (error) throw new Error(error.message);
+  return data as Content[];
 }
 
 export default async function HomePage(props: {
-  searchParams: Promise<{ folderId?: string }>
+  searchParams: Promise<{ folderId?: string }>;
 }) {
-  const supabase = createClient()
+  const supabase = createClient();
 
   const {
     data: { user },
     error,
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (error) {
-    throw new Error(error.message)
+    throw new Error(error.message);
   }
 
   if (!user) {
-    return redirect("/sign-in")
+    return redirect("/sign-in");
   }
 
-  const folderId = (await props.searchParams)?.folderId ?? ""
+  const folderId = (await props.searchParams)?.folderId ?? "";
   const [initialFolders, initialContent] = await Promise.all([
     fetchInitialData(user.id),
     fetchContentForFolder(folderId, user.id),
-  ])
+  ]);
 
   const selectedFolder =
-    initialFolders.find((folder) => folder.id === folderId) || null
+    initialFolders.find((folder) => folder.id === folderId) || null;
 
   return (
     <div className="flex-1 w-full flex flex-col gap-12">
@@ -135,5 +138,5 @@ export default async function HomePage(props: {
         </div>
       </div>
     </div>
-  )
+  );
 }

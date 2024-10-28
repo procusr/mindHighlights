@@ -1,11 +1,11 @@
-import { useState } from "react"
-import { addNewContent } from "@/app/actions/contentActions"
-import type { Content } from "@/types/types"
+import { useState } from "react";
+import { addNewContent } from "@/app/actions/contentActions";
+import type { Content } from "@/types/types";
 
 interface AddContentFormProps {
-  userId: string
-  folderId: string
-  onContentAdded: (newContent: Content) => void
+  userId: string;
+  folderId: string;
+  onContentAdded: (newContent: Content) => void;
 }
 
 export default function AddContentForm({
@@ -13,14 +13,14 @@ export default function AddContentForm({
   folderId,
   onContentAdded,
 }: AddContentFormProps) {
-  const [content, setContent] = useState("")
+  const [content, setContent] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const newContent = await addNewContent(content, folderId, userId)
-    onContentAdded(newContent)
-    setContent("")
-  }
+    e.preventDefault();
+    const newContent = await addNewContent(content, folderId, userId);
+    onContentAdded(newContent);
+    setContent("");
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -37,5 +37,5 @@ export default function AddContentForm({
         Add Content
       </button>
     </form>
-  )
+  );
 }

@@ -1,32 +1,34 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, useState, type ReactNode } from "react";
 
 interface SidebarContextProps {
-  menuOpen: boolean
-  toggleMenu: () => void
-  closeMenu: () => void
+  menuOpen: boolean;
+  toggleMenu: () => void;
+  closeMenu: () => void;
 }
 
-const SidebarContext = createContext<SidebarContextProps | undefined>(undefined)
+const SidebarContext = createContext<SidebarContextProps | undefined>(
+  undefined
+);
 
 export const SidebarProvider = ({ children }: { children: ReactNode }) => {
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const toggleMenu = () => setMenuOpen((prev) => !prev)
-  const closeMenu = () => setMenuOpen(false)
+  const toggleMenu = () => setMenuOpen((prev) => !prev);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <SidebarContext.Provider value={{ menuOpen, toggleMenu, closeMenu }}>
       {children}
     </SidebarContext.Provider>
-  )
-}
+  );
+};
 
 export const useSidebar = (): SidebarContextProps => {
-  const context = useContext(SidebarContext)
+  const context = useContext(SidebarContext);
   if (!context) {
-    throw new Error("useSidebar must be used within a SidebarProvider")
+    throw new Error("useSidebar must be used within a SidebarProvider");
   }
-  return context
-}
+  return context;
+};

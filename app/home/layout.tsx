@@ -1,8 +1,8 @@
-import { SidebarProvider } from "../contexts/SidebarContext"
-import MenuToggle from "../components/MenuToggle"
-import Link from "next/link"
-import HeaderAuth from "@/components/headerAuth"
-import Logo from "@/components/Logo"
+import { SidebarProvider } from "../contexts/SidebarContext";
+import MenuToggle from "../components/MenuToggle";
+import Link from "next/link";
+import HeaderAuth from "@/components/headerAuth";
+import Logo from "@/components/Logo";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -20,5 +20,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <main className="flex flex-1 w-full overflow-hidden">{children}</main>
       </div>
     </SidebarProvider>
-  )
+  );
 }

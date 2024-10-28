@@ -4,6 +4,7 @@ export function GradientBackground() {
       <div className="absolute inset-0 opacity-40">
         {[...Array(5)].map((_, index) => (
           <div
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
             key={index}
             className="absolute transform"
             style={{
@@ -23,7 +24,10 @@ export function GradientBackground() {
       <div className="absolute inset-0">
         {[...Array(3)].map((_, index) => (
           <div
-            key={`line-${index}`}
+            key={`line-${
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+              index
+            }`}
             className="absolute bg-primary dark:bg-primary-light"
             style={{
               left: `${Math.random() * 100}%`,
@@ -38,5 +42,5 @@ export function GradientBackground() {
       </div>
       <div className="absolute inset-0 bg-gradient-to-br from-white via-transparent to-white dark:from-gray-900 dark:via-transparent dark:to-gray-900 opacity-60" />
     </div>
-  )
+  );
 }

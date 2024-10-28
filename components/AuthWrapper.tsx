@@ -1,11 +1,11 @@
-import Link from "next/link"
-import { GradientBackground } from "@/app/components/GradientBackground"
-import Logo from "./Logo"
+import Link from "next/link";
+import { GradientBackground } from "@/app/components/GradientBackground";
+import Logo from "./Logo";
 
 export default function AuthWrapper({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center">
@@ -21,5 +21,5 @@ export default function AuthWrapper({
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,15 +1,13 @@
-import { resetPasswordAction } from "@/app/actions"
-import { FormMessage, type Message } from "@/components/form-message"
-import { SubmitButton } from "@/components/submit-button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import AuthWrapper from "@/components/AuthWrapper"
+import { resetPasswordAction } from "@/app/actions";
+import { FormMessage, type Message } from "@/components/form-message";
+import { SubmitButton } from "@/components/submit-button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import AuthWrapper from "@/components/AuthWrapper";
 
-export default async function ResetPassword(
-  props: {
-    searchParams: Promise<Message>
-  }
-) {
+export default async function ResetPassword(props: {
+  searchParams: Promise<Message>;
+}) {
   const searchParams = await props.searchParams;
   return (
     <AuthWrapper>
@@ -36,5 +34,5 @@ export default async function ResetPassword(
       </SubmitButton>
       <FormMessage message={searchParams} />
     </AuthWrapper>
-  )
+  );
 }

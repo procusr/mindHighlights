@@ -1,7 +1,7 @@
 interface HighlightedTextProps {
-  children: React.ReactNode
-  className?: string
-  highlightClass?: string
+  children: React.ReactNode;
+  className?: string;
+  highlightClass?: string;
 }
 
 export const HighlightedText: React.FC<HighlightedTextProps> = ({
@@ -16,5 +16,5 @@ export const HighlightedText: React.FC<HighlightedTextProps> = ({
       />
       <span className="relative z-10">{children}</span>
     </span>
-  )
-}
+  );
+};

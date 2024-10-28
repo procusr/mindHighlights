@@ -1,5 +1,5 @@
-import { type CookieOptions, createServerClient } from "@supabase/ssr"
-import { type NextRequest, NextResponse } from "next/server"
+import { type CookieOptions, createServerClient } from "@supabase/ssr";
+import { type NextRequest, NextResponse } from "next/server";
 
 export const updateSession = async (request: NextRequest) => {
   // This `try/catch` block is only here for the interactive tutorial.
@@ -10,50 +10,50 @@ export const updateSession = async (request: NextRequest) => {
       request: {
         headers: request.headers,
       },
-    })
+    });
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
 
     const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {
         async getAll() {
-          return await request.cookies.getAll()
+          return await request.cookies.getAll();
         },
         setAll(
           cookiesToSet: {
-            name: string
-            value: string
-            options?: CookieOptions
+            name: string;
+            value: string;
+            options?: CookieOptions;
           }[]
         ) {
           for (const { name, value } of cookiesToSet) {
-            request.cookies.set(name, value)
+            request.cookies.set(name, value);
           }
           response = NextResponse.next({
             request,
-          })
+          });
           for (const { name, value, options } of cookiesToSet) {
-            response.cookies.set(name, value, options)
+            response.cookies.set(name, value, options);
           }
         },
       },
-    })
+    });
 
     // This will refresh session if expired - required for Server Components
     // https://supabase.com/docs/guides/auth/server-side/nextjs
-    const user = await supabase.auth.getUser()
+    const user = await supabase.auth.getUser();
 
     // protected routes
     if (request.nextUrl.pathname.startsWith("/home") && user.error) {
-      return NextResponse.redirect(new URL("/sign-in", request.url))
+      return NextResponse.redirect(new URL("/sign-in", request.url));
     }
 
     if (request.nextUrl.pathname === "/" && !user.error) {
-      return NextResponse.redirect(new URL("/home", request.url))
+      return NextResponse.redirect(new URL("/home", request.url));
     }
 
-    return response
+    return response;
   } catch (e) {
     // If you are here, a Supabase client could not be created!
     // This is likely because you have not set up environment variables.
@@ -62,6 +62,6 @@ export const updateSession = async (request: NextRequest) => {
       request: {
         headers: request.headers,
       },
-    })
+    });
   }
-}
+};

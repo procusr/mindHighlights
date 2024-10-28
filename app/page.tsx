@@ -1,7 +1,7 @@
-import Link from "next/link"
-import { Button } from "../components/ui/button"
-import HeaderAuth from "../components/headerAuth"
-import { HighlightedText } from "../components/HighlightedText"
+import Link from "next/link";
+import { Button } from "../components/ui/button";
+import HeaderAuth from "../components/headerAuth";
+import { HighlightedText } from "../components/HighlightedText";
 
 export default async function Index() {
   return (
@@ -255,5 +255,5 @@ export default async function Index() {
         </div>
       </section>
     </main>
-  )
+  );
 }

@@ -1,13 +1,11 @@
-import { signInAction } from "@/app/actions"
-import { FormMessage, type Message } from "@/components/form-message"
-import { SubmitButton } from "@/components/submit-button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import Link from "next/link"
-import { Checkbox } from "../../../components/ui/checkbox"
-import { cn } from "../../../utils/cn"
-import { CheckIcon } from "lucide-react"
-import AuthWrapper from "@/components/AuthWrapper"
+import { signInAction } from "@/app/actions";
+import AuthWrapper from "@/components/AuthWrapper";
+import { FormMessage, type Message } from "@/components/form-message";
+import { SubmitButton } from "@/components/submit-button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import { Checkbox } from "../../../components/ui/checkbox";
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams;
@@ -88,5 +86,5 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
         </p>
       </form>
     </AuthWrapper>
-  )
+  );
 }

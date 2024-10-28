@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { Menu } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useSidebar } from "../contexts/SidebarContext"
-import { useEffect, useRef } from "react"
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useSidebar } from "../contexts/SidebarContext";
+import { useEffect, useRef } from "react";
 
 export default function MenuToggle() {
-  const { menuOpen, toggleMenu, closeMenu } = useSidebar()
-  const menuRef = useRef<HTMLDivElement>(null)
+  const { menuOpen, toggleMenu, closeMenu } = useSidebar();
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -16,15 +16,15 @@ export default function MenuToggle() {
         menuRef.current &&
         !menuRef.current.contains(event.target as Node)
       ) {
-        closeMenu()
+        closeMenu();
       }
-    }
+    };
 
-    document.addEventListener("mousedown", handleOutsideClick)
+    document.addEventListener("mousedown", handleOutsideClick);
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick)
-    }
-  }, [menuOpen, closeMenu])
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [menuOpen, closeMenu]);
 
   return (
     <div ref={menuRef} className="md:hidden">
@@ -40,5 +40,5 @@ export default function MenuToggle() {
         />
       </Button>
     </div>
-  )
+  );
 }

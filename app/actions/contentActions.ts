@@ -1,28 +1,28 @@
-"use server"
+"use server";
 
-import { createClient } from "@/utils/supabase/server"
-import OpenAI from "openai"
-import type { Content, Folder } from "@/types/types"
-import { revalidatePath } from "next/cache"
+import { createClient } from "@/utils/supabase/server";
+import OpenAI from "openai";
+import type { Content, Folder } from "@/types/types";
+import { revalidatePath } from "next/cache";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
   organization: process.env.OPENAI_ORGANIZATION_ID,
   project: process.env.OPENAI_PROJECT_ID,
-})
+});
 
 export async function addNewContent(
   content: string,
   folderId: string,
   title?: string
 ) {
-  const supabase = createClient()
+  const supabase = createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
-  let generatedTitle = title
+  let generatedTitle = title;
 
   if (!title) {
     const response = await openai.chat.completions.create({
@@ -35,10 +35,10 @@ export async function addNewContent(
         },
       ],
       max_tokens: 60,
-    })
+    });
 
     generatedTitle =
-      response.choices[0]?.message?.content?.trim() || content.slice(0, 170)
+      response.choices[0]?.message?.content?.trim() || content.slice(0, 170);
   }
 
   const { data, error } = await supabase
@@ -49,12 +49,12 @@ export async function addNewContent(
       title: generatedTitle,
       content,
     })
-    .select()
+    .select();
 
-  revalidatePath(`/home/${folderId}`)
+  revalidatePath(`/home/${folderId}`);
 
-  if (error) throw new Error(error.message)
-  return data[0] as Content
+  if (error) throw new Error(error.message);
+  return data[0] as Content;
 }
 
 export async function updateContent(
@@ -63,85 +63,85 @@ export async function updateContent(
   content: string,
   folderId: string
 ) {
-  const supabase = createClient()
+  const supabase = createClient();
 
   const { data, error } = await supabase
     .from("user_content")
     .update({ title, content })
     .eq("id", contentId)
-    .select()
-  revalidatePath(`/home/${folderId}`)
+    .select();
+  revalidatePath(`/home/${folderId}`);
 
-  if (error) throw new Error(error.message)
-  return data[0] as Content
+  if (error) throw new Error(error.message);
+  return data[0] as Content;
 }
 
 export async function deleteContent(contentId: string, folderId: string) {
   try {
-    const supabase = createClient()
+    const supabase = createClient();
 
-    revalidatePath(`/home/${folderId}`)
+    revalidatePath(`/home/${folderId}`);
 
     const { error } = await supabase
       .from("user_content")
       .delete()
-      .eq("id", contentId)
+      .eq("id", contentId);
 
-    if (error) throw error
+    if (error) throw error;
   } catch (error) {
-    revalidatePath("/home")
-    throw error
+    revalidatePath("/home");
+    throw error;
   }
 }
 
 export async function createNewFolder(name: string) {
-  if (!name.trim()) return
-  const supabase = createClient()
+  if (!name.trim()) return;
+  const supabase = createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return
+    return;
   }
 
   const { data, error } = await supabase
     .from("user_folders")
     .insert({ name, user_id: user?.id })
-    .select()
+    .select();
 
-  revalidatePath("/home")
+  revalidatePath("/home");
 
-  if (error) throw new Error(error.message)
-  return data[0] as Folder
+  if (error) throw new Error(error.message);
+  return data[0] as Folder;
 }
 
 export async function updateFolder(folderId: string, name: string) {
-  const supabase = createClient()
+  const supabase = createClient();
 
   const { data, error } = await supabase
     .from("user_folders")
     .update({ name })
     .eq("id", folderId)
-    .select()
+    .select();
 
-  revalidatePath(`/home/${folderId}`)
+  revalidatePath(`/home/${folderId}`);
 
-  if (error) throw new Error(error.message)
-  return data[0] as Folder
+  if (error) throw new Error(error.message);
+  return data[0] as Folder;
 }
 
 export async function deleteFolder(folderId: string) {
-  const supabase = createClient()
+  const supabase = createClient();
 
   const { error } = await supabase
     .from("user_folders")
     .delete()
-    .eq("id", folderId)
+    .eq("id", folderId);
 
-  revalidatePath(`/home/${folderId}`)
+  revalidatePath(`/home/${folderId}`);
 
-  if (error) throw new Error(error.message)
+  if (error) throw new Error(error.message);
 }
 
 export async function generateMemoryAnchor(content: string) {
@@ -155,9 +155,9 @@ export async function generateMemoryAnchor(content: string) {
       },
     ],
     max_tokens: 60,
-  })
+  });
 
-  return response.choices[0]?.message?.content?.trim() || ""
+  return response.choices[0]?.message?.content?.trim() || "";
 }
 
 export async function updateContentAnchor(
@@ -165,16 +165,16 @@ export async function updateContentAnchor(
   anchor: string,
   folderId: string
 ) {
-  const supabase = createClient()
+  const supabase = createClient();
 
   const { data, error } = await supabase
     .from("user_content")
     .update({ anchor })
     .eq("id", contentId)
-    .select()
+    .select();
 
-  revalidatePath(`/home/${folderId}`)
+  revalidatePath(`/home/${folderId}`);
 
-  if (error) throw new Error(error.message)
-  return data[0] as Content
+  if (error) throw new Error(error.message);
+  return data[0] as Content;
 }

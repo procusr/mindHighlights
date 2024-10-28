@@ -1,6 +1,6 @@
-import { Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import AddNewFolder from "./AddNewFolder"
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import AddNewFolder from "./AddNewFolder";
 
 export default function EmptyState() {
   return (
@@ -15,5 +15,5 @@ export default function EmptyState() {
         </Button>
       </AddNewFolder>
     </div>
-  )
+  );
 }

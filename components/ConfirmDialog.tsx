@@ -5,16 +5,16 @@ import {
   DialogTitle,
   DialogFooter,
   DialogDescription,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/utils/cn"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/utils/cn";
 
 interface ConfirmDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title: string
-  description: string
-  onConfirm: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  description: string;
+  onConfirm: () => void;
 }
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
@@ -57,6 +57,6 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       </DialogFooter>
     </DialogContent>
   </Dialog>
-)
+);
 
-export default ConfirmDialog
+export default ConfirmDialog;

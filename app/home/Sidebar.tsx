@@ -1,38 +1,38 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import type { Folder } from "../../types/types"
-import AddNewFolder from "./AddNewFolder"
-import FolderList from "../../components/FolderList"
-import { Button } from "@/components/ui/button"
-import { Plus, Search, X, BookOpen } from "lucide-react"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { useSidebar } from "../contexts/SidebarContext"
+import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import type { Folder } from "../../types/types";
+import AddNewFolder from "./AddNewFolder";
+import FolderList from "../../components/FolderList";
+import { Button } from "@/components/ui/button";
+import { Plus, Search, X, BookOpen } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useSidebar } from "../contexts/SidebarContext";
 
 interface SidebarProps {
-  folderList: Folder[]
-  folderId: string
+  folderList: Folder[];
+  folderId: string;
 }
 
 export default function Sidebar({ folderList, folderId }: SidebarProps) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const { closeMenu, menuOpen } = useSidebar()
+  const [searchTerm, setSearchTerm] = useState("");
+  const { closeMenu, menuOpen } = useSidebar();
 
   const filteredFolders = folderList.filter((folder) =>
     folder.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  );
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
-        closeMenu()
+        closeMenu();
       }
-    }
+    };
 
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [closeMenu])
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [closeMenu]);
 
   return (
     <aside
@@ -101,5 +101,5 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
         </AddNewFolder>
       </div>
     </aside>
-  )
+  );
 }
