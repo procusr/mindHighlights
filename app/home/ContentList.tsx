@@ -90,15 +90,17 @@ export const ContentList: React.FC<ContentListProps> = ({
 
   return (
     <div className="space-y-4 content-container">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search highlights..."
-          value={searchTerm}
-          onChange={handleSearch}
-          className="w-full pl-10 pr-4 rounded-md border border-input mt-1"
-        />
+      <div className="sticky top-10 z-20 pb-2">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search highlights..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="w-full pl-10 pr-4 rounded-md border border-input"
+          />
+        </div>
       </div>
 
       {content.length > 0 ? (

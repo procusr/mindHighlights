@@ -84,10 +84,10 @@ export default async function HomePage(props: {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
               {folderId && selectedFolder ? (
                 <>
-                  <div className="sticky top-0 z-10 pb-4 bg-gray-50">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 sm:mb-4">
-                      <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
+                  <div className="sticky top-0 z-10 bg-gray-50">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 sm:mb-4 px-6">
+                      <div className="flex items-center gap-2 w-full sm:w-auto  ">
+                        <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)] ">
                           {selectedFolder.name}
                         </h2>
                         <FolderActions
