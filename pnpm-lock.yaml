@@ -45,6 +45,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.1.3
         version: 1.1.3(react-dom@19.0.0-rc-fb9a90fa48-20240614(react@19.0.0-rc-fb9a90fa48-20240614))(react@19.0.0-rc-fb9a90fa48-20240614)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
+      '@supabase/auth-helpers-nextjs':
+        specifier: ^0.10.0
+        version: 0.10.0(@supabase/supabase-js@2.45.3)
       '@supabase/ssr':
         specifier: latest
         version: 0.5.1(@supabase/supabase-js@2.45.3)
@@ -843,6 +846,16 @@ packages:
   '@radix-ui/rect@1.1.0':
     resolution: {integrity: sha512-A9+lCBZoaMJlVKcRBz2YByCG+Cp2t6nAnMnNba+XiWxnj6r4JUFqfsgwocMBZU9LPtdxC6wB56ySYpc7LQIoJg==, tarball: https://registry.npmjs.org/@radix-ui/rect/-/rect-1.1.0.tgz}
 
+  '@supabase/auth-helpers-nextjs@0.10.0':
+    resolution: {integrity: sha512-2dfOGsM4yZt0oS4TPiE7bD4vf7EVz7NRz/IJrV6vLg0GP7sMUx8wndv2euLGq4BjN9lUCpu6DG/uCC8j+ylwPg==, tarball: https://registry.npmjs.org/@supabase/auth-helpers-nextjs/-/auth-helpers-nextjs-0.10.0.tgz}
+    peerDependencies:
+      '@supabase/supabase-js': ^2.39.8
+
+  '@supabase/auth-helpers-shared@0.7.0':
+    resolution: {integrity: sha512-FBFf2ei2R7QC+B/5wWkthMha8Ca2bWHAndN+syfuEUUfufv4mLcAgBCcgNg5nJR8L0gZfyuaxgubtOc9aW3Cpg==, tarball: https://registry.npmjs.org/@supabase/auth-helpers-shared/-/auth-helpers-shared-0.7.0.tgz}
+    peerDependencies:
+      '@supabase/supabase-js': ^2.39.8
+
   '@supabase/auth-js@2.65.0':
     resolution: {integrity: sha512-+wboHfZufAE2Y612OsKeVP4rVOeGZzzMLD/Ac3HrTQkkY4qXNjI6Af9gtmxwccE5nFvTiF114FEbIQ1hRq5uUw==, tarball: https://registry.npmjs.org/@supabase/auth-js/-/auth-js-2.65.0.tgz}
 
@@ -1297,6 +1310,9 @@ packages:
     resolution: {integrity: sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==, tarball: https://registry.npmjs.org/jiti/-/jiti-1.21.6.tgz}
     hasBin: true
 
+  jose@4.15.9:
+    resolution: {integrity: sha512-1vUQX+IdDMVPj4k8kOxgUqlcK518yluMuGZwqlr44FS1ppZB/5GWh4rZG89erpOBOJjU/OBsnCVFfapsRz6nEA==, tarball: https://registry.npmjs.org/jose/-/jose-4.15.9.tgz}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==, tarball: https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz}
 
@@ -1695,6 +1711,9 @@ packages:
     resolution: {integrity: sha512-oVekP1cKtI+CTDvHWYFUcMtsK/00wmAEfyqKfNdARm8u1wNVhSgaX7A8d4UuIlUI5e84iEwOhs7ZPYRmzU9U6A==, tarball: https://registry.npmjs.org/semver/-/semver-7.6.3.tgz}
     engines: {node: '>=10'}
     hasBin: true
+
+  set-cookie-parser@2.7.1:
+    resolution: {integrity: sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==, tarball: https://registry.npmjs.org/set-cookie-parser/-/set-cookie-parser-2.7.1.tgz}
 
   shallow-equal@3.1.0:
     resolution: {integrity: sha512-pfVOw8QZIXpMbhBWvzBISicvToTiM5WBF1EeAUZDDSb5Dt29yl4AYbyywbJFSEsRUMr7gJaxqCdr4L3tQf9wVg==, tarball: https://registry.npmjs.org/shallow-equal/-/shallow-equal-3.1.0.tgz}
@@ -2559,6 +2578,17 @@ snapshots:
 
   '@radix-ui/rect@1.1.0': {}
 
+  '@supabase/auth-helpers-nextjs@0.10.0(@supabase/supabase-js@2.45.3)':
+    dependencies:
+      '@supabase/auth-helpers-shared': 0.7.0(@supabase/supabase-js@2.45.3)
+      '@supabase/supabase-js': 2.45.3
+      set-cookie-parser: 2.7.1
+
+  '@supabase/auth-helpers-shared@0.7.0(@supabase/supabase-js@2.45.3)':
+    dependencies:
+      '@supabase/supabase-js': 2.45.3
+      jose: 4.15.9
+
   '@supabase/auth-js@2.65.0':
     dependencies:
       '@supabase/node-fetch': 2.6.15
@@ -3000,6 +3030,8 @@ snapshots:
       '@pkgjs/parseargs': 0.11.0
 
   jiti@1.21.6: {}
+
+  jose@4.15.9: {}
 
   js-tokens@4.0.0: {}
 
@@ -3521,6 +3553,8 @@ snapshots:
 
   semver@7.6.3:
     optional: true
+
+  set-cookie-parser@2.7.1: {}
 
   shallow-equal@3.1.0: {}
 

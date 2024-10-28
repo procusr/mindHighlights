@@ -6,13 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Checkbox } from "../../../components/ui/checkbox";
+import LoginButton from "../signInWithGoogle";
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams;
   return (
     <AuthWrapper>
       <form action="#" method="POST" className="space-y-5">
-        {" "}
         {/* Reduced space-y-6 to space-y-5 */}
         <h1 className="text-xl font-semibold mb-4">Sign in</h1>{" "}
         {/* Reduced text size and margin */}
@@ -85,6 +85,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
           </Link>
         </p>
       </form>
+      <LoginButton />
     </AuthWrapper>
   );
 }
