@@ -10,6 +10,7 @@ import FolderActions from "./FolderActions"
 import AddNewContent from "./AddNewContent"
 import EmptyState from "./EmptyState"
 import { ContentList } from "./ContentList"
+import { Input } from "../../components/ui/input"
 
 async function fetchInitialData(userId: string): Promise<Folder[]> {
   const supabase = createClient()
@@ -87,6 +88,7 @@ export default async function HomePage(props: {
                           {selectedFolder.name}
                         </h2>
                         <FolderActions
+                          key={folderId}
                           folderId={folderId}
                           folderName={selectedFolder.name}
                         />
@@ -104,11 +106,10 @@ export default async function HomePage(props: {
                     </div>
                   </div>
                   <Suspense
-                    key={folderId}
                     fallback={
                       <div className="space-y-4">
                         <div className="relative">
-                          <input
+                          <Input
                             type="search"
                             placeholder="Search highlights..."
                             className="w-full px-4 py-2 rounded-md border border-input bg-muted/50"
