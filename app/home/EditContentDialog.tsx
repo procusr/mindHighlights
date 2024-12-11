@@ -68,7 +68,7 @@ export default function EditContentDialog({
           placeholder="Enter content"
           className="min-h-[100px] mb-2"
         />
-        <div className="flex justify-end space-x-2">
+        <div className="flex justify-end space-x-2 ">
           <Button onClick={onClose} variant="outline">
             Cancel
           </Button>
