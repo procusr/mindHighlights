@@ -20,6 +20,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${lora.variable}`}>
+      <head>
+        {/* <script src="https://unpkg.com/react-scan/dist/auto.global.js" async /> */}
+      </head>
+
       <body className="leading-normal">
         <main className="flex flex-col h-screen bg-background text-foreground">
           {children}
