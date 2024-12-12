@@ -178,3 +178,32 @@ export async function updateContentAnchor(
   if (error) throw new Error(error.message);
   return data[0] as Content;
 }
+
+export async function fetchContent(
+  folderId: string,
+  userId: string,
+  page = 1,
+  searchTerm = ""
+) {
+  const supabase = createClient();
+  const pageSize = 15;
+
+  let query = supabase
+    .from("user_content")
+    .select("*")
+    .eq("folder_id", folderId)
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .range((page - 1) * pageSize, page * pageSize - 1);
+
+  if (searchTerm) {
+    query = query.or(
+      `title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`
+    );
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw new Error(error.message);
+  return data as Content[];
+}
