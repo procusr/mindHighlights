@@ -15,7 +15,7 @@ import EmptyState from "./EmptyState";
 import { ContentList } from "./ContentList";
 import { Input } from "../../components/ui/input";
 
-async function fetchInitialData(userId: string): Promise<Folder[]> {
+async function fetchUserFolders(userId: string): Promise<Folder[]> {
   const supabase = createClient();
 
   const { data: folders, error } = await supabase
@@ -66,7 +66,7 @@ export default async function HomePage(props: {
 
   const folderId = (await props.searchParams)?.folderId ?? "";
   const [initialFolders, initialContent] = await Promise.all([
-    fetchInitialData(user.id),
+    fetchUserFolders(user.id),
     fetchContentForFolder(folderId, user.id),
   ]);
 

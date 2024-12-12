@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Content } from "@/types/types";
 import ContentCard from "./ContentCard";
@@ -21,8 +21,8 @@ export const ContentList: React.FC<ContentListProps> = ({
   folderId,
   userId,
 }) => {
-  const [content, setContent] = useState<Content[]>(initialContent);
-  const [isLoading, setIsLoading] = useState(false);
+  const [content, setContent] = useState<Content[]>([]);
+
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -34,19 +34,20 @@ export const ContentList: React.FC<ContentListProps> = ({
     setSearchTerm("");
   }, [initialContent]);
 
-  const loadContent = async (searchTerm = "", page = 1) => {
-    try {
-      setIsLoading(true);
-      const data = await fetchContent(folderId, userId, page, searchTerm);
-      setContent(
-        page === 1 ? data : (prevContent) => [...prevContent, ...data]
-      );
-      setPage(page);
-    } catch (error) {
-      console.error("Error loading content:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const [isPending, startTransition] = useTransition();
+
+  const loadContent = (searchTerm = "", page = 1) => {
+    startTransition(async () => {
+      try {
+        const data = await fetchContent(folderId, userId, page, searchTerm);
+        setContent(
+          page === 1 ? data : (prevContent) => [...prevContent, ...data]
+        );
+        setPage(page);
+      } catch (error) {
+        console.error("Error loading content:", error);
+      }
+    });
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,9 +112,9 @@ export const ContentList: React.FC<ContentListProps> = ({
       {content.length >= 10 && (
         <Button
           onClick={() => loadContent(debouncedSearchTerm, page + 1)}
-          disabled={isLoading}
+          disabled={isPending}
         >
-          {isLoading ? "Loading..." : "Load More"}
+          {isPending ? "Loading..." : "Load More"}
         </Button>
       )}
     </div>
