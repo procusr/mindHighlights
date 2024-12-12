@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
 import type { Content } from "@/types/types";
 import ContentCard from "./ContentCard";
 import { Search } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { useDebounce } from "../../hooks/useDebounce";
 import { Input } from "../../components/ui/input";
-import { deleteContent } from "../actions/contentActions";
+import { deleteContent, fetchContent } from "../actions/contentActions";
 
 interface ContentListProps {
   initialContent: Content[];
@@ -23,12 +22,11 @@ export const ContentList: React.FC<ContentListProps> = ({
   userId,
 }) => {
   const [content, setContent] = useState<Content[]>(initialContent);
-  const [isLoading, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
     setContent(initialContent);
@@ -37,31 +35,18 @@ export const ContentList: React.FC<ContentListProps> = ({
   }, [initialContent]);
 
   const loadContent = async (searchTerm = "", page = 1) => {
-    startTransition(async () => {
-      const pageSize = 15;
-      let query = supabase
-        .from("user_content")
-        .select("*")
-        .eq("folder_id", folderId)
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .range((page - 1) * pageSize, page * pageSize - 1);
-
-      if (searchTerm) {
-        query = query.or(
-          `title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`
-        );
-      }
-
-      const { data, error } = await query;
-
-      if (!error && data) {
-        setContent(
-          page === 1 ? data : (prevContent) => [...prevContent, ...data]
-        );
-        setPage(page);
-      }
-    });
+    try {
+      setIsLoading(true);
+      const data = await fetchContent(folderId, userId, page, searchTerm);
+      setContent(
+        page === 1 ? data : (prevContent) => [...prevContent, ...data]
+      );
+      setPage(page);
+    } catch (error) {
+      console.error("Error loading content:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,7 +68,6 @@ export const ContentList: React.FC<ContentListProps> = ({
     }
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     loadContent(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
