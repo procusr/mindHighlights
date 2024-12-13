@@ -13,6 +13,7 @@ import FolderActions from "./FolderActions";
 import AddNewContent from "./AddNewContent";
 import EmptyState from "./EmptyState";
 import { ContentList } from "./ContentList";
+import { Input } from "../../components/ui/input";
 
 async function fetchUserFolders(userId: string): Promise<Folder[]> {
   const supabase = createClient();
@@ -83,11 +84,45 @@ export default async function HomePage(props: {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
               {folderId && selectedFolder ? (
                 <>
-                  <FolderHeader
-                    folderId={folderId}
-                    selectedFolder={selectedFolder}
-                  />
-                  <Suspense fallback={<ContentAreaSkeleton />}>
+                  <div className="sticky top-0 z-10 bg-gray-50">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 sm:mb-4 px-6">
+                      <div className="flex items-center gap-2 w-full sm:w-auto  ">
+                        <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)] ">
+                          {selectedFolder.name}
+                        </h2>
+                        <FolderActions
+                          key={folderId}
+                          folderId={folderId}
+                          folderName={selectedFolder.name}
+                        />
+                      </div>
+                      <AddNewContent folderId={folderId}>
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className="hover:bg-primary/90 w-full sm:w-auto"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Highlight
+                        </Button>
+                      </AddNewContent>
+                    </div>
+                  </div>
+                  <Suspense
+                    fallback={
+                      <div className="space-y-4">
+                        <div className="relative">
+                          <Input
+                            type="search"
+                            placeholder="Search highlights..."
+                            className="w-full px-4 py-2 rounded-md border border-input bg-muted/50"
+                            disabled
+                          />
+                        </div>
+                        <ContentAreaSkeleton />
+                      </div>
+                    }
+                  >
                     <ContentList
                       initialContent={initialContent}
                       folderId={folderId}
@@ -105,36 +140,3 @@ export default async function HomePage(props: {
     </div>
   );
 }
-
-const FolderHeader = ({
-  folderId,
-  selectedFolder,
-}: {
-  folderId: string;
-  selectedFolder: Folder;
-}) => (
-  <div className="sticky top-0 z-10 bg-gray-50">
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 sm:mb-4 px-6">
-      <div className="flex items-center gap-2 w-full sm:w-auto">
-        <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
-          {selectedFolder.name}
-        </h2>
-        <FolderActions
-          key={folderId}
-          folderId={folderId}
-          folderName={selectedFolder.name}
-        />
-      </div>
-      <AddNewContent folderId={folderId}>
-        <Button
-          variant="default"
-          size="sm"
-          className="hover:bg-primary/90 w-full sm:w-auto"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Highlight
-        </Button>
-      </AddNewContent>
-    </div>
-  </div>
-);
