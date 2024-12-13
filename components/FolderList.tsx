@@ -11,7 +11,7 @@ interface FolderListProps {
 
 export default function FolderList({ folders, folderId }: FolderListProps) {
   return (
-    <ul className="space-y-1">
+    <ul className="space-y-0.5">
       {folders.map((folder) => {
         const isSelected = folderId === folder.id;
 
@@ -27,7 +27,7 @@ export default function FolderList({ folders, folderId }: FolderListProps) {
           >
             <Link
               href={`/home?folderId=${folder.id}`}
-              className="block py-2 px-3"
+              className="block py-1.5 px-3"
               scroll={false}
               replace
             >
