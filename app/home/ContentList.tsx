@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useTransition, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { Content } from "@/types/types";
 import ContentCard from "./ContentCard";
 import { Search } from "lucide-react";
-import { Button } from "../../components/ui/button";
-import { useDebounce } from "../../hooks/useDebounce";
-import { Input } from "../../components/ui/input";
-import { deleteContent, fetchContent } from "../actions/contentActions";
+import { Button } from "@/components/ui/button";
+import { useDebounce } from "@/hooks/useDebounce";
+import { Input } from "@/components/ui/input";
+import { deleteContent, fetchContent } from "@/app/actions/contentActions";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ContentListProps {
   initialContent: Content[];
@@ -21,57 +22,83 @@ export const ContentList: React.FC<ContentListProps> = ({
   folderId,
   userId,
 }) => {
-  const [content, setContent] = useState<Content[]>([]);
-
+  const [content, setContent] = useState<Content[]>(initialContent);
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const router = useRouter();
-
-  useEffect(() => {
-    setContent(initialContent);
-    setPage(1);
-    setSearchTerm("");
-  }, [initialContent]);
-
   const [isPending, startTransition] = useTransition();
 
-  const loadContent = (searchTerm = "", page = 1) => {
-    startTransition(async () => {
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadContent() {
+      setIsLoading(true);
       try {
-        const data = await fetchContent(folderId, userId, page, searchTerm);
-        setContent(
-          page === 1 ? data : (prevContent) => [...prevContent, ...data]
+        const data = await fetchContent(
+          folderId,
+          userId,
+          1,
+          debouncedSearchTerm
         );
-        setPage(page);
+        if (isMounted) {
+          setContent(data);
+          setPage(1);
+        }
       } catch (error) {
         console.error("Error loading content:", error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    // Reset content when folder changes or search term updates
+    loadContent();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [folderId, debouncedSearchTerm, userId]);
+
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  }, []);
+
+  const handleLoadMore = useCallback(async () => {
+    if (isPending) return;
+
+    startTransition(async () => {
+      try {
+        const nextPage = page + 1;
+        const newData = await fetchContent(
+          folderId,
+          userId,
+          nextPage,
+          debouncedSearchTerm
+        );
+        setContent((prev) => [...prev, ...newData]);
+        setPage(nextPage);
+      } catch (error) {
+        console.error("Error loading more content:", error);
       }
     });
-  };
+  }, [folderId, userId, page, debouncedSearchTerm, isPending]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    setPage(1);
-  };
-
-  const handleDelete = async (contentId: string) => {
-    try {
-      setContent((prevContent) =>
-        prevContent.filter((item) => item.id !== contentId)
-      );
-
-      await deleteContent(contentId, folderId);
-      router.refresh();
-    } catch (error) {
-      console.error("Error in deletion process:", error);
-      loadContent(debouncedSearchTerm, page);
-    }
-  };
-
-  useEffect(() => {
-    loadContent(debouncedSearchTerm);
-  }, [debouncedSearchTerm]);
+  const handleDelete = useCallback(
+    async (contentId: string) => {
+      try {
+        setContent((prev) => prev.filter((item) => item.id !== contentId));
+        await deleteContent(contentId, folderId);
+        router.refresh();
+      } catch (error) {
+        console.error("Error in deletion process:", error);
+      }
+    },
+    [folderId, router]
+  );
 
   return (
     <div className="space-y-4 content-container">
@@ -88,7 +115,13 @@ export const ContentList: React.FC<ContentListProps> = ({
         </div>
       </div>
 
-      {content.length > 0 ? (
+      {isLoading ? (
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-[100px] w-full" />
+          ))}
+        </div>
+      ) : content.length > 0 ? (
         <div className="space-y-4">
           {content.map((item) => (
             <ContentCard
@@ -110,10 +143,7 @@ export const ContentList: React.FC<ContentListProps> = ({
       )}
 
       {content.length >= 10 && (
-        <Button
-          onClick={() => loadContent(debouncedSearchTerm, page + 1)}
-          disabled={isPending}
-        >
+        <Button onClick={handleLoadMore} disabled={isPending}>
           {isPending ? "Loading..." : "Load More"}
         </Button>
       )}

@@ -19,9 +19,9 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <SidebarContext.Provider value={{ menuOpen, toggleMenu, closeMenu }}>
+    <SidebarContext value={{ menuOpen, toggleMenu, closeMenu }}>
       {children}
-    </SidebarContext.Provider>
+    </SidebarContext>
   );
 };
 

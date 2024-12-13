@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Search, X, BookOpen } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSidebar } from "../contexts/SidebarContext";
+import { cn } from "@/lib/utils";
 
 interface SidebarProps {
   folderList: Folder[];
@@ -36,9 +37,10 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
 
   return (
     <aside
-      className={`${
-        menuOpen ? "translate-x-0" : "-translate-x-full"
-      } sidebar fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-b from-background to-background/95 transition-all duration-300 ease-in-out md:static md:translate-x-0 border-r border-border flex flex-col shadow-lg`}
+      className={cn(
+        menuOpen ? "translate-x-0" : "-translate-x-full",
+        "sidebar fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-b from-background to-background/95 transition-all duration-300 ease-in-out md:static md:translate-x-0 border-r border-border flex flex-col shadow-lg"
+      )}
       aria-labelledby="sidebar-heading"
     >
       <div className="sticky top-0 bg-background/80 backdrop-blur-sm z-10 p-4 border-b border-border">
