@@ -48,7 +48,12 @@ export default async function Signup(props: {
         </div>
         <SubmitButton
           pendingText="Signing Up..."
-          formAction={signUpAction}
+          formAction={async (formData: FormData) => {
+            const result = await signUpAction(formData);
+            if (result.error) {
+              return;
+            }
+          }}
           className="w-full"
         >
           Sign up
