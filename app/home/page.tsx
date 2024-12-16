@@ -87,7 +87,7 @@ export default async function HomePage(props: {
                   <div className="sticky top-0 z-10 bg-gray-50">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 sm:mb-4 px-6">
                       <div className="flex items-center gap-2 w-full sm:w-auto  ">
-                        <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)] ">
+                        <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
                           {selectedFolder.name}
                         </h2>
                         <FolderActions

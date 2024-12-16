@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { Content } from "@/types/types";
 import {
-  deleteContent,
   generateMemoryAnchor,
   updateContentAnchor,
 } from "../actions/contentActions";
@@ -23,12 +22,14 @@ export interface ContentCardProps {
   content: Content;
   folderId: string;
   onDelete: () => void;
+  onUpdate: (updatedContent: Content) => void;
 }
 
 export default function ContentCard({
   content,
   folderId,
   onDelete,
+  onUpdate,
 }: ContentCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -40,11 +41,15 @@ export default function ContentCard({
     setIsGeneratingMemory(true);
     try {
       const anchor = await generateMemoryAnchor(content.content);
-      await updateContentAnchor(content.id, anchor, folderId);
+      const updatedContent = await updateContentAnchor(content.id, anchor);
+      onUpdate(updatedContent);
     } finally {
       setIsGeneratingMemory(false);
     }
   };
+
+  const isAnchorPossible =
+    !content.content?.trim() || content.content.length > 10;
 
   return (
     <Card
@@ -64,8 +69,6 @@ export default function ContentCard({
                 e.stopPropagation();
               }
             }}
-            role="button"
-            tabIndex={0}
           >
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -116,19 +119,21 @@ export default function ContentCard({
               </div>
             </div>
           ) : (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="inline-flex justify-between gap-2"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleMemory();
-              }}
-              disabled={isGeneratingMemory}
-            >
-              Help me remember
-              <Sparkles className="size-3" />
-            </Button>
+            isAnchorPossible && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="inline-flex justify-between gap-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleMemory();
+                }}
+                disabled={isGeneratingMemory}
+              >
+                Help me remember
+                <Sparkles className="size-3" />
+              </Button>
+            )
           )}
         </CardContent>
       )}

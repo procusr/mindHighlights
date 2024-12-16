@@ -29,6 +29,7 @@ export const ContentList: React.FC<ContentListProps> = ({
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -54,10 +55,7 @@ export const ContentList: React.FC<ContentListProps> = ({
         }
       }
     }
-
-    // Reset content when folder changes or search term updates
     loadContent();
-
     return () => {
       isMounted = false;
     };
@@ -81,6 +79,7 @@ export const ContentList: React.FC<ContentListProps> = ({
         );
         setContent((prev) => [...prev, ...newData]);
         setPage(nextPage);
+        setHasMore(newData.length === 5);
       } catch (error) {
         console.error("Error loading more content:", error);
       }
@@ -100,6 +99,14 @@ export const ContentList: React.FC<ContentListProps> = ({
     [folderId, router]
   );
 
+  const handleUpdate = (updatedContent: Content) => {
+    setContent((prevContent) =>
+      prevContent.map((item) =>
+        item.id === updatedContent.id ? updatedContent : item
+      )
+    );
+  };
+
   return (
     <div className="space-y-4 content-container">
       <div className="sticky top-10 z-20 pb-2">
@@ -118,6 +125,7 @@ export const ContentList: React.FC<ContentListProps> = ({
       {isLoading ? (
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
             <Skeleton key={i} className="h-[100px] w-full" />
           ))}
         </div>
@@ -129,6 +137,7 @@ export const ContentList: React.FC<ContentListProps> = ({
               content={item}
               folderId={folderId}
               onDelete={() => handleDelete(item.id)}
+              onUpdate={handleUpdate}
             />
           ))}
         </div>
@@ -142,9 +151,21 @@ export const ContentList: React.FC<ContentListProps> = ({
         </div>
       )}
 
-      {content.length >= 10 && (
-        <Button onClick={handleLoadMore} disabled={isPending}>
-          {isPending ? "Loading..." : "Load More"}
+      {hasMore && content.length >= 5 && (
+        <Button
+          onClick={handleLoadMore}
+          disabled={isPending}
+          className="w-full"
+          variant="outline"
+        >
+          {isPending ? (
+            <div className="flex items-center gap-2">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              Loading...
+            </div>
+          ) : (
+            "Load More"
+          )}
         </Button>
       )}
     </div>

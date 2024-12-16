@@ -160,11 +160,7 @@ export async function generateMemoryAnchor(content: string) {
   return response.choices[0]?.message?.content?.trim() || "";
 }
 
-export async function updateContentAnchor(
-  contentId: string,
-  anchor: string,
-  folderId: string
-) {
+export async function updateContentAnchor(contentId: string, anchor: string) {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -172,8 +168,6 @@ export async function updateContentAnchor(
     .update({ anchor })
     .eq("id", contentId)
     .select();
-
-  revalidatePath(`/home/${folderId}`);
 
   if (error) throw new Error(error.message);
   return data[0] as Content;
