@@ -48,8 +48,8 @@ export default function ContentCard({
     }
   };
 
-  const isAnchorPossible =
-    !content.content?.trim() || content.content.length > 10;
+  const canAnchorContent =
+    !content.content?.trim() || content.content.length > 15;
 
   return (
     <Card
@@ -119,7 +119,7 @@ export default function ContentCard({
               </div>
             </div>
           ) : (
-            isAnchorPossible && (
+            canAnchorContent && (
               <Button
                 variant="ghost"
                 size="sm"
