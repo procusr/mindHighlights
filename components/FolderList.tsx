@@ -28,8 +28,7 @@ export default function FolderList({ folders, folderId }: FolderListProps) {
             <Link
               href={`/home?folderId=${folder.id}`}
               className="block py-1.5 px-3"
-              scroll={false}
-              replace
+              prefetch={true}
             >
               <div className="flex items-center">
                 <span className="truncate flex-grow" title={folder.name}>

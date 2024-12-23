@@ -75,37 +75,34 @@ export default async function HomePage(props: {
         <Suspense fallback={<SidebarSkeleton />}>
           <Sidebar folderList={initialFolders} folderId={folderId} />
         </Suspense>
-        <div className="flex-1 overflow-hidden">
-          <div className="h-full overflow-y-auto max-w-3xl">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-              {folderId && selectedFolder ? (
-                <Suspense
-                  fallback={
-                    <div className="space-y-4">
-                      <div className="relative">
-                        <Input
-                          type="search"
-                          placeholder="Search highlights..."
-                          className="w-full px-4 py-2 rounded-md border border-input bg-muted/50"
-                          disabled
-                        />
-                      </div>
-                      <ContentAreaSkeleton />
-                    </div>
-                  }
-                >
-                  <SelectedFolderView
-                    folderId={folderId}
-                    initialContent={initialContent}
-                    selectedFolder={selectedFolder}
-                    user={user}
-                  />
-                </Suspense>
-              ) : (
-                <EmptyState />
-              )}
-            </div>
-          </div>
+
+        <div className="flex-1 h-full max-w-3xl">
+          {folderId && selectedFolder ? (
+            <Suspense
+              fallback={
+                <div className="space-y-4">
+                  <div className="relative">
+                    <Input
+                      type="search"
+                      placeholder="Search highlights..."
+                      className="w-full px-4 py-2 rounded-md border border-input bg-muted/50"
+                      disabled
+                    />
+                  </div>
+                  <ContentAreaSkeleton />
+                </div>
+              }
+            >
+              <SelectedFolderView
+                folderId={folderId}
+                initialContent={initialContent}
+                selectedFolder={selectedFolder}
+                user={user}
+              />
+            </Suspense>
+          ) : (
+            <EmptyState />
+          )}
         </div>
       </div>
     </div>

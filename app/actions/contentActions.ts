@@ -163,31 +163,41 @@ export async function updateContentAnchor(contentId: string, anchor: string) {
   return data[0] as Content;
 }
 
+export interface ContentResponse {
+  items: Content[];
+  total: number;
+}
+
 export async function fetchContent(
   folderId: string,
   userId: string,
-  page = 1,
-  searchTerm = ""
-) {
+  page: number = 1,
+  searchTerm: string = "",
+  itemsPerPage: number = 12
+): Promise<ContentResponse> {
   const supabase = createClient();
-  const pageSize = 15;
+
+  const offset = (page - 1) * itemsPerPage;
 
   let query = supabase
     .from("user_content")
-    .select("*")
+    .select("*", { count: "exact" })
     .eq("folder_id", folderId)
     .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-    .range((page - 1) * pageSize, page * pageSize - 1);
+    .order("created_at", { ascending: false });
 
   if (searchTerm) {
-    query = query.or(
-      `title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`
-    );
+    query = query.ilike("content", `%${searchTerm}%`);
   }
 
-  const { data, error } = await query;
+  const { data, error, count } = await query
+    .range(offset, offset + itemsPerPage - 1)
+    .limit(itemsPerPage);
 
   if (error) throw new Error(error.message);
-  return data as Content[];
+
+  return {
+    items: data as Content[],
+    total: count ?? 0,
+  };
 }

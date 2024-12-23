@@ -10,6 +10,15 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Input } from "@/components/ui/input";
 import { deleteContent, fetchContent } from "@/app/actions/contentActions";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+} from "@/components/ui/pagination";
+
+const ITEMS_PER_PAGE = 12;
 
 interface ContentListProps {
   initialContent: Content[];
@@ -23,13 +32,16 @@ export const ContentList: React.FC<ContentListProps> = ({
   userId,
 }) => {
   const [content, setContent] = useState<Content[]>(initialContent);
-  const [page, setPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    setContent(initialContent);
+  }, [initialContent]);
 
   useEffect(() => {
     let isMounted = true;
@@ -40,12 +52,13 @@ export const ContentList: React.FC<ContentListProps> = ({
         const data = await fetchContent(
           folderId,
           userId,
-          1,
-          debouncedSearchTerm
+          currentPage,
+          debouncedSearchTerm,
+          ITEMS_PER_PAGE
         );
         if (isMounted) {
-          setContent(data);
-          setPage(1);
+          setContent(data.items);
+          setTotalPages(Math.ceil(data.total / ITEMS_PER_PAGE));
         }
       } catch (error) {
         console.error("Error loading content:", error);
@@ -59,36 +72,21 @@ export const ContentList: React.FC<ContentListProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [folderId, debouncedSearchTerm, userId]);
-
-  useEffect(() => {
-    setContent(initialContent);
-  }, [initialContent]);
+  }, [folderId, debouncedSearchTerm, userId, currentPage]);
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on new search
   }, []);
 
-  const handleLoadMore = useCallback(async () => {
-    if (isPending) return;
-
-    startTransition(async () => {
-      try {
-        const nextPage = page + 1;
-        const newData = await fetchContent(
-          folderId,
-          userId,
-          nextPage,
-          debouncedSearchTerm
-        );
-        setContent((prev) => [...prev, ...newData]);
-        setPage(nextPage);
-        setHasMore(newData.length > 20);
-      } catch (error) {
-        console.error("Error loading more content:", error);
-      }
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+    // Scroll to top of content area smoothly
+    document.querySelector(".content-container")?.scrollTo({
+      top: 0,
+      behavior: "smooth",
     });
-  }, [folderId, userId, page, debouncedSearchTerm, isPending]);
+  }, []);
 
   const handleDelete = useCallback(
     async (contentId: string) => {
@@ -103,78 +101,148 @@ export const ContentList: React.FC<ContentListProps> = ({
     [folderId, router]
   );
 
-  const handleUpdate = (updatedContent: Content) => {
-    setContent((prevContent) =>
-      prevContent.map((item) =>
-        item.id === updatedContent.id ? updatedContent : item
-      )
-    );
-  };
+  const renderPaginationItems = () => {
+    const items = [];
+    const maxVisiblePages = 5;
 
-  const handleNewContent = (newContent: Content) => {
-    setContent((prev) => [newContent, ...prev]);
+    // Always show first page
+    items.push(
+      <PaginationItem key="1">
+        <PaginationLink
+          onClick={() => handlePageChange(1)}
+          isActive={currentPage === 1}
+        >
+          1
+        </PaginationLink>
+      </PaginationItem>
+    );
+
+    if (totalPages <= maxVisiblePages) {
+      // Show all pages if total is less than max visible
+      for (let i = 2; i <= totalPages; i++) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              onClick={() => handlePageChange(i)}
+              isActive={currentPage === i}
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+    } else {
+      // Show ellipsis and surrounding pages
+      if (currentPage > 3) {
+        items.push(
+          <PaginationItem key="start-ellipsis">
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      }
+
+      // Show current page and surrounding pages
+      for (
+        let i = Math.max(2, currentPage - 1);
+        i <= Math.min(currentPage + 1, totalPages - 1);
+        i++
+      ) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              onClick={() => handlePageChange(i)}
+              isActive={currentPage === i}
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+
+      if (currentPage < totalPages - 2) {
+        items.push(
+          <PaginationItem key="end-ellipsis">
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      }
+
+      if (totalPages > 1) {
+        items.push(
+          <PaginationItem key={totalPages}>
+            <PaginationLink
+              onClick={() => handlePageChange(totalPages)}
+              isActive={currentPage === totalPages}
+            >
+              {totalPages}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+    }
+
+    return items;
   };
 
   return (
-    <div className="space-y-4 content-container">
-      <div className="sticky top-10 z-20 pb-2">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search highlights..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="w-full pl-10 pr-4 rounded-md border border-input"
-          />
-        </div>
-      </div>
-
-      {isLoading ? (
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-            <Skeleton key={i} className="h-[100px] w-full" />
-          ))}
-        </div>
-      ) : content.length > 0 ? (
-        <div className="space-y-4">
-          {content.map((item) => (
-            <ContentCard
-              key={item.id}
-              content={item}
-              folderId={folderId}
-              onDelete={() => handleDelete(item.id)}
-              onUpdate={handleUpdate}
+    <div className="flex-1 w-full flex flex-col relative h-full">
+      <div className="space-y-4">
+        <div className="sticky top-0 z-20 pb-2 bg-gray-50">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search highlights..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="w-full pl-10 pr-4 rounded-md border border-input"
             />
-          ))}
+          </div>
         </div>
-      ) : (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">
-            {searchTerm
-              ? "No highlights found matching your search"
-              : "No highlights yet. Add your first highlight!"}
-          </p>
-        </div>
-      )}
 
-      {hasMore && content.length >= 20 && (
-        <Button
-          onClick={handleLoadMore}
-          disabled={isPending}
-          className="w-full"
-          variant="outline"
-        >
-          {isPending ? (
-            <div className="flex items-center gap-2">
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              Loading...
+        {isLoading ? (
+          <div className="space-y-4">
+            {[...Array(3)].map((_, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+              <Skeleton key={i} className="h-[100px] w-full" />
+            ))}
+          </div>
+        ) : content.length > 0 ? (
+          <>
+            <div className="space-y-4  pb-16">
+              {content.map((item) => (
+                <ContentCard
+                  key={item.id}
+                  content={item}
+                  folderId={folderId}
+                  onDelete={() => handleDelete(item.id)}
+                  onUpdate={(updated) => {
+                    setContent((prev) =>
+                      prev.map((c) => (c.id === updated.id ? updated : c))
+                    );
+                  }}
+                />
+              ))}
             </div>
-          ) : (
-            "Load More"
-          )}
-        </Button>
+          </>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">
+              {searchTerm
+                ? "No highlights found matching your search"
+                : "No highlights yet. Add your first highlight!"}
+            </p>
+          </div>
+        )}
+      </div>
+      {totalPages > 1 && (
+        <div className="sticky bottom-8 bg-background/95 backdrop-blur-sm border-t border-border py-4 sm:px-6 w-full">
+          <Pagination>
+            <PaginationContent className="gap-1">
+              {renderPaginationItems()}
+            </PaginationContent>
+          </Pagination>
+        </div>
       )}
     </div>
   );

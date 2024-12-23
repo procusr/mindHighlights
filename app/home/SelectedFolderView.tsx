@@ -26,42 +26,40 @@ export default function SelectedFolderView({
   };
 
   return (
-    <div className="flex-1 overflow-hidden">
-      <div className="h-full overflow-y-auto max-w-3xl">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-          <div className="sticky top-0 z-10 bg-gray-50">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 sm:mb-4 px-6">
-              <div className="flex items-center gap-2 w-full sm:w-auto  ">
-                <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
-                  {selectedFolder.name}
-                </h2>
-                <FolderActions
-                  key={folderId}
-                  folderId={folderId}
-                  folderName={selectedFolder.name}
-                />
-              </div>
-              <AddNewContent
+    <div className="flex-1 flex flex-col h-screen">
+      <div className="sticky top-0 z-30 bg-gray-50 border-b">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <h2 className="text-lg sm:text-2xl font-bold text-primary truncate max-w-[calc(100%-2rem)]">
+                {selectedFolder.name}
+              </h2>
+              <FolderActions
+                key={folderId}
                 folderId={folderId}
-                onAddContent={handleNewContent}
-              >
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="hover:bg-primary/90 w-full sm:w-auto"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Highlight
-                </Button>
-              </AddNewContent>
+                folderName={selectedFolder.name}
+              />
             </div>
+            <AddNewContent folderId={folderId} onAddContent={handleNewContent}>
+              <Button
+                variant="default"
+                size="sm"
+                className="hover:bg-primary/90 w-full sm:w-auto"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Highlight
+              </Button>
+            </AddNewContent>
           </div>
-          <ContentList
-            initialContent={content}
-            folderId={folderId}
-            userId={user.id}
-          />
         </div>
+      </div>
+
+      <div className="px-4 sm:px-6 py-4 overflow-y-auto">
+        <ContentList
+          initialContent={content}
+          folderId={folderId}
+          userId={user.id}
+        />
       </div>
     </div>
   );
