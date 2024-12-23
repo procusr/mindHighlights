@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useCallback, useEffect, useRef } from "react";
+import { useState, useTransition, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { Content } from "@/types/types";
 import ContentCard from "./ContentCard";
@@ -61,6 +61,10 @@ export const ContentList: React.FC<ContentListProps> = ({
     };
   }, [folderId, debouncedSearchTerm, userId]);
 
+  useEffect(() => {
+    setContent(initialContent);
+  }, [initialContent]);
+
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   }, []);
@@ -79,7 +83,7 @@ export const ContentList: React.FC<ContentListProps> = ({
         );
         setContent((prev) => [...prev, ...newData]);
         setPage(nextPage);
-        setHasMore(newData.length === 5);
+        setHasMore(newData.length > 20);
       } catch (error) {
         console.error("Error loading more content:", error);
       }
@@ -105,6 +109,10 @@ export const ContentList: React.FC<ContentListProps> = ({
         item.id === updatedContent.id ? updatedContent : item
       )
     );
+  };
+
+  const handleNewContent = (newContent: Content) => {
+    setContent((prev) => [newContent, ...prev]);
   };
 
   return (
@@ -151,7 +159,7 @@ export const ContentList: React.FC<ContentListProps> = ({
         </div>
       )}
 
-      {hasMore && content.length >= 5 && (
+      {hasMore && content.length >= 20 && (
         <Button
           onClick={handleLoadMore}
           disabled={isPending}

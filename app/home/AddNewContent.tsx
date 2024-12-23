@@ -17,15 +17,18 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { addNewContent } from "../actions/contentActions";
+import type { Content } from "@/types/types";
 
 interface AddNewContentProps {
   children: ReactNode;
   folderId: string;
+  onAddContent: (content: Content) => void;
 }
 
 export default function AddNewContent({
   children,
   folderId,
+  onAddContent,
 }: AddNewContentProps) {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
@@ -39,7 +42,12 @@ export default function AddNewContent({
 
     startTransition(async () => {
       try {
-        await addNewContent(content, folderId, autoTitle ? undefined : title);
+        const contentToAdd = await addNewContent(
+          content,
+          folderId,
+          autoTitle ? undefined : title
+        );
+        onAddContent(contentToAdd);
         setContent("");
         setTitle("");
         setIsOpen(false);

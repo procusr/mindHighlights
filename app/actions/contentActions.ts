@@ -3,7 +3,6 @@
 import { createClient } from "@/utils/supabase/server";
 import OpenAI from "openai";
 import type { Content, Folder } from "@/types/types";
-import { revalidatePath } from "next/cache";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -15,12 +14,16 @@ export async function addNewContent(
   content: string,
   folderId: string,
   title?: string
-) {
+): Promise<Content> {
   const supabase = createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
 
   let generatedTitle = title;
 
@@ -38,23 +41,24 @@ export async function addNewContent(
     });
 
     generatedTitle =
-      response.choices[0]?.message?.content?.trim() || content.slice(0, 170);
+      response.choices[0]?.message?.content?.trim() || content.slice(0, 200);
   }
 
   const { data, error } = await supabase
     .from("user_content")
-    .insert({
-      user_id: user?.id,
-      folder_id: folderId,
-      title: generatedTitle,
-      content,
-    })
-    .select();
+    .insert([
+      {
+        content,
+        folder_id: folderId,
+        user_id: user.id,
+        title: generatedTitle,
+      },
+    ])
+    .select("*")
+    .single();
 
-  revalidatePath(`/home/${folderId}`);
-
-  if (error) throw new Error(error.message);
-  return data[0] as Content;
+  if (error) throw error;
+  return data as Content;
 }
 
 export async function updateContent(
@@ -70,28 +74,20 @@ export async function updateContent(
     .update({ title, content })
     .eq("id", contentId)
     .select();
-  revalidatePath(`/home/${folderId}`);
 
   if (error) throw new Error(error.message);
   return data[0] as Content;
 }
 
 export async function deleteContent(contentId: string, folderId: string) {
-  try {
-    const supabase = createClient();
+  const supabase = createClient();
 
-    revalidatePath(`/home/${folderId}`);
+  const { error } = await supabase
+    .from("user_content")
+    .delete()
+    .eq("id", contentId);
 
-    const { error } = await supabase
-      .from("user_content")
-      .delete()
-      .eq("id", contentId);
-
-    if (error) throw error;
-  } catch (error) {
-    revalidatePath("/home");
-    throw error;
-  }
+  if (error) throw error;
 }
 
 export async function createNewFolder(name: string) {
@@ -110,8 +106,6 @@ export async function createNewFolder(name: string) {
     .insert({ name, user_id: user?.id })
     .select();
 
-  revalidatePath("/home");
-
   if (error) throw new Error(error.message);
   return data[0] as Folder;
 }
@@ -125,8 +119,6 @@ export async function updateFolder(folderId: string, name: string) {
     .eq("id", folderId)
     .select();
 
-  revalidatePath(`/home/${folderId}`);
-
   if (error) throw new Error(error.message);
   return data[0] as Folder;
 }
@@ -138,8 +130,6 @@ export async function deleteFolder(folderId: string) {
     .from("user_folders")
     .delete()
     .eq("id", folderId);
-
-  revalidatePath(`/home/${folderId}`);
 
   if (error) throw new Error(error.message);
 }
