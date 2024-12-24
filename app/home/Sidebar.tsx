@@ -44,12 +44,12 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
       aria-labelledby="sidebar-heading"
     >
       <div className="sticky top-0 bg-background/80 backdrop-blur-sm z-10 p-4 border-b border-border">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-2">
           <h2
             id="sidebar-heading"
             className="text-xl font-bold text-primary flex items-center"
           >
-            <BookOpen className="mr-2 h-5 w-5" />
+            <BookOpen className="mr-2 size-4" />
             Collections
           </h2>
           <Button
@@ -62,7 +62,7 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
             <X className="h-5 w-5" />
           </Button>
         </div>
-        <div className="relative mb-4">
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
             id="folder-search-input"
@@ -90,7 +90,7 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
           <FolderList folders={filteredFolders} folderId={folderId} />
         </div>
       </ScrollArea>
-      <div className="sticky bottom-0 bg-background/80 backdrop-blur-sm p-4 border-t border-border">
+      <div className="sticky bottom-0 bg-background/80 backdrop-blur-sm p-2">
         <AddNewFolder>
           <Button
             variant="outline"

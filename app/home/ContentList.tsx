@@ -185,46 +185,43 @@ export const ContentList: React.FC<ContentListProps> = ({
   };
 
   return (
-    <div className="flex-1 w-full flex flex-col relative h-full">
-      <div className="space-y-4">
-        <div className="sticky top-0 z-20 pb-2 bg-gray-50">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search highlights..."
-              value={searchTerm}
-              onChange={handleSearch}
-              className="w-full pl-10 pr-4 rounded-md border border-input"
-            />
-          </div>
+    <div className="w-full flex flex-col relative h-screen">
+      <div className="sticky top-0 z-30 pb-2 bg-gray-50">
+        <div className="relative mx-6">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4  text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search highlights..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="pl-10 pr-4 rounded-md border border-input"
+          />
         </div>
-
+      </div>
+      <div className="h-screen space-y-4 w-full overflow-y-auto py-4 px-4 sm:px-6 pr-4">
         {isLoading ? (
-          <div className="space-y-4">
+          <>
             {[...Array(3)].map((_, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               <Skeleton key={i} className="h-[100px] w-full" />
             ))}
-          </div>
-        ) : content.length > 0 ? (
-          <>
-            <div className="space-y-4  pb-16">
-              {content.map((item) => (
-                <ContentCard
-                  key={item.id}
-                  content={item}
-                  folderId={folderId}
-                  onDelete={() => handleDelete(item.id)}
-                  onUpdate={(updated) => {
-                    setContent((prev) =>
-                      prev.map((c) => (c.id === updated.id ? updated : c))
-                    );
-                  }}
-                />
-              ))}
-            </div>
           </>
+        ) : content.length > 0 ? (
+          <div className="sm:pb-36 pb-44 space-y-4">
+            {content.map((item) => (
+              <ContentCard
+                key={item.id}
+                content={item}
+                folderId={folderId}
+                onDelete={() => handleDelete(item.id)}
+                onUpdate={(updated) => {
+                  setContent((prev) =>
+                    prev.map((c) => (c.id === updated.id ? updated : c))
+                  );
+                }}
+              />
+            ))}
+          </div>
         ) : (
           <div className="text-center py-8">
             <p className="text-muted-foreground">
@@ -236,7 +233,7 @@ export const ContentList: React.FC<ContentListProps> = ({
         )}
       </div>
       {totalPages > 1 && (
-        <div className="sticky bottom-8 bg-background/95 backdrop-blur-sm border-t border-border py-4 sm:px-6 w-full">
+        <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border py-2 sm:px-4 w-full">
           <Pagination>
             <PaginationContent className="gap-1">
               {renderPaginationItems()}
