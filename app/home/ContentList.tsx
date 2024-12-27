@@ -207,7 +207,7 @@ export const ContentList: React.FC<ContentListProps> = ({
             ))}
           </div>
         ) : content.length > 0 ? (
-          <div className="pb-60 space-y-4">
+          <div className="pb-56 space-y-4">
             {content.map((item) => (
               <ContentCard
                 key={item.id}
