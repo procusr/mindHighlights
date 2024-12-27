@@ -198,9 +198,9 @@ export const ContentList: React.FC<ContentListProps> = ({
           />
         </div>
       </div>
-      <ScrollArea className="space-y-4 w-full px-4 sm:px-6">
+      <ScrollArea className="space-y-4 w-full px-4 sm:px-6 h-screen">
         {isLoading ? (
-          <div className="space-y-4 h-screen">
+          <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               <Skeleton key={i} className="h-[100px] w-full" />

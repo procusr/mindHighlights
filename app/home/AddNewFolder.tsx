@@ -68,7 +68,7 @@ export default function AddNewFolder({
       }}
     >
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogTitle>Create New Folder</DialogTitle>
         <DialogDescription>Enter a name for your new folder.</DialogDescription>
         <Input

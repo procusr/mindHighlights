@@ -96,10 +96,8 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
             )}
           </div>
         </div>
-        <ScrollArea className="flex-grow">
-          <div className="px-4 py-6">
-            <FolderList folders={filteredFolders} folderId={folderId} />
-          </div>
+        <ScrollArea className="flex-grow px-4 py-6">
+          <FolderList folders={filteredFolders} folderId={folderId} />
         </ScrollArea>
       </aside>
     </>
