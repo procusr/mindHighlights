@@ -10,6 +10,7 @@ import {
 import EmptyState from "./EmptyState";
 import { Input } from "../../components/ui/input";
 import SelectedFolderView from "./SelectedFolderView";
+import InstallPrompt from "../components/Pwa";
 
 async function fetchUserFolders(userId: string): Promise<Folder[]> {
   const supabase = createClient();
@@ -77,6 +78,7 @@ export default async function HomePage(props: {
         </Suspense>
 
         <div className="flex-1 h-full max-w-3xl">
+          <InstallPrompt />
           {folderId && selectedFolder ? (
             <Suspense
               fallback={
