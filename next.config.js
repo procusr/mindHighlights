@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 
-module.exports = withPWA({
+const { default: withPWAInit } = require("@ducanh2912/next-pwa");
+
+module.exports = withPWAInit({
   dest: "public", // The folder where service worker and other static assets will be placed
   cacheOnFrontEndNav: true, // Enable caching for front-end navigation
   aggressiveFrontEndNavCaching: true, // Aggressive caching for smoother navigation
