@@ -1,12 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-    <!-- Background -->
-    <rect width="200" height="200" fill="hsl(220, 30%, 35%)" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="512" height="512">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#4A5573"/>
 
-    <!-- Unique 'M' Letter -->
-    <path d="M50 150 L50 50 L100 100 L150 50 L150 150"
-          fill="white"
-          stroke="hsl(220, 30%, 35%)"
-          stroke-width="16"
-          stroke-linecap="round"
-          stroke-linejoin="round" />
+  <!-- Unique 'M' Letter -->
+  <path
+    d="M50 150 L50 50 L100 100 L150 50 L150 150"
+    fill="white"
+    stroke="#4A5573"
+    stroke-width="16"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
 </svg>
