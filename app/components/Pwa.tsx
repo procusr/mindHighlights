@@ -5,46 +5,63 @@ import { useEffect, useState } from "react";
 
 function InstallPrompt() {
   const [isIOS, setIsIOS] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
-    setIsIOS(
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
-    );
+    // Check if device is mobile
+    const checkMobile = () => {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+    };
 
+    // Check if device is iOS
+    const checkIOS = () => {
+      return (
+        /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        !(window as any).MSStream
+      );
+    };
+
+    // Check if device is Android
+    const checkAndroid = () => {
+      return /Android/i.test(navigator.userAgent);
+    };
+
+    setIsMobile(checkMobile());
+    setIsIOS(checkIOS());
+    setIsAndroid(checkAndroid());
     setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
 
-    // Handle installation prompt for non-iOS devices
+    // Handle installation prompt for Android devices
     window.addEventListener("beforeinstallprompt", (e) => {
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault();
-      // Stash the event so it can be triggered later
       setDeferredPrompt(e);
     });
   }, []);
 
   const handleInstallClick = async () => {
-    if (!isIOS && deferredPrompt) {
-      // Show the install prompt
+    if (deferredPrompt) {
       deferredPrompt.prompt();
-      // Wait for the user to respond to the prompt
       const { outcome } = await deferredPrompt.userChoice;
-      // Clear the saved prompt since it can't be used again
       setDeferredPrompt(null);
     }
   };
 
-  if (isStandalone) {
-    return null; // Don't show install button if already installed
+  // Don't show if already installed or not on mobile
+  if (isStandalone || !isMobile) {
+    return null;
   }
 
   return (
     <div>
       <h3>Install App</h3>
-      {!isIOS && deferredPrompt && (
+      {isAndroid && deferredPrompt && (
         <Button onClick={handleInstallClick}>Add to Home Screen</Button>
       )}
       {isIOS && (
