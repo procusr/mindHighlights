@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 10;
 
 interface ContentListProps {
   initialContent: Content[];
@@ -185,7 +185,7 @@ export const ContentList: React.FC<ContentListProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col relative h-screen">
+    <div className="w-full flex flex-col relative">
       <div className="sticky top-0 z-30 pb-2 bg-gray-50">
         <div className="relative mx-6">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4  text-muted-foreground" />
