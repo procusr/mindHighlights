@@ -44,7 +44,11 @@ export default function SelectedFolderView({
           />
         </div>
         <AddNewContent folderId={folderId} onAddContent={handleNewContent}>
-          <Button variant="default" size="sm" className="hover:bg-primary/90 ">
+          <Button
+            variant="outline"
+            size="sm"
+            className="hover:bg-primary hover:text-primary-foreground transition-colors "
+          >
             <Plus className="h-4 w-4 sm:mr-2 mr-0" />
             <span className="hidden sm:block">Add highlight</span>
           </Button>
