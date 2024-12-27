@@ -186,7 +186,7 @@ export const ContentList: React.FC<ContentListProps> = ({
 
   return (
     <div className="w-full flex flex-col relative">
-      <div className="sticky top-0 z-30 pb-2 bg-gray-50">
+      <div className="sticky top-0 z-30 bg-gray-50">
         <div className="relative mx-6">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4  text-muted-foreground" />
           <Input
@@ -198,7 +198,7 @@ export const ContentList: React.FC<ContentListProps> = ({
           />
         </div>
       </div>
-      <ScrollArea className="space-y-4 w-full px-4 sm:px-6 h-screen">
+      <ScrollArea className="space-y-2 w-full px-4 sm:px-6 h-screen">
         {isLoading ? (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
@@ -207,7 +207,7 @@ export const ContentList: React.FC<ContentListProps> = ({
             ))}
           </div>
         ) : content.length > 0 ? (
-          <div className="sm:pb-36 pb-44 space-y-4">
+          <div className="pb-60 space-y-4">
             {content.map((item) => (
               <ContentCard
                 key={item.id}

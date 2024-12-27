@@ -78,7 +78,7 @@ export default async function HomePage(props: {
         </Suspense>
 
         <div className="flex-1 h-full max-w-3xl">
-          <InstallPrompt />
+          {/* <InstallPrompt /> */}
           {folderId && selectedFolder ? (
             <Suspense
               fallback={
