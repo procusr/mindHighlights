@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { Content } from "@/types/types";
 import ContentCard from "./ContentCard";
@@ -16,6 +16,7 @@ import {
   PaginationItem,
   PaginationLink,
 } from "@/components/ui/pagination";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -197,14 +198,14 @@ export const ContentList: React.FC<ContentListProps> = ({
           />
         </div>
       </div>
-      <div className="h-screen space-y-4 w-full overflow-y-auto py-4 px-4 sm:px-6 pr-4">
+      <ScrollArea className="space-y-4 w-full px-4 sm:px-6">
         {isLoading ? (
-          <>
+          <div className="space-y-4 h-screen">
             {[...Array(3)].map((_, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               <Skeleton key={i} className="h-[100px] w-full" />
             ))}
-          </>
+          </div>
         ) : content.length > 0 ? (
           <div className="sm:pb-36 pb-44 space-y-4">
             {content.map((item) => (
@@ -230,7 +231,7 @@ export const ContentList: React.FC<ContentListProps> = ({
             </p>
           </div>
         )}
-      </div>
+      </ScrollArea>
       {totalPages > 1 && (
         <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border py-2 sm:px-4 w-full">
           <Pagination>

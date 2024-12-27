@@ -6,6 +6,7 @@ interface SidebarContextProps {
   menuOpen: boolean;
   toggleMenu: () => void;
   closeMenu: () => void;
+  openMenu: () => void;
 }
 
 const SidebarContext = createContext<SidebarContextProps | undefined>(
@@ -17,9 +18,10 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
   const closeMenu = () => setMenuOpen(false);
+  const openMenu = () => setMenuOpen(true);
 
   return (
-    <SidebarContext value={{ menuOpen, toggleMenu, closeMenu }}>
+    <SidebarContext value={{ menuOpen, toggleMenu, closeMenu, openMenu }}>
       {children}
     </SidebarContext>
   );
