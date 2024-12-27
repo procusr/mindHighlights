@@ -8,12 +8,16 @@ export default function InstallPrompt() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    setIsIOS(
+    const iOS =
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
-    );
+      /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    const standaloneIOS = (navigator as any).standalone === true;
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches || standaloneIOS;
 
-    setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
+    setIsIOS(iOS);
+    setIsStandalone(standalone);
   }, []);
 
   if (isStandalone) {
