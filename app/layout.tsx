@@ -1,6 +1,7 @@
 import { Inter, Lora } from "next/font/google";
 import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import type { Metadata } from "next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,6 +14,10 @@ const lora = Lora({
   variable: "--font-lora",
   display: "swap",
 });
+
+export const metadata: Metadata = {
+  manifest: "/manifest.json",
+};
 
 export default function RootLayout({
   children,
