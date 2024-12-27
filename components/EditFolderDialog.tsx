@@ -38,19 +38,12 @@ export default function EditFolderDialog({
             Enter a new name for the folder.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input
-              id="name"
-              value={newFolderName}
-              onChange={(e) => setNewFolderName(e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-        </div>
+
+        <Input
+          id="name"
+          value={newFolderName}
+          onChange={(e) => setNewFolderName(e.target.value)}
+        />
         <DialogFooter>
           <Button type="submit" onClick={onSave}>
             {confirmText}
