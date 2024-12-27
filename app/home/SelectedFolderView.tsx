@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AddNewContent from "./AddNewContent";
 import FolderActions from "./FolderActions";
 import { Plus } from "lucide-react";
@@ -28,7 +28,7 @@ export default function SelectedFolderView({
   return (
     <div className="flex-1 flex flex-col h-screen">
       <div className="sticky top-0 z-30 bg-gray-50">
-        <div className="mx-auto px-4 sm:px-6 py-2">
+        <div className="mx-auto px-6 py-2">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <h2 className="text-lg font-bold text-primary truncate max-w-[calc(100%-2rem)]">

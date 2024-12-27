@@ -43,15 +43,24 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
       )}
       aria-labelledby="sidebar-heading"
     >
-      <div className="sticky top-0 bg-background/80 backdrop-blur-sm z-10 p-4 border-b border-border">
+      <div className="sticky sm:top-0  bg-background/80 backdrop-blur-sm z-10 p-4 border-b border-border">
         <div className="flex justify-between items-center mb-2">
           <h2
             id="sidebar-heading"
             className="text-xl font-bold text-primary flex items-center"
           >
-            <BookOpen className="mr-2 size-4" />
-            Collections
+            Folders
           </h2>
+          <AddNewFolder>
+            <Button
+              variant="outline"
+              size="sm"
+              className="hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
+            >
+              <Plus className="size-4 mr-2" />
+              New Folder
+            </Button>
+          </AddNewFolder>
           <Button
             variant="ghost"
             size="icon"
@@ -90,18 +99,6 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
           <FolderList folders={filteredFolders} folderId={folderId} />
         </div>
       </ScrollArea>
-      <div className="sticky bottom-0 bg-background/80 backdrop-blur-sm p-2">
-        <AddNewFolder>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full justify-start text-primary hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add New Folder
-          </Button>
-        </AddNewFolder>
-      </div>
     </aside>
   );
 }

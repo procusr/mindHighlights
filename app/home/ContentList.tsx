@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import type { Content } from "@/types/types";
 import ContentCard from "./ContentCard";
 import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Input } from "@/components/ui/input";
 import { deleteContent, fetchContent } from "@/app/actions/contentActions";
