@@ -12,29 +12,40 @@ import {
 import ConfirmDialog from "@/components/ConfirmDialog";
 import EditFolderDialog from "@/components/EditFolderDialog";
 import { deleteFolder, updateFolder } from "../actions/contentActions";
+import type { Folder } from "@/types/types";
+import { useRouter } from "next/navigation";
 
 interface FolderActionsProps {
   folderId: string;
   folderName: string;
+  onDeleted?: () => void;
+  onEdited?: (folder: Folder) => void;
 }
 
 export default function FolderActions({
   folderId,
   folderName,
+  onDeleted,
+  onEdited,
 }: FolderActionsProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState(folderName);
 
+  const router = useRouter();
+
   const handleDeleteFolder = async () => {
     await deleteFolder(folderId);
     setIsDeleteDialogOpen(false);
+    onDeleted?.();
+    router.back();
   };
 
   const handleEditFolder = async () => {
     if (newFolderName.trim() && newFolderName !== folderName) {
-      await updateFolder(folderId, newFolderName);
+      const updatedFolder = await updateFolder(folderId, newFolderName);
       setIsEditDialogOpen(false);
+      onEdited?.(updatedFolder);
     }
   };
 

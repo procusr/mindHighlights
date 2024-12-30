@@ -14,14 +14,18 @@ import { cn } from "@/lib/utils";
 interface SidebarProps {
   folderList: Folder[];
   folderId: string;
+  onCreate: (newFolder: Folder) => void;
 }
 
-export default function Sidebar({ folderList, folderId }: SidebarProps) {
+export default function Sidebar({
+  folderList,
+  folderId,
+  onCreate,
+}: SidebarProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [folders, setFolders] = useState<Folder[]>(folderList);
   const { closeMenu, menuOpen, openMenu } = useSidebar();
 
-  const filteredFolders = folders.filter((folder) =>
+  const filteredFolders = folderList.filter((folder) =>
     folder.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -59,11 +63,7 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
             >
               Folders
             </h2>
-            <AddNewFolder
-              onFolderCreated={(newFolder) =>
-                setFolders((prev) => [...prev, newFolder])
-              }
-            >
+            <AddNewFolder onFolderCreated={onCreate}>
               <Button
                 variant="outline"
                 size="sm"
