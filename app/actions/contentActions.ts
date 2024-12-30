@@ -171,12 +171,11 @@ export interface ContentResponse {
 export async function fetchContent(
   folderId: string,
   userId: string,
-  page: number = 1,
-  searchTerm: string = "",
-  itemsPerPage: number = 12
+  page = 1,
+  searchTerm = "",
+  itemsPerPage = 12
 ): Promise<ContentResponse> {
   const supabase = createClient();
-
   const offset = (page - 1) * itemsPerPage;
 
   let query = supabase
@@ -190,14 +189,32 @@ export async function fetchContent(
     query = query.ilike("content", `%${searchTerm}%`);
   }
 
-  const { data, error, count } = await query
-    .range(offset, offset + itemsPerPage - 1)
-    .limit(itemsPerPage);
+  const response = await query;
+  const totalCount = response.count ?? 0;
 
-  if (error) throw new Error(error.message);
+  if (!totalCount) {
+    return {
+      items: [],
+      total: 0,
+    };
+  }
+
+  const from = offset;
+  const to = Math.min(offset + itemsPerPage - 1, totalCount - 1);
+
+  if (from <= to) {
+    const { data, error } = await query.range(from, to).limit(itemsPerPage);
+
+    if (error) throw new Error(error.message);
+
+    return {
+      items: data as Content[],
+      total: totalCount,
+    };
+  }
 
   return {
-    items: data as Content[],
-    total: count ?? 0,
+    items: [],
+    total: totalCount,
   };
 }

@@ -31,8 +31,8 @@ export default function SelectedFolderView({
       : selectedFolder.name;
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="sticky top-0 z-30 bg-gray-50 w-full px-6 py-2 flex justify-between">
+    <div className="flex flex-col h-screen rounded-md">
+      <div className="sticky top-0 z-30 max-w-3xl px-6 py-2 flex justify-between">
         <div className="flex items-center">
           <h2 className="text-lg font-bold text-primary max-w-[calc(100%-1rem)]">
             {foldername}
@@ -47,7 +47,7 @@ export default function SelectedFolderView({
           <Button
             variant="outline"
             size="sm"
-            className="hover:bg-primary hover:text-primary-foreground transition-colors "
+            className="hover:bg-primary hover:text-primary-foreground transition-colors"
           >
             <Plus className="h-4 w-4 sm:mr-2 mr-0" />
             <span className="hidden sm:block">Add highlight</span>

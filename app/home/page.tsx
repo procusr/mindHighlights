@@ -77,13 +77,13 @@ export default async function HomePage(props: {
           <Sidebar folderList={initialFolders} folderId={folderId} />
         </Suspense>
 
-        <div className="flex-1 h-full max-w-3xl">
+        <div className="flex-1">
           {/* <InstallPrompt /> */}
           {folderId && selectedFolder ? (
             <Suspense
               fallback={
                 <div className="space-y-4">
-                  <div className="relative">
+                  <div className="relative max-w-3xl">
                     <Input
                       type="search"
                       placeholder="Search highlights..."

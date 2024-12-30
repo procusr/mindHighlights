@@ -16,7 +16,6 @@ import {
   PaginationItem,
   PaginationLink,
 } from "@/components/ui/pagination";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -185,55 +184,57 @@ export const ContentList: React.FC<ContentListProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col relative">
-      <div className="sticky top-0 z-30 bg-gray-50">
-        <div className="relative mx-6">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4  text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search highlights..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="pl-10 pr-4 rounded-md border border-input"
-          />
+    <>
+      <div className="w-full flex flex-col relative overflow-auto">
+        <div className="sticky top-0 z-30 max-w-3xl pb-2">
+          <div className="relative mx-6">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4  text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search highlights..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="pl-10 pr-4 rounded-md border border-input mt-1"
+            />
+          </div>
+        </div>
+        <div className="space-y-2 h-screen max-w-3xl">
+          {isLoading ? (
+            <div className="space-y-4 px-4 sm:px-6">
+              {[...Array(3)].map((_, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                <Skeleton key={i} className="h-[100px] w-full " />
+              ))}
+            </div>
+          ) : content.length > 0 ? (
+            <div className="pb-20 space-y-4 border-border border-r px-4 sm:px-6">
+              {content.map((item) => (
+                <ContentCard
+                  key={item.id}
+                  content={item}
+                  folderId={folderId}
+                  onDelete={() => handleDelete(item.id)}
+                  onUpdate={(updated) => {
+                    setContent((prev) =>
+                      prev.map((c) => (c.id === updated.id ? updated : c))
+                    );
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">
+                {searchTerm
+                  ? "No highlights found matching your search"
+                  : "No highlights yet. Add your first highlight!"}
+              </p>
+            </div>
+          )}
         </div>
       </div>
-      <ScrollArea className="space-y-2 w-full px-4 sm:px-6 h-screen">
-        {isLoading ? (
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-              <Skeleton key={i} className="h-[100px] w-full" />
-            ))}
-          </div>
-        ) : content.length > 0 ? (
-          <div className="pb-56 space-y-4">
-            {content.map((item) => (
-              <ContentCard
-                key={item.id}
-                content={item}
-                folderId={folderId}
-                onDelete={() => handleDelete(item.id)}
-                onUpdate={(updated) => {
-                  setContent((prev) =>
-                    prev.map((c) => (c.id === updated.id ? updated : c))
-                  );
-                }}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">
-              {searchTerm
-                ? "No highlights found matching your search"
-                : "No highlights yet. Add your first highlight!"}
-            </p>
-          </div>
-        )}
-      </ScrollArea>
       {totalPages > 1 && (
-        <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border py-2 sm:px-4 w-full">
+        <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-r border-border py-2 sm:px-4 max-w-3xl w-full">
           <Pagination>
             <PaginationContent className="gap-1">
               {renderPaginationItems()}
@@ -241,6 +242,6 @@ export const ContentList: React.FC<ContentListProps> = ({
           </Pagination>
         </div>
       )}
-    </div>
+    </>
   );
 };
