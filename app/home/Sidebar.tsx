@@ -18,9 +18,10 @@ interface SidebarProps {
 
 export default function Sidebar({ folderList, folderId }: SidebarProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [folders, setFolders] = useState<Folder[]>(folderList);
   const { closeMenu, menuOpen, openMenu } = useSidebar();
 
-  const filteredFolders = folderList.filter((folder) =>
+  const filteredFolders = folders.filter((folder) =>
     folder.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -46,7 +47,7 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
       <aside
         className={cn(
           menuOpen ? "translate-x-0 pt-12 z-100" : "-translate-x-full",
-          "sidebar fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-b from-background to-background/95 transition-all duration-300 ease-in-out md:static md:translate-x-0 border-r border-border flex flex-col shadow-lg"
+          "sidebar fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-b from-background to-background/95 transition-all duration-300 ease-in-out md:static md:translate-x-0 border-r border-border flex flex-col shadow-lg pb-12"
         )}
         aria-labelledby="sidebar-heading"
       >
@@ -58,7 +59,11 @@ export default function Sidebar({ folderList, folderId }: SidebarProps) {
             >
               Folders
             </h2>
-            <AddNewFolder>
+            <AddNewFolder
+              onFolderCreated={(newFolder) =>
+                setFolders((prev) => [...prev, newFolder])
+              }
+            >
               <Button
                 variant="outline"
                 size="sm"

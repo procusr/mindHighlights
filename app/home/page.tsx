@@ -10,7 +10,6 @@ import {
 import EmptyState from "./EmptyState";
 import { Input } from "../../components/ui/input";
 import SelectedFolderView from "./SelectedFolderView";
-import InstallPrompt from "../components/Pwa";
 
 async function fetchUserFolders(userId: string): Promise<Folder[]> {
   const supabase = createClient();
