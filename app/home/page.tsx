@@ -62,7 +62,7 @@ export default async function HomePage(props: {
     <UserContent
       folderId={folderId}
       initialFolders={initialFolders}
-      intialContent={initialContent}
+      initialContent={initialContent}
       user={user}
     />
   );
