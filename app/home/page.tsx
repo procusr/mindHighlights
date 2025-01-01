@@ -1,15 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import type { Content, Folder } from "@/types/types";
-import Sidebar from "./Sidebar";
-import { Suspense } from "react";
-import {
-  SidebarSkeleton,
-  ContentAreaSkeleton,
-} from "@/components/ui/skeletons";
-import EmptyState from "./EmptyState";
-import { Input } from "../../components/ui/input";
-import SelectedFolderView from "./SelectedFolderView";
+import UserContent from "./UserContent";
 
 async function fetchUserFolders(userId: string): Promise<Folder[]> {
   const supabase = createClient();
@@ -66,46 +58,12 @@ export default async function HomePage(props: {
     fetchContentForFolder(folderId, user.id),
   ]);
 
-  const selectedFolder =
-    initialFolders.find((folder) => folder.id === folderId) || null;
-
   return (
-    <div className="flex-1 w-full flex flex-col gap-12">
-      <div className="flex h-[calc(100vh-64px)] bg-gray-50">
-        <Suspense fallback={<SidebarSkeleton />}>
-          <Sidebar folderList={initialFolders} folderId={folderId} />
-        </Suspense>
-
-        <div className="flex-1">
-          {/* <InstallPrompt /> */}
-          {folderId && selectedFolder ? (
-            <Suspense
-              fallback={
-                <div className="space-y-4">
-                  <div className="relative max-w-3xl">
-                    <Input
-                      type="search"
-                      placeholder="Search highlights..."
-                      className="w-full px-4 py-2 rounded-md border border-input bg-muted/50"
-                      disabled
-                    />
-                  </div>
-                  <ContentAreaSkeleton />
-                </div>
-              }
-            >
-              <SelectedFolderView
-                folderId={folderId}
-                initialContent={initialContent}
-                selectedFolder={selectedFolder}
-                user={user}
-              />
-            </Suspense>
-          ) : (
-            <EmptyState />
-          )}
-        </div>
-      </div>
-    </div>
+    <UserContent
+      folderId={folderId}
+      initialFolders={initialFolders}
+      initialContent={initialContent}
+      user={user}
+    />
   );
 }

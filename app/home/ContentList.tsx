@@ -206,7 +206,7 @@ export const ContentList: React.FC<ContentListProps> = ({
                 <Skeleton key={i} className="h-[100px] w-full " />
               ))}
             </div>
-          ) : content.length > 0 ? (
+          ) : content?.length > 0 ? (
             <div className="pb-20 space-y-4 border-border border-r px-4 sm:px-6">
               {content.map((item) => (
                 <ContentCard

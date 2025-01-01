@@ -6,18 +6,22 @@ import FolderActions from "./FolderActions";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContentList } from "./ContentList";
-import type { Content } from "@/types/types";
+import type { Content, Folder } from "@/types/types";
 
 export default function SelectedFolderView({
   folderId,
   selectedFolder,
   initialContent,
   user,
+  onDeleteFolder,
+  onEditFolder,
 }: {
   folderId: string;
-  selectedFolder: { name: string };
+  selectedFolder: Folder;
   initialContent: Content[];
   user: { id: string };
+  onDeleteFolder: () => void;
+  onEditFolder: (folder: Folder) => void;
 }) {
   const [content, setContent] = useState<Content[]>(initialContent);
 
@@ -27,8 +31,8 @@ export default function SelectedFolderView({
 
   const foldername =
     selectedFolder?.name.length > 30
-      ? `${selectedFolder.name.slice(0, 22)}...`
-      : selectedFolder.name;
+      ? `${selectedFolder?.name.slice(0, 22)}...`
+      : selectedFolder?.name;
 
   return (
     <div className="flex flex-col h-screen">
@@ -40,7 +44,9 @@ export default function SelectedFolderView({
           <FolderActions
             key={folderId}
             folderId={folderId}
-            folderName={selectedFolder.name}
+            folderName={selectedFolder?.name}
+            onDeleted={onDeleteFolder}
+            onEdited={onEditFolder}
           />
         </div>
         <AddNewContent folderId={folderId} onAddContent={handleNewContent}>
