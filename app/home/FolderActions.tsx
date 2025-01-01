@@ -13,7 +13,6 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import EditFolderDialog from "@/components/EditFolderDialog";
 import { deleteFolder, updateFolder } from "../actions/contentActions";
 import type { Folder } from "@/types/types";
-import { useRouter } from "next/navigation";
 
 interface FolderActionsProps {
   folderId: string;
@@ -32,13 +31,10 @@ export default function FolderActions({
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState(folderName);
 
-  const router = useRouter();
-
   const handleDeleteFolder = async () => {
     await deleteFolder(folderId);
     setIsDeleteDialogOpen(false);
     onDeleted?.();
-    router.back();
   };
 
   const handleEditFolder = async () => {

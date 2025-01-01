@@ -4,7 +4,7 @@ import type { Content, Folder } from "@/types/types";
 import SelectedFolderView from "./SelectedFolderView";
 import Sidebar from "./Sidebar";
 import type { User } from "@supabase/auth-helpers-nextjs";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function UserContent({
   initialFolders,
