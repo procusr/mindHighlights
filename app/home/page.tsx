@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import type { Content, Folder } from "@/types/types";
 import UserContent from "./UserContent";
-import InstallPrompt from "../components/InstallPrompt";
 
 async function fetchUserFolders(userId: string): Promise<Folder[]> {
   const supabase = createClient();
@@ -60,14 +59,11 @@ export default async function HomePage(props: {
   ]);
 
   return (
-    <>
-      <UserContent
-        folderId={folderId}
-        initialFolders={initialFolders}
-        initialContent={initialContent}
-        user={user}
-      />
-      <InstallPrompt />
-    </>
+    <UserContent
+      folderId={folderId}
+      initialFolders={initialFolders}
+      initialContent={initialContent}
+      user={user}
+    />
   );
 }

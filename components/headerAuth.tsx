@@ -14,6 +14,7 @@ import {
 } from "./ui/menubar";
 
 import { SubmitButton } from "./submit-button";
+import InstallPrompt from "@/app/components/InstallPrompt";
 
 // Mock function to generate random folders
 const folders = ["Research", "Notes", "Projects", "Ideas", "Assignments"];
@@ -60,6 +61,12 @@ export default async function HeaderAuth() {
                     Sign out
                   </SubmitButton>
                 </form>
+              </MenubarContent>
+              <MenubarContent className="bg-white w-48 max-w-full">
+                <MenubarItem className="text-gray-700">
+                  <InstallPrompt />
+                </MenubarItem>
+                <MenubarSeparator />
               </MenubarContent>
             </MenubarMenu>
           </Menubar>
