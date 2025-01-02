@@ -186,7 +186,7 @@ export const ContentList: React.FC<ContentListProps> = ({
   return (
     <>
       <div className="w-full flex flex-col relative overflow-auto">
-        <div className="sticky top-0 z-30 max-w-3xl pb-2">
+        <div className="sticky top-0 z-30 max-w-2xl pb-2 bg-background/95 backdrop-blur-sm ">
           <div className="relative mx-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4  text-muted-foreground" />
             <Input
@@ -198,7 +198,7 @@ export const ContentList: React.FC<ContentListProps> = ({
             />
           </div>
         </div>
-        <div className="space-y-2 h-screen max-w-3xl">
+        <div className="space-y-2 h-screen max-w-2xl">
           {isLoading ? (
             <div className="space-y-4 px-4 sm:px-6">
               {[...Array(3)].map((_, i) => (
@@ -207,7 +207,7 @@ export const ContentList: React.FC<ContentListProps> = ({
               ))}
             </div>
           ) : content?.length > 0 ? (
-            <div className="pb-20 space-y-4 border-border border-r px-4 sm:px-6">
+            <div className="pb-20 space-y-4 px-4 sm:px-6">
               {content.map((item) => (
                 <ContentCard
                   key={item.id}
@@ -233,8 +233,9 @@ export const ContentList: React.FC<ContentListProps> = ({
           )}
         </div>
       </div>
+      <hr />
       {totalPages > 1 && (
-        <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-r border-border py-2 sm:px-4 max-w-3xl w-full">
+        <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm py-2 sm:px-4 max-w-2xl w-full">
           <Pagination>
             <PaginationContent className="gap-1">
               {renderPaginationItems()}

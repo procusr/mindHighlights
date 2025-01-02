@@ -36,11 +36,9 @@ export default function SelectedFolderView({
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="sticky top-0 z-30 max-w-3xl px-6 py-2 flex justify-between">
+      <div className="sticky top-0 z-30 max-w-2xl px-6 py-3 flex justify-between">
         <div className="flex items-center">
-          <h2 className="text-lg font-bold text-primary max-w-[calc(100%-1rem)]">
-            {foldername}
-          </h2>
+          <h2 className="text-lg font-bold text-primary">{foldername}</h2>
           <FolderActions
             key={folderId}
             folderId={folderId}
