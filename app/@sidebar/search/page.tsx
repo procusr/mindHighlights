@@ -1,7 +1,9 @@
+import SidebarWrapper from "@/components/SidebarWrapper";
+
 export default function SearchSidebar() {
   return (
-    <div className="w-80 h-full border-r bg-card">
+    <SidebarWrapper>
       <p>Search</p>
-    </div>
+    </SidebarWrapper>
   );
 }

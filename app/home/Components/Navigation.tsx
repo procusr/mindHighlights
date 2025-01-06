@@ -3,9 +3,9 @@
 import { Home, Folder, Search, Settings } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useSidebar } from "@/app/contexts/NewSidebarContext";
+import { useSidebar } from "@/app/contexts/SidebarContext";
 import { cn } from "@/lib/utils";
+import { isNotLoggedInPage } from "@/utils/url/isNotLoggedInPage";
 
 type MenuItem = {
   href: string;
@@ -26,6 +26,8 @@ export function Navigation() {
   const router = useRouter();
   const { isOpen, setIsOpen } = useSidebar();
 
+  if (isNotLoggedInPage()) return null;
+
   const isActive = (href: string) => {
     if (href === "/") {
       return pathname === href;
@@ -39,8 +41,8 @@ export function Navigation() {
   };
 
   return (
-    <nav className="w-14 flex flex-col py-2 h-screen">
-      <div className="flex flex-col items-center gap-2 p-3 w-full">
+    <nav className="w-14 flex flex-col py-2 h-screen left-0 relative">
+      <div className="flex flex-col items-center gap-2 p-3 w-full fixed top-0 left-0">
         {menuItems.map((item) => (
           <button
             type="button"

@@ -1,7 +1,7 @@
 // components/folders/folder-item.tsx
 "use client";
 
-import { useSidebar } from "@/app/contexts/NewSidebarContext";
+import { useSidebar } from "@/app/contexts/SidebarContext";
 import Link from "next/link";
 import { useMediaQuery } from "react-responsive";
 

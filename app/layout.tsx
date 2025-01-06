@@ -2,9 +2,8 @@ import { Inter, Lora } from "next/font/google";
 import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { Metadata } from "next";
-
 import { Navigation } from "./home/Components/Navigation";
-import { SidebarProvider } from "./contexts/NewSidebarContext";
+import { SidebarProvider } from "./contexts/SidebarContext";
 import { MobileSidebar } from "./components/MobileSidebar";
 import { DesktopSidebar } from "./components/DesktopSidebar";
 import HeaderAuth from "@/components/headerAuth";

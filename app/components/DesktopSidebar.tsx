@@ -3,7 +3,8 @@
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { useSidebar } from "../contexts/NewSidebarContext";
+import { useSidebar } from "../contexts/SidebarContext";
+import { isNotLoggedInPage } from "@/utils/url/isNotLoggedInPage";
 
 export function DesktopSidebar({ children }: { children: React.ReactNode }) {
   const { isOpen, setIsOpen } = useSidebar();
@@ -17,6 +18,8 @@ export function DesktopSidebar({ children }: { children: React.ReactNode }) {
   };
 
   if (!isOpen) return null;
+
+  if (isNotLoggedInPage()) return null;
 
   return (
     <aside className="hidden md:block w-64 rounded-xl bg-muted/30 shadow-lg">

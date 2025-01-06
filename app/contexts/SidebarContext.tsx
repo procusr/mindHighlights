@@ -1,36 +1,33 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { useSidebarState } from "@/hooks/useSidebarState";
+import { createContext, useContext } from "react";
 
-interface SidebarContextProps {
-  menuOpen: boolean;
-  toggleMenu: () => void;
-  closeMenu: () => void;
-  openMenu: () => void;
+interface SidebarContextType {
+  isOpen: boolean;
+  setIsOpen: (value: boolean) => Promise<URLSearchParams>;
 }
 
-const SidebarContext = createContext<SidebarContextProps | undefined>(
-  undefined
-);
+const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
-export const SidebarProvider = ({ children }: { children: ReactNode }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const toggleMenu = () => setMenuOpen((prev) => !prev);
-  const closeMenu = () => setMenuOpen(false);
-  const openMenu = () => setMenuOpen(true);
+export function SidebarProvider({ children }: { children: React.ReactNode }) {
+  const [isOpen, setIsOpen] = useSidebarState();
 
   return (
-    <SidebarContext value={{ menuOpen, toggleMenu, closeMenu, openMenu }}>
+    <SidebarContext.Provider
+      value={{
+        isOpen: isOpen ?? false,
+        setIsOpen,
+      }}
+    >
       {children}
-    </SidebarContext>
+    </SidebarContext.Provider>
   );
-};
+}
 
-export const useSidebar = (): SidebarContextProps => {
+export function useSidebar() {
   const context = useContext(SidebarContext);
-  if (!context) {
-    throw new Error("useSidebar must be used within a SidebarProvider");
-  }
+  if (!context)
+    throw new Error("useSidebar must be used within SidebarProvider");
   return context;
-};
+}

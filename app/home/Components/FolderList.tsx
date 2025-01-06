@@ -1,4 +1,3 @@
-// components/folders/folders-list.tsx
 "use client";
 
 import { mockFolders } from "@/app/utils/mock-data";

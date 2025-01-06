@@ -1,7 +1,9 @@
+import SidebarWrapper from "@/components/SidebarWrapper";
+
 export default function SettingsSidebar() {
   return (
-    <div className="w-80 h-full border-r bg-card">
+    <SidebarWrapper>
       <p>textet</p>
-    </div>
+    </SidebarWrapper>
   );
 }

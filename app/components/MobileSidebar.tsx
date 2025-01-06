@@ -5,7 +5,8 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { usePathname } from "next/navigation";
-import { useSidebar } from "../contexts/NewSidebarContext";
+import { useSidebar } from "../contexts/SidebarContext";
+import { isNotLoggedInPage } from "@/utils/url/isNotLoggedInPage";
 
 const getMenuTitle = (pathname: string) => {
   if (pathname.startsWith("/folders")) return "Folders";
@@ -17,6 +18,7 @@ const getMenuTitle = (pathname: string) => {
 export function MobileSidebar({ children }: { children: React.ReactNode }) {
   const { isOpen, setIsOpen } = useSidebar();
   const pathname = usePathname();
+  if (isNotLoggedInPage()) return null;
 
   if (!isOpen) return null;
 
