@@ -16,7 +16,7 @@ export function DesktopSidebar({ children }: { children: React.ReactNode }) {
       "/folders": "Folders",
       "/search": "Search Results",
       "/settings": "Preferences",
-      "/": "Workspace",
+      "/": "home",
     };
     return (
       Object.entries(map).find(([path]) => pathname.startsWith(path))?.[1] ||
@@ -60,9 +60,14 @@ export function DesktopSidebar({ children }: { children: React.ReactNode }) {
           </div>
 
           <Button
-            variant="text"
+            variant="outline"
             size="icon"
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              setIsOpen(false);
+              document
+                .getElementById("sidebar")
+                ?.setAttribute("data-state", "close");
+            }}
             className="hover:bg-gray-100 rounded-lg"
             aria-label="Close sidebar"
           >

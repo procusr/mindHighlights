@@ -89,7 +89,7 @@ export default function AddNewFolder({
               isPending || status === "success" || !newFolderName.trim()
             }
             className="relative min-w-[100px] transition-all duration-200"
-            variant={status === "error" ? "destructive" : "default"}
+            variant={status === "error" ? "alert" : "primary"}
           >
             {isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
             {status === "success" && <Check className="h-4 w-4 mr-2" />}
