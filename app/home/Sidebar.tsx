@@ -3,12 +3,11 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import type { Folder } from "../../types/types";
-import AddNewFolder from "./AddNewFolder";
-import FolderList from "../../components/FolderList";
+import AddNewFolder from "../(highlights)/@sidebar/folders/AddNewFolder";
 import { Button } from "@/components/ui/button";
 import { Plus, Search, X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useSidebar } from "../contexts/SidebarContext";
+
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -23,34 +22,27 @@ export default function Sidebar({
   onCreate,
 }: SidebarProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const { closeMenu, menuOpen, openMenu } = useSidebar();
 
   const filteredFolders = folderList.filter((folder) =>
     folder.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        closeMenu();
-      }
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     if (window.innerWidth >= 768) {
+  //       closeMenu();
+  //     }
+  //   };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [closeMenu]);
+  //   window.addEventListener("resize", handleResize);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, [closeMenu]);
 
   return (
     <>
-      {menuOpen && (
-        <div
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-30 md:hidden"
-          aria-hidden="true"
-        />
-      )}
       <aside
         className={cn(
-          menuOpen ? "translate-x-0 pt-12 z-100" : "-translate-x-full",
+          "-translate-x-full",
           "sidebar fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-b from-background to-background/95 transition-all duration-300 ease-in-out md:static md:translate-x-0 border-r border-border flex flex-col shadow-lg pb-12"
         )}
         aria-labelledby="sidebar-heading"
@@ -83,16 +75,16 @@ export default function Sidebar({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-10 py-2 bg-background border-input focus:ring-1 focus:ring-ring"
-              onClick={openMenu}
+              // onClick={openMenu}
             />
             {searchTerm && (
               <Button
-                variant="ghost"
+                variant="text"
                 size="sm"
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
                 onClick={() => {
                   setSearchTerm("");
-                  openMenu();
+                  // openMenu();
                 }}
                 aria-label="Clear search"
               >
@@ -101,9 +93,9 @@ export default function Sidebar({
             )}
           </div>
         </div>
-        <ScrollArea className="flex-grow px-4 py-6 sm:pb-10 pb-20 ">
+        {/* <ScrollArea className="flex-grow px-4 py-6 sm:pb-10 pb-20 ">
           <FolderList folders={filteredFolders} folderId={folderId} />
-        </ScrollArea>
+        </ScrollArea> */}
       </aside>
     </>
   );

@@ -66,12 +66,12 @@
     --destructive-foreground: 210 20% 98%;
   }
 
-  * {
-    @apply border-border will-change-auto;
-  }
-
-  *:focus-visible {
-    @apply ring-2 ring-primary ring-offset-2 outline-none;
+  @layer utilities {
+    .hide-search-controls::-webkit-search-decoration,
+    .hide-search-controls::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+      appearance: none;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

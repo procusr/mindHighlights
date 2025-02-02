@@ -8,7 +8,7 @@ export default function AuthWrapper({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center">
+    <div className="relative min-h-dvh flex flex-col items-center justify-center ">
       <GradientBackground />
       <div className="w-full max-w-sm space-y-8 relative z-10 animate-fade-in-up">
         <div className="bg-white/80 dark:bg-gray-800/80 shadow-2xl rounded-2xl overflow-hidden backdrop-blur-xl">

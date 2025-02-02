@@ -28,6 +28,14 @@ export function MobileSidebar({ children }: { children: React.ReactNode }) {
       <div
         className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 md:hidden"
         onClick={() => setIsOpen(false)}
+        onKeyUp={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            setIsOpen(false);
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label="Close sidebar"
       />
 
       {/* Mobile Sidebar */}
@@ -42,9 +50,14 @@ export function MobileSidebar({ children }: { children: React.ReactNode }) {
           <div className="px-4 h-14 border-b border-border flex items-center justify-between">
             <h2 className="font-semibold">{getMenuTitle(pathname)}</h2>
             <Button
-              variant="ghost"
+              variant="text"
               size="icon"
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false);
+                document
+                  .getElementById("sidebar")
+                  ?.setAttribute("data-state", "close");
+              }}
               className="h-8 w-8"
             >
               <X className="h-4 w-4" />

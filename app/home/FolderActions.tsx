@@ -50,7 +50,7 @@ export default function FolderActions({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="ghost"
+            variant="text"
             size="sm"
             className="text-muted-foreground hover:text-primary hover:bg-accent p-1"
           >

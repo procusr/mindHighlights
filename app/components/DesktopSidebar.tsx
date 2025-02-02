@@ -1,41 +1,78 @@
 "use client";
 
-import { X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../contexts/SidebarContext";
-import { isNotLoggedInPage } from "@/utils/url/isNotLoggedInPage";
+import AddNewFolder from "../(highlights)/@sidebar/folders/AddNewFolder";
+import { cn } from "@/lib/utils";
 
 export function DesktopSidebar({ children }: { children: React.ReactNode }) {
   const { isOpen, setIsOpen } = useSidebar();
   const pathname = usePathname();
 
   const getTitle = () => {
-    if (pathname.startsWith("/folders")) return "Folders";
-    if (pathname.startsWith("/search")) return "Search";
-    if (pathname.startsWith("/settings")) return "Settings";
-    return "Home";
+    const map: Record<string, string> = {
+      "/folders": "Folders",
+      "/search": "Search Results",
+      "/settings": "Preferences",
+      "/": "Workspace",
+    };
+    return (
+      Object.entries(map).find(([path]) => pathname.startsWith(path))?.[1] ||
+      "Navigation"
+    );
   };
 
   if (!isOpen) return null;
 
-  if (isNotLoggedInPage()) return null;
-
   return (
-    <aside className="hidden md:block w-64 rounded-xl bg-muted/30 shadow-lg">
-      <div className="h-full flex flex-col">
+    <aside
+      className={cn(
+        "hidden sm:block w-64 shadow-[0_8px_24px_-6px_rgba(0,0,0,0.08)]",
+        "bg-background/95 backdrop-blur-sm border border-gray-100",
+        "fixed top-[68px] left-[75px]",
+        "h-[calc(100vh-56px)] z-50 rounded-xl",
+        "data-[state=open]:opacity-100 data-[state=closed]:opacity-0"
+      )}
+      data-state={isOpen ? "open" : "closed"}
+    >
+      <div className="h-full flex flex-col overflow-hidden">
+        {/* Header - Keeping original layout structure */}
         <div className="p-4 h-14 border-b border-border flex items-center justify-between">
-          <h2 className="font-semibold">{getTitle()}</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-[15px] font-medium tracking-tight">
+              {getTitle()}
+            </h2>
+
+            {pathname.startsWith("/folders") && (
+              <AddNewFolder>
+                <Button
+                  variant="text"
+                  size="icon"
+                  className="hover:bg-gray-100 rounded-lg"
+                  aria-label="New folder"
+                >
+                  <Plus className="size-5 text-primary" />
+                </Button>
+              </AddNewFolder>
+            )}
+          </div>
+
           <Button
-            variant="ghost"
+            variant="text"
             size="icon"
             onClick={() => setIsOpen(false)}
-            className="h-8 w-8"
+            className="hover:bg-gray-100 rounded-lg"
+            aria-label="Close sidebar"
           >
-            <X className="h-4 w-4" />
+            <X className="size-5 text-gray-500" />
           </Button>
         </div>
-        <div className="flex-1 p-2">{children}</div>
+
+        <div className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+          {children}
+        </div>
       </div>
     </aside>
   );

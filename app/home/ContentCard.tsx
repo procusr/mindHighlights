@@ -72,7 +72,7 @@ export default function ContentCard({
           >
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-primary p-1">
+                <Button variant="text" size="sm" className="text-primary p-1">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -121,7 +121,7 @@ export default function ContentCard({
           ) : (
             canAnchorContent && (
               <Button
-                variant="ghost"
+                variant="text"
                 size="sm"
                 className="inline-flex justify-between gap-2"
                 onClick={(e) => {

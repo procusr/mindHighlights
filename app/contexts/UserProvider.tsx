@@ -1,49 +1,60 @@
-// "use client";
+"use client";
 
-// import { createClient } from "@/utils/supabase/client";
-// import { createContext, useContext, type ReactNode } from "react";
+import { createClient } from "@/utils/supabase/client";
+import {
+  createContext,
+  useContext,
+  type ReactNode,
+  useState,
+  useEffect,
+} from "react";
 
-// interface UserContextProps {
-//   isLoggedIn: boolean;
-// }
+interface UserContextProps {
+  isLoggedIn: boolean;
+}
 
-// export const UserContext = createContext<UserContextProps | undefined>(
-//   undefined
-// );
+export const UserContext = createContext<UserContextProps | undefined>(
+  undefined
+);
 
-// const initializeAuth = () => {
-//   const supabase = createClient();
-//   supabase.auth.getUser().then(({ data: { user } }) => {
-//     currentLoginState = !!user;
-//   });
-//   return false;
-// };
+async function initializeAuth() {
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session !== null;
+}
 
-// let currentLoginState = initializeAuth();
+const UserProvider = ({ children }: { children: ReactNode }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-// const UserProvider = ({ children }: { children: ReactNode }) => {
-//   return (
-//     <UserContext value={{ isLoggedIn: currentLoginState }}>
-//       {children}
-//     </UserContext>
-//   );
-// };
+  useEffect(() => {
+    initializeAuth().then((loggedIn) => {
+      setIsLoggedIn(loggedIn);
+    });
+  }, []);
 
-// export const useUser = (): UserContextProps => {
-//   const context = useContext(UserContext);
-//   if (!context) {
-//     throw new Error("useUser must be used within a UserProvider");
-//   }
-//   return context;
-// };
+  return (
+    <UserContext.Provider value={{ isLoggedIn }}>
+      {children}
+    </UserContext.Provider>
+  );
+};
 
-// export default UserProvider;
+export const useUser = (): UserContextProps => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
+  return context;
+};
 
-// export const refreshAuthState = async () => {
-//   const supabase = createClient();
-//   const {
-//     data: { user },
-//   } = await supabase.auth.getUser();
-//   currentLoginState = !!user;
-//   return currentLoginState;
-// };
+export const refreshAuthState = async () => {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return !!user;
+};
+
+export default UserProvider;

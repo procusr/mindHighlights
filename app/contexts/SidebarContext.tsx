@@ -1,22 +1,22 @@
 "use client";
 
-import { useSidebarState } from "@/hooks/useSidebarState";
-import { createContext, useContext } from "react";
+// import { useSidebarState } from "@/hooks/useSidebarState";
+import { createContext, useContext, useState } from "react";
 
 interface SidebarContextType {
   isOpen: boolean;
-  setIsOpen: (value: boolean) => Promise<URLSearchParams>;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
-  const [isOpen, setIsOpen] = useSidebarState();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <SidebarContext.Provider
       value={{
-        isOpen: isOpen ?? false,
+        isOpen: isOpen,
         setIsOpen,
       }}
     >

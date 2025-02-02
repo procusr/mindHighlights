@@ -1,8 +1,10 @@
-// app/folders/page.tsx
+import { folderCache } from "@/app/utils/search-params";
 
-import { folderCache } from "../utils/search-params";
-
-export default async function FoldersPage({ searchParams }) {
+export default async function FoldersPage({
+  searchParams,
+}: {
+  searchParams: Promise<string>;
+}) {
   // Parse search params server-side
   const { search, sort, page } = await folderCache.parse(searchParams);
 

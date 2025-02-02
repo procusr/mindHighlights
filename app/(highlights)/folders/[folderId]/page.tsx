@@ -4,11 +4,13 @@ import { mockFolders } from "@/app/utils/mock-data";
 import { notFound } from "next/navigation";
 
 export default function FolderPage({
-  params: { folderId },
+  params,
 }: {
-  params: { folderId: string };
+  params: Promise<{ folderId: string }>;
 }) {
-  const folder = mockFolders.find((f) => f.id === folderId);
+  const folder = mockFolders.find(
+    async (f) => f.id === (await params).folderId
+  );
 
   if (!folder) {
     notFound();

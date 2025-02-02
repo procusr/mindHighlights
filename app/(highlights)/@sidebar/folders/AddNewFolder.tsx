@@ -14,7 +14,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import type { Folder } from "@/types/types";
-import { createNewFolder } from "../actions/contentActions";
+import { createNewFolder } from "../../../actions/contentActions";
+import { useRouter } from "next/navigation";
 
 interface AddNewFolderProps {
   children: ReactNode;
@@ -30,6 +31,8 @@ export default function AddNewFolder({
   const [isPending, startTransition] = useTransition();
   const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
 
+  const { refresh } = useRouter();
+
   const handleCreateFolder = () => {
     if (!newFolderName.trim() || isPending) return;
 
@@ -39,11 +42,10 @@ export default function AddNewFolder({
         if (newFolder) {
           setStatus("success");
           onFolderCreated?.(newFolder);
-          setTimeout(() => {
-            setIsOpen(false);
-            setNewFolderName("");
-            setStatus("idle");
-          }, 1000);
+          setIsOpen(false);
+          setNewFolderName("");
+          setStatus("idle");
+          refresh();
         } else {
           throw new Error("Failed to create folder");
         }

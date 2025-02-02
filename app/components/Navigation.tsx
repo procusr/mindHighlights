@@ -1,11 +1,13 @@
 "use client";
 
 import { Home, Folder, Search, Settings } from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, redirect } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import { useSidebar } from "@/app/contexts/SidebarContext";
 import { cn } from "@/lib/utils";
 import { isNotLoggedInPage } from "@/utils/url/isNotLoggedInPage";
+import { useEffect } from "react";
+import { useUser } from "@/app/contexts/UserProvider";
 
 type MenuItem = {
   href: string;
@@ -25,8 +27,9 @@ export function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
   const { isOpen, setIsOpen } = useSidebar();
+  const { isLoggedIn } = useUser();
 
-  if (isNotLoggedInPage()) return null;
+  if (!isLoggedIn) return null;
 
   const isActive = (href: string) => {
     if (href === "/") {
@@ -35,14 +38,15 @@ export function Navigation() {
     return pathname.startsWith(href) && href !== "/";
   };
 
-  const handleClick = async (href: string) => {
-    if (!isOpen) await setIsOpen(true);
+  const handleClick = (href: string) => {
+    setIsOpen(true);
+    document.getElementById("sidebar")?.setAttribute("data-state", "open");
     router.push(href);
   };
 
   return (
-    <nav className="w-14 flex flex-col py-2 h-screen left-0 relative">
-      <div className="flex flex-col items-center gap-2 p-3 w-full fixed top-0 left-0">
+    <nav className={cn("w-[72px] h-screen fixed left-0  bg-white z-30")}>
+      <div className="flex flex-col items-center gap-2 p-3 w-full">
         {menuItems.map((item) => (
           <button
             type="button"

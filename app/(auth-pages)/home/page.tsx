@@ -43,7 +43,7 @@ export default async function Index() {
         <div
           className="absolute inset-0 opacity-10"
           style={{
-            backgroundImage: `radial-gradient(#fff 1px, transparent 1px)`,
+            backgroundImage: "radial-gradient(#fff 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         />
@@ -178,17 +178,6 @@ export default async function Index() {
 // import { createClient } from "@/utils/supabase/server";
 // import type { Content, Folder } from "@/types/types";
 // import UserContent from "./UserContent";
-
-// async function fetchUserFolders(userId: string): Promise<Folder[]> {
-//   const supabase = createClient();
-
-//   const { data: folders, error } = await supabase
-//     .from("user_folders")
-//     .select("id, name, user_id, created_at")
-//     .eq("user_id", userId);
-//   if (error) throw new Error(error.message);
-//   return folders as Folder[];
-// }
 
 // async function fetchContentForFolder(
 //   folderId: string,

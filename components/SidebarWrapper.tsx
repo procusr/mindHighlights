@@ -5,5 +5,5 @@ export default function SidebarWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="h-full">{children}</div>;
+  return <div className="h-full bg-background w-full">{children}</div>;
 }

@@ -23,7 +23,7 @@ export default async function HeaderAuth() {
   return (
     <div className="flex items-center gap-1">
       {user ? (
-        <Menubar className="border-none">
+        <Menubar>
           <MenubarMenu>
             <MenubarTrigger className="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-white text-sm sm:text-base sm:mr-4">
               {user.email?.charAt(0).toUpperCase()}
@@ -31,11 +31,10 @@ export default async function HeaderAuth() {
             <MenubarContent className="bg-white w-48 max-w-full">
               <MenubarItem className="text-gray-700">{user.email}</MenubarItem>
               <MenubarSeparator />
-              <form action={signOutAction} method="post">
+              <form action={signOutAction}>
                 <SubmitButton
-                  type="submit"
                   className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                  variant="ghost"
+                  variant="text"
                   size="sm"
                 >
                   Sign out
