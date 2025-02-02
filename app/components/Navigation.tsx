@@ -1,13 +1,11 @@
 "use client";
 
-import { Home, Folder, Search, Settings } from "lucide-react";
-import { useRouter, usePathname, redirect } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
 import { useSidebar } from "@/app/contexts/SidebarContext";
-import { cn } from "@/lib/utils";
-import { isNotLoggedInPage } from "@/utils/url/isNotLoggedInPage";
-import { useEffect } from "react";
 import { useUser } from "@/app/contexts/UserProvider";
+import { cn } from "@/lib/utils";
+import type { LucideIcon } from "lucide-react";
+import { Folder, Home, Search, Settings } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 type MenuItem = {
   href: string;
@@ -26,7 +24,7 @@ const menuItems: MenuItem[] = [
 export function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isOpen, setIsOpen } = useSidebar();
+  const { setIsOpen } = useSidebar();
   const { isLoggedIn } = useUser();
 
   if (!isLoggedIn) return null;
