@@ -24,8 +24,8 @@ export default function Layout({
             </div>
             <div className="flex-1 p-2 ml-[57px] sm:peer-[[data-state=open]]:ml-[352px] peer-[[data-state=open]]:ml-0">
               <div className="w-full h-full rounded-xl shadow-inner flex flex-col  bg-background">
-                <div className="p-4 border-b flex-shrink-0">
-                  <h2 className="text-xl font-bold">Scrollable Content</h2>
+                <div className="p-3 border-b ">
+                  <h2 className="text-lg font-bold ml-2">Scrollable Content</h2>
                 </div>
 
                 <div className="flex-1 overflow-y-auto">

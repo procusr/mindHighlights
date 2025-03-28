@@ -33,7 +33,7 @@ export function FolderItem({ folder }: { folder: Folder }) {
     <Button
       onClick={handleClick}
       variant={isSelected ? "outline" : "text"}
-      className="w-full px-2 py-2 text-left justify-start transition-colors rounded-sm"
+      className="w-full p-2 text-left justify-start transition-colors rounded-sm"
     >
       {folder.name}
     </Button>

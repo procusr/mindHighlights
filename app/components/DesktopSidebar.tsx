@@ -16,7 +16,7 @@ export function DesktopSidebar({ children }: { children: React.ReactNode }) {
       "/folders": "Folders",
       "/search": "Search Results",
       "/settings": "Preferences",
-      "/": "home",
+      "/": "Home",
     };
     return (
       Object.entries(map).find(([path]) => pathname.startsWith(path))?.[1] ||
@@ -38,11 +38,9 @@ export function DesktopSidebar({ children }: { children: React.ReactNode }) {
       data-state={isOpen ? "open" : "closed"}
     >
       <div className="h-full flex flex-col overflow-hidden rounded-lg">
-        <div className="p-4 pr-2 h-14 border-b border-border flex items-center justify-between">
+        <div className="pl-4 pr-2 py-2 h-15 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h2 className="text-[15px] font-medium tracking-tight">
-              {getTitle()}
-            </h2>
+            <h2 className="text-md font-medium tracking-tight">{getTitle()}</h2>
 
             {pathname.startsWith("/folders") && (
               <AddNewFolder>
