@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
+import { User } from "@supabase/auth-helpers-nextjs";
 import {
   createContext,
   useContext,
@@ -11,6 +12,7 @@ import {
 
 interface UserContextProps {
   isLoggedIn: boolean;
+  user: User | undefined;
 }
 
 export const UserContext = createContext<UserContextProps | undefined>(
@@ -22,20 +24,22 @@ async function initializeAuth() {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  return session !== null;
+  return session;
 }
 
 const UserProvider = ({ children }: { children: ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [user, setUser] = useState<User>();
 
   useEffect(() => {
-    initializeAuth().then((loggedIn) => {
-      setIsLoggedIn(loggedIn);
+    initializeAuth().then((user) => {
+      setIsLoggedIn(user?.user !== null);
+      setUser(user?.user);
     });
   }, []);
 
   return (
-    <UserContext.Provider value={{ isLoggedIn }}>
+    <UserContext.Provider value={{ isLoggedIn, user }}>
       {children}
     </UserContext.Provider>
   );

@@ -49,7 +49,7 @@ async function fetchUserFolders({
 export default async function FoldersSidebar({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
   const supabase = createClient();
   const { query, page = "1" } = await searchParams;

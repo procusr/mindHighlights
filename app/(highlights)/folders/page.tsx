@@ -5,7 +5,6 @@ export default async function FoldersPage({
 }: {
   searchParams: Promise<string>;
 }) {
-  // Parse search params server-side
   const { search, sort, page } = await folderCache.parse(searchParams);
 
   return (

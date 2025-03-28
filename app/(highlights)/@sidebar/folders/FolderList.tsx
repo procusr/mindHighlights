@@ -74,7 +74,7 @@ export function FoldersList({
 
   return (
     <section className="flex flex-col gap-2.5 px-2.5">
-      <div className="sticky top-0 backdrop-blur-sm pt-1 z-10">
+      <div className="sticky top-0 pt-1 z-10 bg-background">
         <Input
           type="search"
           value={inputValue}

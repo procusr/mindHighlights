@@ -2,10 +2,20 @@
 
 import { useSidebar } from "@/app/contexts/SidebarContext";
 import { useUser } from "@/app/contexts/UserProvider";
+import { SubmitButton } from "@/components/submit-button";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 import { Folder, Home, Search, Settings } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { signOutAction } from "../actions";
 
 type MenuItem = {
   href: string;
@@ -25,7 +35,7 @@ export function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
   const { setIsOpen } = useSidebar();
-  const { isLoggedIn } = useUser();
+  const { isLoggedIn, user } = useUser();
 
   if (!isLoggedIn) return null;
 
@@ -43,7 +53,11 @@ export function Navigation() {
   };
 
   return (
-    <nav className={cn("w-[72px] h-screen fixed left-0  bg-white z-30")}>
+    <nav
+      className={cn(
+        "w-[64px] h-dvh fixed left-0 mt-2 z-30 flex flex-col  items-center rounded-md"
+      )}
+    >
       <div className="flex flex-col items-center gap-2 p-3 w-full">
         {menuItems.map((item) => (
           <button
@@ -67,6 +81,28 @@ export function Navigation() {
           </button>
         ))}
       </div>
+      {isLoggedIn && (
+        <Menubar className="bg-zinc-300 border-none fixed bottom-4 ">
+          <MenubarMenu>
+            <MenubarTrigger className="size-8 flex items-center justify-center rounded-full bg-primary text-white text-sm sm:text-base self-end cursor-pointer">
+              {user?.email?.charAt(0).toUpperCase()}
+            </MenubarTrigger>
+            <MenubarContent className="w-48 max-w-full">
+              <MenubarItem className="text-gray-700">{user?.email}</MenubarItem>
+              <MenubarSeparator />
+              <form action={signOutAction}>
+                <SubmitButton
+                  className="w-full text-left  py-2 hover:bg-gray-100"
+                  variant="text"
+                  size="sm"
+                >
+                  Sign out
+                </SubmitButton>
+              </form>
+            </MenubarContent>
+          </MenubarMenu>
+        </Menubar>
+      )}
     </nav>
   );
 }

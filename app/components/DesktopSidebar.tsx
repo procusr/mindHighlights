@@ -31,15 +31,14 @@ export function DesktopSidebar({ children }: { children: React.ReactNode }) {
       className={cn(
         "hidden sm:block w-64 shadow-[0_8px_24px_-6px_rgba(0,0,0,0.08)]",
         "bg-background/95 backdrop-blur-sm border border-gray-100",
-        "fixed top-[68px] left-[75px]",
-        "h-[calc(100vh-56px)] z-50 rounded-xl",
+        "fixed top-[63px] left-[66px]",
+        "h-[calc(100vh-78px)] z-50 rounded-xl",
         "data-[state=open]:opacity-100 data-[state=closed]:opacity-0"
       )}
       data-state={isOpen ? "open" : "closed"}
     >
-      <div className="h-full flex flex-col overflow-hidden">
-        {/* Header - Keeping original layout structure */}
-        <div className="p-4 h-14 border-b border-border flex items-center justify-between">
+      <div className="h-full flex flex-col overflow-hidden rounded-lg">
+        <div className="p-4 pr-2 h-14 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h2 className="text-[15px] font-medium tracking-tight">
               {getTitle()}
@@ -60,7 +59,7 @@ export function DesktopSidebar({ children }: { children: React.ReactNode }) {
           </div>
 
           <Button
-            variant="outline"
+            variant="text"
             size="icon"
             onClick={() => {
               setIsOpen(false);

@@ -49,7 +49,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         </Button>
         <Button
           onClick={onConfirm}
-          variant="destructive"
+          variant="alert"
           className="w-full sm:w-auto hover:bg-destructive/90"
         >
           Delete
