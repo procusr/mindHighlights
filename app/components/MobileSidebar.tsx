@@ -23,10 +23,8 @@ export function MobileSidebar({ children }: { children: React.ReactNode }) {
   if (!isOpen) return null;
 
   return (
-    <>
-      {/* Mobile Overlay */}
+    <div className="fixed inset-0 z-50 flex md:hidden right-0 bg-background size-full">
       <div
-        className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 md:hidden"
         onClick={() => setIsOpen(false)}
         onKeyUp={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -39,33 +37,26 @@ export function MobileSidebar({ children }: { children: React.ReactNode }) {
       />
 
       {/* Mobile Sidebar */}
-      <div
-        className="
-        fixed inset-y-0 left-16 right-0 z-50
-        md:hidden
-        bg-card border-l border-border
-      "
-      >
-        <div className="h-full flex flex-col">
-          <div className="px-4 h-14 border-b border-border flex items-center justify-between">
-            <h2 className="font-semibold">{getMenuTitle(pathname)}</h2>
-            <Button
-              variant="text"
-              size="icon"
-              onClick={() => {
-                setIsOpen(false);
-                document
-                  .getElementById("sidebar")
-                  ?.setAttribute("data-state", "close");
-              }}
-              className="h-8 w-8"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="flex-1 overflow-auto">{children}</div>
+
+      <div className="flex size-full flex-col">
+        <div className="px-4 h-14 border-b border-border flex items-center justify-between">
+          <h2 className="font-semibold">{getMenuTitle(pathname)}</h2>
+          <Button
+            variant="text"
+            size="icon"
+            onClick={() => {
+              setIsOpen(false);
+              document
+                .getElementById("sidebar")
+                ?.setAttribute("data-state", "close");
+            }}
+            className="h-8 w-8"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
+        <div className="overflow-auto">{children}</div>
       </div>
-    </>
+    </div>
   );
 }

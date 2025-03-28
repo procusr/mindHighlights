@@ -34,7 +34,7 @@ const menuItems: MenuItem[] = [
 export function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
-  const { setIsOpen } = useSidebar();
+  const { setIsOpen, isOpen } = useSidebar();
   const { isLoggedIn, user } = useUser();
 
   if (!isLoggedIn) return null;
@@ -55,7 +55,9 @@ export function Navigation() {
   return (
     <nav
       className={cn(
-        "w-[64px] h-dvh fixed left-0 mt-2 z-30 flex flex-col  items-center rounded-md"
+        isOpen
+          ? "hidden"
+          : "w-[64px] h-dvh fixed left-0 mt-2 z-30 flex flex-col items-center rounded-md"
       )}
     >
       <div className="flex flex-col items-center gap-2 p-3 w-full">
