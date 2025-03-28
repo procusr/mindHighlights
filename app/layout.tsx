@@ -27,10 +27,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${lora.variable}`}>
-      <head>
-        {/* <script src="https://unpkg.com/react-scan/dist/auto.global.js" async /> */}
-      </head>
-
       <body className="text-foreground overflow-hidden bg-muted-foreground/40">
         <header className="flex items-center justify-between py-2 px-6  sticky top-0 z-50 w-full">
           <div className="flex items-center flex-grow">
