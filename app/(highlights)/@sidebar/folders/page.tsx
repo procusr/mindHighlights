@@ -12,7 +12,7 @@ interface SearchParams {
   page?: string;
 }
 
-async function fetchUserFolders({
+export async function fetchUserFolders({
   userId,
   query,
   page,

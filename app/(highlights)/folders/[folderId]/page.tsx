@@ -1,33 +1,68 @@
-// app/folders/[folderId]/page.tsx
 import { FolderItemContent } from "@/app/home/Components/FolderItemContent";
-import { mockFolders } from "@/app/utils/mock-data";
-import { notFound } from "next/navigation";
+import UserContent from "@/app/home/UserContent";
+import type { Content, Folder } from "@/types/types";
+import { createClient } from "@/utils/supabase/server";
 
-export default function FolderPage({
+import { notFound, redirect } from "next/navigation";
+import { fetchUserFolders } from "../../@sidebar/folders/page";
+import SelectedFolderView from "@/app/home/SelectedFolderView";
+
+async function fetchContentForFolder(
+  folderId: string,
+  userId: string
+): Promise<Content[]> {
+  const supabase = createClient();
+
+  if (!folderId) return [];
+
+  const { data, error } = await supabase
+    .from("user_content")
+    .select("*")
+    .eq("folder_id", folderId)
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  if (error) throw new Error(error.message);
+  return data as Content[];
+}
+
+export default async function FolderPage({
   params,
 }: {
   params: Promise<{ folderId: string }>;
 }) {
-  const folder = mockFolders.find(
-    async (f) => f.id === (await params).folderId
-  );
+  const { folderId } = await params;
 
-  if (!folder) {
+  if (!folderId) {
     notFound();
   }
 
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">{folder.name}</h1>
-      <p className="text-muted-foreground mt-4">
-        Contains {folder.items.length} items.
-      </p>
+  const supabase = createClient();
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-        {folder.items.map((item) => (
-          <FolderItemContent key={item.id} item={item} />
-        ))}
-      </div>
-    </div>
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return redirect("/sign-in");
+  }
+
+  const [initialFolders, initialContent] = await Promise.all([
+    fetchUserFolders({ userId: user.id }),
+    fetchContentForFolder(folderId, user.id),
+  ]);
+
+  const selectedFolder = initialFolders.folders.find(
+    (folder: Folder) => folder.id === folderId
+  ) as Folder;
+
+  return (
+    <SelectedFolderView
+      initialContent={initialContent}
+      selectedFolder={selectedFolder}
+      user={user}
+    />
   );
 }

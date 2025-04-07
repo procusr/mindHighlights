@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import { useInView } from "react-intersection-observer";
 import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface FoldersListProps {
   folderList: Folder[];
@@ -37,10 +39,9 @@ export function FoldersList({
       .withDefault("")
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     setFolderListState(folderList);
-  }, [inputValue, folderList]);
+  }, [folderList]);
 
   useEffect(() => {
     setFolderListState(
@@ -82,6 +83,17 @@ export function FoldersList({
           placeholder="Search folders..."
           aria-label="Search folders"
         />
+        {inputValue && (
+          <Button
+            variant="text"
+            size="icon"
+            aria-label="Clear search"
+            className="relative"
+            onClick={() => setInputValue("")}
+          >
+            <X className="absolute top-0 left-48 size-4" />
+          </Button>
+        )}
 
         <div className="mt-1 border-t border-gray-100" />
       </div>
