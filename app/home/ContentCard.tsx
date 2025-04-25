@@ -56,7 +56,7 @@ export default function ContentCard({
       className="overflow-hidden transition-all duration-300 hover:shadow-lg group cursor-pointer"
       onClick={() => setIsExpanded(!isExpanded)}
     >
-      <CardHeader className="p-4 bg-gradient-to-r from-secondary/30 to-primary/10">
+      <CardHeader className="p-4">
         <div className="flex justify-between items-center w-full">
           <CardTitle className="text-sm font-medium break-words mr-2 flex-grow">
             {content.title}

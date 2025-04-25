@@ -1,5 +1,3 @@
-import { FolderItemContent } from "@/app/home/Components/FolderItemContent";
-import UserContent from "@/app/home/UserContent";
 import type { Content, Folder } from "@/types/types";
 import { createClient } from "@/utils/supabase/server";
 

@@ -88,11 +88,6 @@ export default function SelectedFolderView({
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-    // Scroll to top of content area smoothly
-    document.querySelector(".content-container")?.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
   }, []);
 
   const handleDelete = useCallback(
@@ -198,9 +193,9 @@ export default function SelectedFolderView({
 
   return (
     <>
-      <div className="flex sticky top-0 z-30 max-w-2xl px-6 py-3  justify-between items-center">
+      <div className="flex sticky top-0 z-30 max-w-2xl px-6 py-3  justify-between items-center bg-background/95">
         <div className="flex items-center">
-          <h2 className="text-lg font-bold text-primary">{foldername}</h2>
+          <h2 className="text-lg font-bold ">{foldername}</h2>
           <FolderActions
             key={selectedFolder.id}
             folderId={selectedFolder.id}
@@ -262,7 +257,7 @@ export default function SelectedFolderView({
       </div>
 
       {totalPages > 1 && (
-        <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm sm:px-4 max-w-2xl w-full pb-2">
+        <div className="fixed bottom-[15px] bg-background/95 backdrop-blur-sm sm:px-4 max-w-2xl w-full pb-2">
           <hr className="pt-2" />
           <Pagination>
             <PaginationContent className="gap-1">
