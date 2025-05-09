@@ -89,18 +89,6 @@
       "rlig" 1,
       "calt" 1;
   }
-
-  body {
-    @apply bg-background text-foreground antialiased
-           text-base leading-relaxed
-           selection:bg-[hsl(var(--highlight)/0.2)]
-           selection:text-foreground;
-    font-family: "Inter", sans-serif;
-    font-feature-settings:
-      "rlig" 1,
-      "calt" 1;
-    text-rendering: optimizeLegibility;
-  }
 }
 
 /* Animations */

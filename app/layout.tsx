@@ -27,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${lora.variable}`}>
-      <body className="text-foreground overflow-hidden bg-muted-foreground/40">
+      <body className="text-foreground min-h-screen overflow-y-auto">
         <header className="flex items-center justify-between py-2 px-6  sticky top-0 z-50 w-full">
           <div className="flex items-center flex-grow">
             <Link href="/" title="Home" className="ml-auto flex-shrink-0">

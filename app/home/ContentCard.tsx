@@ -94,7 +94,7 @@ export default function ContentCard({
         </div>
       </CardHeader>
       {isExpanded && (
-        <CardContent className="p-4 bg-gradient-to-b from-transparent to-secondary/10">
+        <CardContent className="p-4 bg-secondary">
           <p className="text-base leading-relaxed text-foreground whitespace-pre-wrap mb-4">
             <span className="bg-highlight">{content.content}</span>
           </p>

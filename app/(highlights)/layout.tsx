@@ -23,7 +23,7 @@ export default function Layout({
               <DesktopSidebar>{sidebar}</DesktopSidebar>
             </div>
             <div className="flex-1 p-2 ml-[57px] sm:peer-[[data-state=open]]:ml-[352px] peer-[[data-state=open]]:ml-0">
-              <div className="w-full h-full rounded-xl shadow-inner flex flex-col  bg-background">
+              <div className="size-full rounded-xl shadow-inner flex flex-col bg-background">
                 <div className="flex-1 overflow-y-auto">
                   <div className="p-4">{children}</div>
                 </div>
