@@ -3,12 +3,47 @@
 import { createClient } from "@/utils/supabase/server";
 import OpenAI from "openai";
 import type { Content, Folder } from "@/types/types";
+import { FOLDER_SEARCH_LIMIT } from "../constants/constants";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
   organization: process.env.OPENAI_ORGANIZATION_ID,
   project: process.env.OPENAI_PROJECT_ID,
 });
+
+export async function fetchUserFolders({
+  userId,
+  query,
+  page,
+}: {
+  userId: string;
+  query?: string | null;
+  page?: string;
+}): Promise<{
+  folders: Folder[];
+  count: number;
+}> {
+  const supabase = createClient();
+  const pageInt = Number(page || "1");
+
+  let foldersQuery = supabase
+    .from("user_folders")
+    .select("id, name, user_id, created_at", { count: "exact" })
+    .eq("user_id", userId)
+    .range(0, pageInt * FOLDER_SEARCH_LIMIT - 1);
+
+  if (query && query.trim() !== "") {
+    foldersQuery = foldersQuery.ilike("name", `%${query}%`);
+  }
+
+  const { data, error, count } = await foldersQuery;
+  if (error) throw new Error(error.message);
+
+  return {
+    folders: data as Folder[],
+    count: count || 0,
+  };
+}
 
 export async function addNewContent(
   content: string,

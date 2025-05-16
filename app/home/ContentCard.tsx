@@ -56,7 +56,7 @@ export default function ContentCard({
       className="overflow-hidden transition-all duration-300 hover:shadow-lg group cursor-pointer"
       onClick={() => setIsExpanded(!isExpanded)}
     >
-      <CardHeader className="p-4 bg-gradient-to-r from-secondary/30 to-primary/10">
+      <CardHeader className="p-4">
         <div className="flex justify-between items-center w-full">
           <CardTitle className="text-sm font-medium break-words mr-2 flex-grow">
             {content.title}
@@ -72,7 +72,7 @@ export default function ContentCard({
           >
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-primary p-1">
+                <Button variant="text" size="sm" className="text-primary p-1">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -94,7 +94,7 @@ export default function ContentCard({
         </div>
       </CardHeader>
       {isExpanded && (
-        <CardContent className="p-4 bg-gradient-to-b from-transparent to-secondary/10">
+        <CardContent className="p-4 bg-secondary">
           <p className="text-base leading-relaxed text-foreground whitespace-pre-wrap mb-4">
             <span className="bg-highlight">{content.content}</span>
           </p>
@@ -121,7 +121,7 @@ export default function ContentCard({
           ) : (
             canAnchorContent && (
               <Button
-                variant="ghost"
+                variant="text"
                 size="sm"
                 className="inline-flex justify-between gap-2"
                 onClick={(e) => {

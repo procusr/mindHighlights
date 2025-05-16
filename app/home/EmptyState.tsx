@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import AddNewFolder from "./AddNewFolder";
+import AddNewFolder from "../(highlights)/@sidebar/folders/AddNewFolder";
 
 export default function EmptyState() {
   return (

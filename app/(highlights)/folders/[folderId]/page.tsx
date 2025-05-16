@@ -1,18 +1,9 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
 import type { Content, Folder } from "@/types/types";
-import UserContent from "./UserContent";
+import { createClient } from "@/utils/supabase/server";
 
-async function fetchUserFolders(userId: string): Promise<Folder[]> {
-  const supabase = createClient();
-
-  const { data: folders, error } = await supabase
-    .from("user_folders")
-    .select("id, name, user_id, created_at")
-    .eq("user_id", userId);
-  if (error) throw new Error(error.message);
-  return folders as Folder[];
-}
+import { notFound, redirect } from "next/navigation";
+import SelectedFolderView from "@/app/home/SelectedFolderView";
+import { fetchUserFolders } from "@/app/actions/contentActions";
 
 async function fetchContentForFolder(
   folderId: string,
@@ -34,9 +25,17 @@ async function fetchContentForFolder(
   return data as Content[];
 }
 
-export default async function HomePage(props: {
-  searchParams: Promise<{ folderId?: string }>;
+export default async function FolderPage({
+  params,
+}: {
+  params: Promise<{ folderId: string }>;
 }) {
+  const { folderId } = await params;
+
+  if (!folderId) {
+    notFound();
+  }
+
   const supabase = createClient();
 
   const {
@@ -44,25 +43,23 @@ export default async function HomePage(props: {
     error,
   } = await supabase.auth.getUser();
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
   if (!user) {
     return redirect("/sign-in");
   }
 
-  const folderId = (await props.searchParams)?.folderId ?? "";
   const [initialFolders, initialContent] = await Promise.all([
-    fetchUserFolders(user.id),
+    fetchUserFolders({ userId: user.id }),
     fetchContentForFolder(folderId, user.id),
   ]);
 
+  const selectedFolder = initialFolders.folders.find(
+    (folder: Folder) => folder.id === folderId
+  ) as Folder;
+
   return (
-    <UserContent
-      folderId={folderId}
-      initialFolders={initialFolders}
+    <SelectedFolderView
       initialContent={initialContent}
+      selectedFolder={selectedFolder}
       user={user}
     />
   );

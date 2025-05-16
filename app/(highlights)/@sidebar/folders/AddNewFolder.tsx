@@ -14,7 +14,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import type { Folder } from "@/types/types";
-import { createNewFolder } from "../actions/contentActions";
+import { createNewFolder } from "../../../actions/contentActions";
+import { useRouter } from "next/navigation";
 
 interface AddNewFolderProps {
   children: ReactNode;
@@ -30,6 +31,8 @@ export default function AddNewFolder({
   const [isPending, startTransition] = useTransition();
   const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
 
+  const { refresh } = useRouter();
+
   const handleCreateFolder = () => {
     if (!newFolderName.trim() || isPending) return;
 
@@ -39,11 +42,10 @@ export default function AddNewFolder({
         if (newFolder) {
           setStatus("success");
           onFolderCreated?.(newFolder);
-          setTimeout(() => {
-            setIsOpen(false);
-            setNewFolderName("");
-            setStatus("idle");
-          }, 1000);
+          setIsOpen(false);
+          setNewFolderName("");
+          setStatus("idle");
+          refresh();
         } else {
           throw new Error("Failed to create folder");
         }
@@ -70,7 +72,6 @@ export default function AddNewFolder({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogTitle>Create New Folder</DialogTitle>
-        <DialogDescription>Enter a name for your new folder.</DialogDescription>
         <Input
           value={newFolderName}
           onChange={(e) => setNewFolderName(e.target.value)}
@@ -87,7 +88,7 @@ export default function AddNewFolder({
               isPending || status === "success" || !newFolderName.trim()
             }
             className="relative min-w-[100px] transition-all duration-200"
-            variant={status === "error" ? "destructive" : "default"}
+            variant={status === "error" ? "alert" : "primary"}
           >
             {isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
             {status === "success" && <Check className="h-4 w-4 mr-2" />}
