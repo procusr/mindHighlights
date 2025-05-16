@@ -6,44 +6,11 @@ import type { Folder } from "@/types/types";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { fetchUserFolders } from "@/app/actions/contentActions";
 
 interface SearchParams {
   query?: string | null;
   page?: string;
-}
-
-export async function fetchUserFolders({
-  userId,
-  query,
-  page,
-}: {
-  userId: string;
-  query?: string | null;
-  page?: string;
-}): Promise<{
-  folders: Folder[];
-  count: number;
-}> {
-  const supabase = createClient();
-  const pageInt = Number(page || "1");
-
-  let foldersQuery = supabase
-    .from("user_folders")
-    .select("id, name, user_id, created_at", { count: "exact" })
-    .eq("user_id", userId)
-    .range(0, pageInt * FOLDER_SEARCH_LIMIT - 1);
-
-  if (query && query.trim() !== "") {
-    foldersQuery = foldersQuery.ilike("name", `%${query}%`);
-  }
-
-  const { data, error, count } = await foldersQuery;
-  if (error) throw new Error(error.message);
-
-  return {
-    folders: data as Folder[],
-    count: count || 0,
-  };
 }
 
 export default async function FoldersSidebar({

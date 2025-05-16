@@ -2,8 +2,8 @@ import type { Content, Folder } from "@/types/types";
 import { createClient } from "@/utils/supabase/server";
 
 import { notFound, redirect } from "next/navigation";
-import { fetchUserFolders } from "../../@sidebar/folders/page";
 import SelectedFolderView from "@/app/home/SelectedFolderView";
+import { fetchUserFolders } from "@/app/actions/contentActions";
 
 async function fetchContentForFolder(
   folderId: string,
