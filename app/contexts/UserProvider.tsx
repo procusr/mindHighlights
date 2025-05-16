@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
-import { User } from "@supabase/auth-helpers-nextjs";
+import type { User } from "@supabase/auth-helpers-nextjs";
 import {
   createContext,
   useContext,
@@ -9,6 +9,7 @@ import {
   useState,
   useEffect,
 } from "react";
+import { Contexter } from "./Contexter";
 
 interface UserContextProps {
   isLoggedIn: boolean;
@@ -45,13 +46,9 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useUser = (): UserContextProps => {
-  const context = useContext(UserContext);
-  if (!context) {
-    throw new Error("useUser must be used within a UserProvider");
-  }
-  return context;
-};
+export const useUser = Contexter<UserContextProps>({
+  UserContext,
+});
 
 export const refreshAuthState = async () => {
   const supabase = createClient();

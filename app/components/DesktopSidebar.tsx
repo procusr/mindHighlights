@@ -14,7 +14,7 @@ export function DesktopSidebar({ children }: { children: React.ReactNode }) {
   const getTitle = () => {
     const map: Record<string, string> = {
       "/folders": "Folders",
-      "/search": "Search Results",
+      "/flashcards": "Flashcards",
       "/settings": "Preferences",
       "/": "Home",
     };

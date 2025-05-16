@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/menubar";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
-import { Folder, Home, Search, Settings } from "lucide-react";
+import { Folder, Home, WalletCardsIcon, Settings } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { signOutAction } from "../actions";
 
@@ -27,7 +27,7 @@ type MenuItem = {
 const menuItems: MenuItem[] = [
   { href: "/", label: "Home", icon: Home },
   { href: "/folders", label: "Folders", icon: Folder },
-  { href: "/search", label: "Search", icon: Search },
+  { href: "/flashcards", label: "Flashcards", icon: WalletCardsIcon },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -75,7 +75,7 @@ export function Navigation() {
             >
               <item.icon className="h-5 w-5 text-gray-700" />
             </div>
-            <span className="mt-1 text-[11px] font-medium text-gray-600 truncate max-w-[64px] px-1">
+            <span className="mt-1 text-[11px] font-medium text-gray-600  max-w-[64px] px-1">
               {item.label}
             </span>
           </button>

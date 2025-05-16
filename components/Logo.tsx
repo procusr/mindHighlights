@@ -7,7 +7,7 @@ export default function Logo() {
 
   return (
     <div
-      className="text-xl sm:text-2xl font-extrabold inline-flex items-baseline select-none cursor-pointer relative"
+      className="text-xl sm:text-2xl font-extrabold inline-flex items-baseline select-none cursor-pointer relative overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
@@ -23,7 +23,7 @@ export default function Logo() {
             text-gray-800 dark:text-gray-100
             transition-all duration-500 ease-out
             tracking-tight
-            ${isHovered ? "translate-x-[-0.02em]" : ""}
+            ${isHovered ? "transform -translate-x-px" : ""}
           `}
           style={{
             marginRight: "-0.15em",
@@ -54,7 +54,7 @@ export default function Logo() {
               transition-all duration-500 ease-out
               mix-blend-multiply dark:mix-blend-soft-light
               origin-left
-              ${isHovered ? "scale-x-105" : "scale-x-100"}
+              ${isHovered ? "scale-x-[1.03]" : "scale-x-100"}
             `}
             style={{
               left: "-0.25em",
